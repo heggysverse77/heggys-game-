@@ -1,0 +1,94 @@
+/* ============================================================
+   Heggy Game — Global Design System Tokens
+   Mathematical Spacing Scale, Typography, Geometry & Color Scale
+   ============================================================ */
+
+:root {
+  /* --- 1. Mathematical Spacing Scale --- */
+  --space-1:     4px;
+  --space-2:     8px;
+  --space-3:     12px;
+  --space-4:     16px;
+  --space-5:     20px;
+  --space-6:     24px;
+  --space-7:     32px;
+  --space-8:     40px;
+  --space-9:     48px;
+  --space-10:    64px;
+  --space-12:    80px;
+
+  /* --- 2. Responsive Page Container & Layout --- */
+  --container-max:   1200px;
+  --container-wide:  1400px;
+  --container-narrow: 760px;
+
+  /* Consistent Page Padding */
+  --page-pad-desktop: 40px;
+  --page-pad-tablet:  24px;
+  --page-pad-mobile:  16px;
+
+  /* Consistent Card Padding */
+  --card-pad-desktop: 24px;
+  --card-pad-tablet:  20px;
+  --card-pad-mobile:  16px;
+
+  /* Consistent Section & Card Gaps */
+  --gap-section-desktop: 32px;
+  --gap-section-mobile:  20px;
+  --gap-card:            20px;
+
+  /* --- 3. Interactive Control Heights (Guaranteed Minimums >= 44px) --- */
+  --control-h-sm:   40px;
+  --control-h-md:   48px;
+  --control-h-lg:   56px;
+  --control-h-xl:   64px;
+
+  /* --- 4. Border Radius Scale --- */
+  --radius-xs:      8px;
+  --radius-sm:      12px;
+  --radius-md:      16px;
+  --radius-lg:      20px;
+  --radius-xl:      24px;
+  --radius-2xl:     32px;
+  --radius-pill:    9999px;
+
+  /* --- 5. Modal System Geometry --- */
+  --modal-pad-desktop: 28px;
+  --modal-pad-tablet:  20px;
+  --modal-pad-mobile:  16px;
+  --modal-w-sm:        min(92vw, 480px);
+  --modal-w-md:        min(94vw, 640px);
+  --modal-w-lg:        min(95vw, 760px);
+  --modal-max-h:       min(90vh, 840px);
+
+  /* --- 6. Warm Comic Pop Palette --- */
+  --comic-cream:       #FFF6E5;
+  --comic-cream-soft:  #FFF9EE;
+  --comic-white:       #FFFFFF;
+  --comic-black:       #1A1A1A;
+  --comic-black-soft:  #2D2D2D;
+  --comic-gold:        #F6BD60;
+  --comic-gold-hover:  #EDA845;
+  --comic-pink:        #F28482;
+  --comic-pink-hover:  #E86A68;
+  --comic-teal:        #38A3A5;
+  --comic-teal-hover:  #2E8B8D;
+  --comic-blush:       #F5CAC3;
+  --comic-sand:        #F7EDE2;
+
+  /* Atmospheric Dark Surfaces */
+  --bg-deep:           #121816;
+  --bg-card:           #1B2321;
+  --bg-card-hover:     #242F2C;
+
+  /* --- 7. Crisp Comic Borders & Shadows --- */
+  --border-comic-sm:   2px solid #1A1A1A;
+  --border-comic-md:   2.5px solid #1A1A1A;
+  --border-comic-lg:   3px solid #1A1A1A;
+
+  --shadow-comic-xs:   2px 2px 0px #1A1A1A;
+  --shadow-comic-sm:   3px 3px 0px #1A1A1A;
+  --shadow-comic-md:   4px 4px 0px #1A1A1A;
+  --shadow-comic-lg:   6px 6px 0px #1A1A1A;
+  --shadow-comic-xl:   8px 8px 0px #1A1A1A;
+}

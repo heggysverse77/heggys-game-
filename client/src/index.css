@@ -1,0 +1,455 @@
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap");
+@import "tailwindcss";
+@import "./styles/tokens.css";
+@import "./styles/animations.css";
+@import "./styles/rtl.css";
+
+/* ============================================================
+   TAILWIND v4 — Modern Heggy Theme Tokens
+   ============================================================ */
+@theme {
+  /* --- 5-Color Party Palette --- */
+  --color-palette-gold:     #F6BD60;
+  --color-palette-cream:    #F7EDE2;
+  --color-palette-blush:    #F5CAC3;
+  --color-palette-teal:     #38A3A5;
+  --color-palette-coral:    #F28482;
+
+  /* --- Base Surfaces --- */
+  --color-heggy-deep:       #121816;
+  --color-heggy-card:       #1b2321;
+  --color-heggy-card-2:     #242e2b;
+  --color-heggy-gold:       #F6BD60;
+  --color-heggy-pink:       #F28482;
+  --color-heggy-teal:       #38A3A5;
+  --color-heggy-cream:      #FFF6E5;
+  --color-heggy-black:      #1A1A1A;
+
+  /* --- Typography --- */
+  --font-display: "Tajawal", "Cairo", sans-serif;
+  --font-body:    "Cairo", "Tajawal", sans-serif;
+
+  /* --- Animations --- */
+  --animate-float:       float 3s ease-in-out infinite;
+  --animate-jelly:       jelly 0.4s ease;
+  --animate-slide-up:    slideUp 0.3s ease forwards;
+  --animate-slide-in:    slideIn 0.3s ease forwards;
+  --animate-fade-in:     fadeIn 0.2s ease forwards;
+  --animate-rubber-band: rubberBand 0.5s ease;
+  --animate-shimmer:     shimmer 2s linear infinite;
+  --animate-pop:         pop 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  --animate-shake:       shake 0.35s ease;
+}
+
+/* ============================================================
+   Global Reset & Base Surface
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  direction: rtl;
+  scroll-behavior: smooth;
+  background-color: #121816;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #121816;
+  color: #FFF6E5;
+  min-height: 100dvh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ============================================================
+   Custom Scrollbar
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(26, 26, 26, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #F6BD60;
+  border-radius: 9999px;
+  border: 2px solid #1A1A1A;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #EDA845;
+}
+
+/* ============================================================
+   Selection & Focus Ring
+   ============================================================ */
+::selection {
+  background-color: #F6BD60;
+  color: #1A1A1A;
+}
+
+:focus-visible {
+  outline: 3px solid #F6BD60;
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Responsive Page Containers (Breathable & Centered)
+   ============================================================ */
+.app-container {
+  width: min(100% - 32px, 1200px);
+  margin-inline: auto;
+  padding-inline: 0;
+}
+@media (min-width: 640px) {
+  .app-container {
+    width: min(100% - 48px, 1200px);
+  }
+}
+@media (min-width: 1024px) {
+  .app-container {
+    width: min(100% - 64px, 1240px);
+  }
+}
+
+.app-container-wide {
+  width: min(100% - 32px, 1400px);
+  margin-inline: auto;
+}
+@media (min-width: 640px) {
+  .app-container-wide {
+    width: min(100% - 48px, 1400px);
+  }
+}
+
+.app-container-narrow {
+  width: min(100% - 32px, 760px);
+  margin-inline: auto;
+}
+
+/* ============================================================
+   Unified Button Architecture
+   Height minimum 44px, radius 16px/20px, crisp ink border, 3D offset shadow
+   ============================================================ */
+.comic-btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding-inline: 20px;
+  padding-block: 10px;
+  border-radius: 16px;
+  border: 2.5px solid #1A1A1A;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1.25;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  white-space: nowrap;
+}
+
+.comic-btn-base:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.comic-btn-base:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+.comic-btn-pink {
+  composes: comic-btn-base;
+  background-color: #F28482;
+  color: #FFFFFF;
+  border: 2.5px solid #1A1A1A;
+  box-shadow: 0 4px 0px #1A1A1A;
+  min-height: 48px;
+  padding: 10px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 800;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.comic-btn-pink:hover:not(:disabled) {
+  background-color: #E86A68;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0px #1A1A1A;
+}
+.comic-btn-pink:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0px #1A1A1A;
+}
+
+.comic-btn-teal {
+  background-color: #38A3A5;
+  color: #FFFFFF;
+  border: 2.5px solid #1A1A1A;
+  box-shadow: 0 4px 0px #1A1A1A;
+  min-height: 48px;
+  padding: 10px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 800;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.comic-btn-teal:hover:not(:disabled) {
+  background-color: #2E8B8D;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0px #1A1A1A;
+}
+.comic-btn-teal:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0px #1A1A1A;
+}
+
+.comic-btn-gold {
+  background-color: #F6BD60;
+  color: #1A1A1A;
+  border: 2.5px solid #1A1A1A;
+  box-shadow: 0 4px 0px #1A1A1A;
+  min-height: 48px;
+  padding: 10px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 800;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.comic-btn-gold:hover:not(:disabled) {
+  background-color: #EDA845;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0px #1A1A1A;
+}
+.comic-btn-gold:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0px #1A1A1A;
+}
+
+.comic-btn-white {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+  border: 2.5px solid #1A1A1A;
+  box-shadow: 0 4px 0px #1A1A1A;
+  min-height: 48px;
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 800;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.comic-btn-white:hover:not(:disabled) {
+  background-color: #F8F8F8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0px #1A1A1A;
+}
+.comic-btn-white:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0px #1A1A1A;
+}
+
+/* Secondary & Ghost buttons */
+.comic-btn-secondary {
+  background-color: #FFF6E5;
+  color: #1A1A1A;
+  border: 2.5px solid #1A1A1A;
+  box-shadow: 0 3px 0px #1A1A1A;
+  min-height: 44px;
+  padding: 8px 18px;
+  border-radius: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.comic-btn-secondary:hover:not(:disabled) {
+  background-color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0px #1A1A1A;
+}
+
+/* ============================================================
+   Card Architecture
+   Consistent internal padding (20-24px desktop, 16px mobile), 20px radius, 4px shadow
+   ============================================================ */
+.comic-card {
+  background-color: #FFF6E5;
+  color: #1A1A1A;
+  border: 2.5px solid #1A1A1A;
+  border-radius: 20px;
+  box-shadow: 4px 4px 0px #1A1A1A;
+  padding: 20px;
+}
+@media (min-width: 640px) {
+  .comic-card {
+    padding: 24px;
+    border-radius: 24px;
+  }
+}
+
+.comic-card-white {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+  border: 2px solid #1A1A1A;
+  border-radius: 16px;
+  box-shadow: 3px 3px 0px #1A1A1A;
+  padding: 16px;
+}
+@media (min-width: 640px) {
+  .comic-card-white {
+    padding: 20px;
+    border-radius: 18px;
+  }
+}
+
+/* ============================================================
+   Option Cards (for Settings & Option Selectors)
+   Large, comfortable hitboxes with distinct selected states
+   ============================================================ */
+.option-card-base {
+  min-height: 52px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 2px solid #1A1A1A;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.option-card-inactive {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+  border-color: #1A1A1A;
+  box-shadow: 2px 2px 0px #1A1A1A;
+}
+.option-card-inactive:hover {
+  background-color: #FFF9EE;
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0px #1A1A1A;
+}
+
+.option-card-selected-gold {
+  background-color: #F6BD60;
+  color: #1A1A1A;
+  border: 2.5px solid #1A1A1A;
+  box-shadow: 3px 3px 0px #1A1A1A;
+  transform: translateY(-1px);
+  font-weight: 900;
+}
+
+.option-card-selected-teal {
+  background-color: #38A3A5;
+  color: #FFFFFF;
+  border: 2.5px solid #1A1A1A;
+  box-shadow: 3px 3px 0px #1A1A1A;
+  transform: translateY(-1px);
+  font-weight: 900;
+}
+
+/* ============================================================
+   Modal Architecture (3-Part Shell)
+   Fixed Header, Scrollable Body, Fixed Footer (Never clipped)
+   ============================================================ */
+.modal-shell {
+  width: min(94vw, 680px);
+  max-height: min(90vh, 840px);
+  background-color: #FFF6E5;
+  color: #1A1A1A;
+  border: 3px solid #1A1A1A;
+  border-radius: 24px;
+  box-shadow: 6px 6px 0px #1A1A1A;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: auto;
+  position: relative;
+}
+@media (min-width: 640px) {
+  .modal-shell {
+    border-radius: 28px;
+    box-shadow: 8px 8px 0px #1A1A1A;
+  }
+}
+
+.modal-header-fixed {
+  flex-shrink: 0;
+  padding: 20px 24px;
+  border-bottom: 2.5px solid #1A1A1A;
+  background-color: #FFF6E5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.modal-body-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+@media (min-width: 640px) {
+  .modal-body-scroll {
+    padding: 28px;
+    gap: 28px;
+  }
+}
+
+.modal-footer-fixed {
+  flex-shrink: 0;
+  padding: 16px 24px;
+  border-top: 2.5px solid #1A1A1A;
+  background-color: #FFF6E5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   Timer Utility States
+   ============================================================ */
+.timer-safe   { color: #38A3A5; stroke: #38A3A5; }
+.timer-warn   { color: #F6BD60; stroke: #F6BD60; }
+.timer-danger { color: #F28482; stroke: #F28482; }
+
+/* Safe Text Wrapping */
+.text-wrap-safe {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}

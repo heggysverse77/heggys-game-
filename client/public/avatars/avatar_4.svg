@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="bg_avatar_4" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ff4500" />
+      <stop offset="100%" stop-color="#1c0c05" />
+    </radialGradient>
+    <linearGradient id="goldChain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF" />
+      <stop offset="30%" stop-color="#FFD700" />
+      <stop offset="70%" stop-color="#FFA500" />
+      <stop offset="100%" stop-color="#FF8C00" />
+    </linearGradient>
+    <linearGradient id="shemaghPattern" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d90429" />
+      <stop offset="50%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#d90429" />
+    </linearGradient>
+    <filter id="glow_avatar_4">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Circle with Neon Border -->
+  <circle cx="100" cy="100" r="95" fill="url(#bg_avatar_4)" stroke="#ffd700" stroke-width="4" filter="url(#glow_avatar_4)" />
+
+  <!-- Fire / Spark Particles -->
+  <circle cx="45" cy="40" r="2.5" fill="#FFF" opacity="0.8"/>
+  <circle cx="155" cy="35" r="3" fill="#FFA500" opacity="0.9"/>
+  <circle cx="170" cy="80" r="2" fill="#FF4500" opacity="0.7"/>
+  <circle cx="30" cy="120" r="3.5" fill="#FFD700" opacity="0.85"/>
+
+  <!-- Character Torso / Outfit -->
+  <path d="M 40 200 C 40 145, 160 145, 160 200 Z" fill="#141416" stroke="#2a2a2e" stroke-width="2" />
+  <path d="M 75 155 L 100 185 L 125 155 Z" fill="#8d5524" />
+
+  <!-- Neck -->
+  <rect x="86" y="125" width="28" height="35" fill="#8d5524" />
+  <path d="M 86 135 L 100 150 L 114 135 Z" fill="#000" opacity="0.15" />
+
+  <!-- Head / Face Base -->
+  <path d="M 65 80 C 65 130, 100 145, 100 145 C 100 145, 135 130, 135 80 C 135 50, 65 50, 65 80 Z" fill="#8d5524" stroke="#000" stroke-width="1.5" />
+
+  <!-- Ears -->
+  <circle cx="63" cy="88" r="8" fill="#8d5524" />
+  <circle cx="137" cy="88" r="8" fill="#8d5524" />
+  <circle cx="60" cy="92" r="3" fill="#FFD700" stroke="#000" stroke-width="1"/>
+
+  
+    <!-- Anime Hair Base -->
+    <path d="M 55 75 C 50 35, 150 35, 145 75 C 155 40, 115 15, 95 18 C 70 20, 45 45, 55 75 Z" fill="#111" />
+    <!-- Dynamic Spiky Bangs -->
+    <path d="M 58 70 L 72 90 L 80 68 L 95 96 L 105 68 L 120 92 L 132 68 L 142 80 L 135 55 L 65 55 Z" fill="#111" />
+  
+
+  <!-- Eyes & Eyebrows -->
+  
+    <!-- Dark Rapper Sunglasses -->
+    <rect x="68" y="76" width="30" height="18" rx="4" fill="#111" stroke="#FFD700" stroke-width="2" />
+    <rect x="102" y="76" width="30" height="18" rx="4" fill="#111" stroke="#FFD700" stroke-width="2" />
+    <line x1="98" y1="84" x2="102" y2="84" stroke="#FFD700" stroke-width="3" />
+    <!-- Lens Glare -->
+    <line x1="72" y1="80" x2="82" y2="90" stroke="#FFF" stroke-width="2" opacity="0.8" />
+    <line x1="106" y1="80" x2="116" y2="90" stroke="#FFF" stroke-width="2" opacity="0.8" />
+  
+
+  <!-- Nose -->
+  <path d="M 98 94 L 102 99 L 97 101" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8" />
+
+  <!-- Mouth -->
+  <path d="M 90 115 Q 100 120 112 114" stroke="#000" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+  
+    <!-- Cigarette with Smoke -->
+    <rect x="108" y="112" width="22" height="4" rx="1.5" fill="#FFF" stroke="#333" stroke-width="0.5" transform="rotate(-12 108 112)" />
+    <rect x="127" y="108" width="4" height="4" rx="1" fill="#FF4500" filter="url(#glow_avatar_4)" transform="rotate(-12 108 112)" />
+    <path d="M 134 105 Q 142 95 138 85 Q 148 75 142 60" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  
+
+  
+    <!-- Heavy Gold Diamond Cuban Link Chain -->
+    <path d="M 68 150 Q 100 195 132 150" stroke="url(#goldChain)" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="3,1" filter="url(#glow_avatar_4)" />
+    <path d="M 76 160 Q 100 198 124 160" stroke="url(#goldChain)" stroke-width="5" fill="none" stroke-linecap="round" />
+    <!-- Big Medallion -->
+    <circle cx="100" cy="188" r="10" fill="url(#goldChain)" stroke="#FFF" stroke-width="1.5" />
+    <text x="100" y="192" font-size="10" font-weight="900" fill="#000" text-anchor="middle">👑</text>
+  
+
+  
+
+  <!-- Outer Ring Badge Style -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+</svg>

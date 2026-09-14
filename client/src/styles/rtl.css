@@ -1,0 +1,75 @@
+/* ============================================================
+   Heggy Game — RTL & Arabic Typography Architecture
+   Logical Layout, Clean Hierarchy & Bidirectional Isolation
+   ============================================================ */
+
+/* 1. Global RTL root */
+html {
+  direction: rtl;
+  text-align: right;
+}
+
+/* 2. Arabic Font Rendering & Smoothing */
+body {
+  font-feature-settings: "kern" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+/* 3. Typography Scale & Weights */
+.font-display {
+  font-family: "Tajawal", "Cairo", sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.font-body {
+  font-family: "Cairo", "Tajawal", sans-serif;
+}
+
+/* Heading hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Tajawal", "Cairo", sans-serif;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+p, span, label, input, textarea, button {
+  font-family: "Cairo", "Tajawal", sans-serif;
+}
+
+/* 4. Form inputs RTL & Placeholder styling */
+input,
+textarea {
+  direction: rtl;
+  text-align: right;
+  font-feature-settings: "kern" 1;
+}
+
+input::placeholder,
+textarea::placeholder {
+  direction: rtl;
+  text-align: right;
+  opacity: 0.6;
+}
+
+/* 5. Bidirectional Isolation for Technical / Numeric values */
+.ltr-num,
+.timer-number,
+.stat-number {
+  direction: ltr;
+  display: inline-block;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
+.room-code {
+  direction: ltr;
+  letter-spacing: 0.2em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 900;
+  display: inline-block;
+  unicode-bidi: isolate;
+}

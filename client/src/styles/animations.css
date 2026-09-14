@@ -1,0 +1,122 @@
+/* ============================================================
+   Heggy Game — Custom Keyframe Animations
+   All referenced via Tailwind's animate-* utilities
+   defined in @theme inside index.css
+   ============================================================ */
+
+/* Gentle avatar float */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* Button jelly wiggle */
+@keyframes jelly {
+  0%   { transform: scale(1, 1); }
+  25%  { transform: scale(0.95, 1.05); }
+  50%  { transform: scale(1.05, 0.95); }
+  75%  { transform: scale(0.98, 1.02); }
+  100% { transform: scale(1, 1); }
+}
+
+/* Card/question slide up from below */
+@keyframes slideUp {
+  0%   { opacity: 0; transform: translateY(32px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Sidebar / panel slide in from right (RTL) */
+@keyframes slideIn {
+  0%   { opacity: 0; transform: translateX(24px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Generic fade in */
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Staggered leaderboard row fade + slide left */
+@keyframes fadeSlide {
+  0%   { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Answer match result — rubber band */
+@keyframes rubberBand {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.25, 0.75); }
+  40%  { transform: scale(0.75, 1.25); }
+  50%  { transform: scale(1.15, 0.85); }
+  65%  { transform: scale(0.95, 1.05); }
+  75%  { transform: scale(1.05, 0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Room code shimmer */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Avatar/score pop in */
+@keyframes pop {
+  0%   { opacity: 0; transform: scale(0.6); }
+  70%  { transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Error shake */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+/* SVG timer ring stroke draw */
+@keyframes draw {
+  0%   { stroke-dashoffset: 314; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* Particle orb drift */
+@keyframes drift {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.6; }
+  33%  { transform: translate(30px, -40px) scale(1.05); opacity: 0.8; }
+  66%  { transform: translate(-20px, -60px) scale(0.95); opacity: 0.5; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+}
+
+/* Podium row reveal */
+@keyframes podiumRise {
+  0%   { opacity: 0; transform: translateY(40px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Dare card flip */
+@keyframes cardFlip {
+  0%   { transform: perspective(600px) rotateY(90deg); opacity: 0; }
+  100% { transform: perspective(600px) rotateY(0deg);  opacity: 1; }
+}
+
+/* Winner crown bounce */
+@keyframes crownBounce {
+  0%,100% { transform: translateY(0) rotate(-5deg); }
+  50%      { transform: translateY(-12px) rotate(5deg); }
+}
+
+/* Pulse ring (around avatars in matching phase) */
+@keyframes pulseRing {
+  0%   { transform: scale(1); opacity: 0.8; }
+  70%  { transform: scale(1.4); opacity: 0; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Typing dots */
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%            { transform: translateY(-6px); }
+}
