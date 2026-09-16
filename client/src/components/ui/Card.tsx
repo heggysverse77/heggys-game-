@@ -1,27 +1,27 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 interface CardProps {
   children: ReactNode;
   className?: string;
-  variant?: 'cream' | 'white' | 'gold' | 'pink' | 'teal';
+  variant?: 'cream' | 'white' | 'gold' | 'pink' | 'teal' | 'cyan' | 'dark';
   onClick?: () => void;
   padding?: 'sm' | 'md' | 'lg' | 'xl' | 'none';
+  style?: CSSProperties;
 }
 
-const variantClasses = {
-  cream: 'bg-[#FFF6E5] text-[#1A1A1A] border-2.5 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] sm:shadow-[6px_6px_0px_#1A1A1A]',
-  white: 'bg-white text-[#1A1A1A] border-2 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A]',
-  gold:  'bg-[#F6BD60] text-[#1A1A1A] border-2.5 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] sm:shadow-[6px_6px_0px_#1A1A1A]',
-  pink:  'bg-[#F28482] text-white border-2.5 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] sm:shadow-[6px_6px_0px_#1A1A1A]',
-  teal:  'bg-[#38A3A5] text-white border-2.5 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] sm:shadow-[6px_6px_0px_#1A1A1A]',
+const variantClasses: Record<string, string> = {
+  cream: '',
+  white: '',
+  gold: 'hv-card-glow-orange',
+  pink: '',
+  teal: 'hv-card-glow-teal',
+  cyan: 'hv-card-glow-teal',
+  dark: '',
 };
 
-const paddingClasses = {
-  none: '',
-  sm:   'p-4',
-  md:   'p-5 sm:p-6',
-  lg:   'p-6 sm:p-8 md:p-10',
-  xl:   'p-8 sm:p-10 md:p-12',
+const pinkStyle = {
+  borderColor: 'rgba(255,166,70,0.35)',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.3), 0 0 28px rgba(255,166,70,0.12)',
 };
 
 export default function Card({
@@ -30,20 +30,21 @@ export default function Card({
   variant = 'cream',
   onClick,
   padding = 'lg',
+  style,
 }: CardProps) {
+  const paddingValue =
+    padding === 'none' ? 0 : padding === 'sm' ? 16 : padding === 'md' ? 20 : 24;
+
   return (
     <div
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
       onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
-      className={[
-        'rounded-2xl sm:rounded-3xl transition-all duration-150',
-        variantClasses[variant],
-        paddingClasses[padding],
-        onClick ? 'cursor-pointer hover:-translate-y-1 hover:shadow-[8px_8px_0px_#1A1A1A] active:translate-y-0.5' : '',
-        className,
-      ].join(' ')}
+      className={['hv-card', onClick ? 'hv-card-clickable' : '', variantClasses[variant], className]
+        .filter(Boolean)
+        .join(' ')}
+      style={{ padding: paddingValue, ...(variant === 'pink' ? pinkStyle : undefined), ...style }}
     >
       {children}
     </div>

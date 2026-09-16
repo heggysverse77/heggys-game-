@@ -1,0 +1,155 @@
+/* ============================================================
+   HeggyVerse — Spacing & Layout System
+   8px grid system for margins/padding
+   ============================================================ */
+
+/* ============================================================
+   Spacing Scale (8px Grid)
+   ============================================================ */
+.space-0 { margin: 0; }
+.space-1 { margin: calc(var(--space-1)); }   /* 4px */
+.space-2 { margin: calc(var(--space-2)); }   /* 8px */
+.space-3 { margin: calc(var(--space-3)); }   /* 12px */
+.space-4 { margin: calc(var(--space-4)); }   /* 16px */
+.space-5 { margin: calc(var(--space-5)); }   /* 20px */
+.space-6 { margin: calc(var(--space-6)); }   /* 24px */
+.space-7 { margin: calc(var(--space-7)); }   /* 28px */
+.space-8 { margin: calc(var(--space-8)); }   /* 32px */
+.space-9 { margin: calc(var(--space-9)); }   /* 36px */
+.space-10 { margin: calc(var(--space-10)); } /* 40px */
+.space-12 { margin: calc(var(--space-12)); } /* 48px */
+.space-14 { margin: calc(var(--space-14)); } /* 56px */
+.space-16 { margin: calc(var(--space-16)); } /* 64px */
+.space-20 { margin: calc(var(--space-20)); } /* 80px */
+.space-24 { margin: calc(var(--space-24)); } /* 96px */
+
+/* Vertical spacing utilities */
+.v-space-1 { margin-top: calc(var(--space-1)); margin-bottom: calc(var(--space-1)); }
+.v-space-2 { margin-top: calc(var(--space-2)); margin-bottom: calc(var(--space-2)); }
+.v-space-3 { margin-top: calc(var(--space-3)); margin-bottom: calc(var(--space-3)); }
+.v-space-4 { margin-top: calc(var(--space-4)); margin-bottom: calc(var(--space-4)); }
+.v-space-5 { margin-top: calc(var(--space-5)); margin-bottom: calc(var(--space-5)); }
+.v-space-6 { margin-top: calc(var(--space-6)); margin-bottom: calc(var(--space-6)); }
+.v-space-8 { margin-top: calc(var(--space-8)); margin-bottom: calc(var(--space-8)); }
+.v-space-10 { margin-top: calc(var(--space-10)); margin-bottom: calc(var(--space-10)); }
+.v-space-12 { margin-top: calc(var(--space-12)); margin-bottom: calc(var(--space-12)); }
+.v-space-14 { margin-top: calc(var(--space-14)); margin-bottom: calc(var(--space-14)); }
+.v-space-16 { margin-top: calc(var(--space-16)); margin-bottom: calc(var(--space-16)); }
+
+/* Horizontal spacing utilities */
+.h-space-1 { margin-left: calc(var(--space-1)); margin-right: calc(var(--space-1)); }
+.h-space-2 { margin-left: calc(var(--space-2)); margin-right: calc(var(--space-2)); }
+.h-space-3 { margin-left: calc(var(--space-3)); margin-right: calc(var(--space-3)); }
+.h-space-4 { margin-left: calc(var(--space-4)); margin-right: calc(var(--space-4)); }
+.h-space-5 { margin-left: calc(var(--space-5)); margin-right: calc(var(--space-5)); }
+.h-space-6 { margin-left: calc(var(--space-6)); margin-right: calc(var(--space-6)); }
+.h-space-8 { margin-left: calc(var(--space-8)); margin-right: calc(var(--space-8)); }
+.h-space-10 { margin-left: calc(var(--space-10)); margin-right: calc(var(--space-10)); }
+
+/* ============================================================
+   Section Spacing
+   Section spacing: 64px top/bottom
+   ============================================================ */
+.section-py { padding-top: calc(var(--space-16)); padding-bottom: calc(var(--space-16)); }
+.section-py-reverse { padding-top: calc(var(--space-16)); padding-bottom: calc(var(--space-16)); }
+
+/* ============================================================
+   Component Spacing
+   Component internal padding: 24px
+   ============================================================ */
+.component-py { padding-top: calc(var(--space-6)); padding-bottom: calc(var(--space-6)); }
+.component-py-lg { padding-top: calc(var(--space-8)); padding-bottom: calc(var(--space-8)); }
+
+/* ============================================================
+   Gutters
+   Consistent gutters: 24px between columns
+   ============================================================ */
+.gutter { gap: calc(var(--space-6)); }
+.gutter-2xl { gap: calc(var(--space-10)); }
+
+/* ============================================================
+   Container & Max Width
+   Max width: 1200px, 12-column grid
+   ============================================================ */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+  box-sizing: border-box;
+}
+
+.grid-cols-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: calc(var(--gutter));
+}
+
+.grid-cols-12 > * {
+  padding-inline: calc(var(--gutter) / 2);
+}
+
+/* ============================================================
+   Grid Column Offsets
+   ============================================================ */
+.col-1 { grid-column: span 1; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-5 { grid-column: span 5; }
+.col-6 { grid-column: span 6; }
+.col-7 { grid-column: span 7; }
+.col-8 { grid-column: span 8; }
+.col-9 { grid-column: span 9; }
+.col-10 { grid-column: span 10; }
+.col-11 { grid-column: span 11; }
+.col-12 { grid-column: span 12; }
+
+/* ============================================================
+   Utility for RTL direction control
+   ============================================================ */
+[dir="rtl"] { direction: rtl; text-align: right; }
+[dir="ltr"] { direction: ltr; text-align: left; }
+
+/* ============================================================
+   Aspect Ratio & Minimum Heights
+   ============================================================ */
+.aspect-square { aspect-ratio: 1 / 1; }
+.aspect-video { aspect-ratio: 16 / 9; }
+
+.min-h-0 { min-height: 0; }
+
+/* ============================================================
+   Visibility & Display
+   ============================================================ */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.invisible { visibility: hidden; }
+
+/* ============================================================
+   Print styles
+   ============================================================ */
+@media print {
+  *, *::before, *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  a, a:visited {
+    text-decoration: underline;
+  }
+  a[href]:after {
+    content: attr(href);
+  }
+}

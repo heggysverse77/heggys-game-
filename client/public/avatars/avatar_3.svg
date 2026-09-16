@@ -1,25 +1,79 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
   <defs>
-    <linearGradient id="grad_avatar_3" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00B4DB" />
-      <stop offset="100%" stop-color="#0083B0" />
-    </linearGradient>
-    <filter id="glow_avatar_3" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="3" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    <radialGradient id="handsome_bg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFF3EB" />
+      <stop offset="70%" stop-color="#FCD5CE" />
+      <stop offset="100%" stop-color="#F8AD9D" />
+    </radialGradient>
+    <filter id="star_glow">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
     </filter>
   </defs>
-  
-  <!-- Outer Glow Circle -->
-  <circle cx="60" cy="60" r="56" fill="url(#grad_avatar_3)" stroke="#00F2FE" stroke-width="4" />
-  
-  <!-- Inner Subtle Ring -->
-  <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="4,4" />
-  
-  <!-- Main Emoji / Character -->
-  <text x="60" y="68" font-size="52" text-anchor="middle" dominant-baseline="central" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.35));">🐼</text>
-  
-  <!-- Accessory Badge (Bottom Right) -->
-  <circle cx="92" cy="92" r="16" fill="#1C1033" stroke="#00F2FE" stroke-width="2" />
-  <text x="92" y="94" font-size="16" text-anchor="middle" dominant-baseline="central">🕶️</text>
+
+  <!-- Outer Circle -->
+  <circle cx="150" cy="150" r="142" fill="url(#handsome_bg)" stroke="#1A1A1A" stroke-width="8" />
+  <circle cx="150" cy="150" r="133" fill="none" stroke="#F28482" stroke-width="3" opacity="0.6" />
+
+  <!-- Four-Point Anime Sparkles in Background -->
+  <path d="M 60 70 Q 66 70 66 64 Q 66 70 72 70 Q 66 70 66 76 Q 66 70 60 70 Z" fill="#F6BD60" stroke="#1A1A1A" stroke-width="1.5" filter="url(#star_glow)" />
+  <path d="M 235 80 Q 242 80 242 73 Q 242 80 249 80 Q 242 80 242 87 Q 242 80 235 80 Z" fill="#F6BD60" stroke="#1A1A1A" stroke-width="1.5" filter="url(#star_glow)" />
+
+  <g clip-path="url(#handsomeClip)">
+    <clipPath id="handsomeClip">
+      <circle cx="150" cy="150" r="138" />
+    </clipPath>
+
+    <!-- Silk Open Collar Shirt -->
+    <path d="M 45 300 C 55 215, 95 200, 150 200 C 205 200, 245 215, 255 300 Z" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="5" />
+    <!-- V-Neck Opening -->
+    <path d="M 125 200 L 150 248 L 175 200 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="3.5" />
+    <!-- Silver Pendant -->
+    <circle cx="150" cy="225" r="3.5" fill="#E2E8F0" stroke="#1A1A1A" stroke-width="1.5" />
+
+    <!-- Neck -->
+    <rect x="128" y="160" width="44" height="45" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4" />
+    <path d="M 128 160 C 140 180, 160 180, 172 160 Z" fill="#E8B28E" />
+
+    <!-- Ears -->
+    <ellipse cx="94" cy="142" rx="14" ry="18" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4.5" />
+    <ellipse cx="206" cy="142" rx="14" ry="18" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4.5" />
+
+    <!-- Sharp Chiseled Face Base -->
+    <path d="M 104 105 C 104 75, 196 75, 196 105 C 196 160, 175 190, 150 195 C 125 190, 104 160, 104 105 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="5" />
+    <!-- Charming Cheek Blush -->
+    <ellipse cx="118" cy="148" rx="12" ry="6" fill="#F28482" opacity="0.45" />
+    <ellipse cx="182" cy="148" rx="12" ry="6" fill="#F28482" opacity="0.45" />
+
+    <!-- Slick Dark Anime Hair with Flowing Bangs -->
+    <path d="M 90 108 C 82 50, 115 28, 150 26 C 185 28, 218 50, 210 108 C 225 75, 208 42, 185 34 C 160 26, 135 26, 112 36 C 94 45, 84 75, 90 108 Z" fill="#1C1824" stroke="#1A1A1A" stroke-width="5" />
+    <!-- Swept Bangs Parting Across Brow -->
+    <path d="M 112 40 Q 145 95 130 118 Q 155 75 185 52 Z" fill="#2D2738" stroke="#1A1A1A" stroke-width="3" />
+
+    <!-- Right Eye: Open, Dreamy & Deep Brown -->
+    <ellipse cx="173" cy="126" rx="9" ry="11" fill="#FFF" stroke="#1A1A1A" stroke-width="3" />
+    <circle cx="173" cy="126" r="6.5" fill="#3D2014" />
+    <circle cx="173" cy="126" r="3.5" fill="#1A1A1A" />
+    <circle cx="171" cy="124" r="2.2" fill="#FFF" />
+    <!-- Left Eye: The Charming Playful WINK 😉 -->
+    <path d="M 116 128 Q 127 120 138 128" stroke="#1A1A1A" stroke-width="5.5" stroke-linecap="round" fill="none" />
+    <!-- Star Sparkle on the Winking Eye! -->
+    <path d="M 104 120 Q 110 120 110 114 Q 110 120 116 120 Q 110 120 110 126 Q 110 120 104 120 Z" fill="#FFF" stroke="#1A1A1A" stroke-width="1.5" filter="url(#star_glow)" />
+
+    <!-- Eyebrows (Smooth & Confident) -->
+    <path d="M 114 112 Q 126 106 138 114" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
+    <path d="M 162 112 Q 174 104 186 110" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
+
+    <!-- Nose -->
+    <path d="M 150 118 L 147 138 L 154 139" stroke="#1A1A1A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+    <!-- Killer Charming Smirk -->
+    <path d="M 134 158 Q 146 168 166 156" stroke="#1A1A1A" stroke-width="4.5" stroke-linecap="round" fill="none" />
+    <path d="M 140 160 Q 150 166 162 158" fill="#FFF" />
+  </g>
+
+  <circle cx="150" cy="150" r="142" fill="none" stroke="#1A1A1A" stroke-width="8" />
 </svg>

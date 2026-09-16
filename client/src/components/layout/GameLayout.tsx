@@ -8,26 +8,25 @@ interface GameLayoutProps {
 
 export default function GameLayout({ children, className = '' }: GameLayoutProps) {
   return (
-    <div className="min-h-screen w-full flex flex-col items-center text-[#F7EDE2] overflow-x-hidden font-body relative" dir="rtl">
-      {/* Retro-Futuristic Egyptian Comic Background Image with Depth Blur */}
+    <div
+      style={{ minHeight: '100dvh', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      dir="rtl"
+    >
+      {/* Futuristic ambient glows — orange / teal / accent on #121212 */}
       <div
-        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat filter blur-[7px] scale-105 transition-all duration-700"
+        aria-hidden="true"
         style={{
-          backgroundImage: "url('/images/retro_egypt_bg.jpg')",
+          position: 'fixed',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: 0,
+          background:
+            'radial-gradient(1000px 480px at 50% -8%, rgba(52,55,121,0.22), transparent 62%), radial-gradient(900px 420px at 85% -5%, rgba(255,166,70,0.10), transparent 60%), radial-gradient(800px 420px at 10% 0%, rgba(51,169,172,0.10), transparent 60%)',
         }}
       />
-
-      {/* Cinematic Ambient Tint & Vignette for Depth & Focus */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#0B1519]/35 via-[#0B1519]/20 to-[#0B1519]/55"
-        aria-hidden="true"
-      />
-
-      {/* Content container */}
-      <div className={`relative z-10 flex-1 flex flex-col items-center w-full pb-12 sm:pb-16 ${className}`}>
+      <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', paddingTop: 0, paddingBottom: 48 }} className={className}>
         {children}
       </div>
     </div>
   );
 }
-

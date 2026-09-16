@@ -104,16 +104,27 @@ export interface LeaderboardEntry {
   commentary?: string;
 }
 
+export interface RevealedAnswerGuesser {
+  guesserPlayerId: string;
+  nickname: string;
+  avatarId: string;
+  isCorrect: boolean;
+}
+
+export interface RevealedAnswer {
+  answerId: string;
+  text: string;
+  playerId: string;
+  nickname: string;
+  avatarId?: string;
+  guessers?: RevealedAnswerGuesser[];
+}
+
 export interface RoundResultsPayload {
   roundNumber: number;
   scores: RoundScore[];
   leaderboard: LeaderboardEntry[];
-  revealedAnswers: {
-    answerId: string;
-    text: string;
-    playerId: string;
-    nickname: string;
-  }[];
+  revealedAnswers: RevealedAnswer[];
 }
 
 export interface RoundNextRoundPayload {

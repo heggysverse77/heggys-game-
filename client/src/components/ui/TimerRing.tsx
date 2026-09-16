@@ -29,17 +29,17 @@ export default function TimerRing({
   const isWarning = remainingSeconds > 5 && progress <= 0.4;
 
   const strokeColor = isCritical
-    ? '#F28482'
+    ? '#F86041'
     : isWarning
-    ? '#F6BD60'
-    : '#38A3A5';
+    ? '#FFA646'
 
+    : '#33A9AC';
   const textColorClass = isCritical
-    ? 'text-[#F28482]'
+    ? 'text-[#F86041]'
     : isWarning
-    ? 'text-[#F6BD60]'
-    : 'text-[#38A3A5]';
+    ? 'text-[#FFA646]'
 
+    : 'text-[#33A9AC]';
   useEffect(() => {
     if (circleRef.current) {
       circleRef.current.style.strokeDashoffset = String(dashOffset);

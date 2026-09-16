@@ -8,7 +8,7 @@ interface Orb {
   opacity: number;
 }
 
-const COLORS = ['#F6BD60', '#F7EDE2', '#F5CAC3', '#84A59D', '#F28482'];
+const COLORS = ['#FFA646', '#33A9AC', '#F86041', '#982062', '#343779'];
 
 export default function ParticleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

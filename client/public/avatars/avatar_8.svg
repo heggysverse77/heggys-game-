@@ -1,89 +1,90 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
   <defs>
-    <radialGradient id="bg_avatar_8" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#ff5500" />
-      <stop offset="100%" stop-color="#200800" />
+    <radialGradient id="rofl_bg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFFBEB" />
+      <stop offset="70%" stop-color="#FEF08A" />
+      <stop offset="100%" stop-color="#FACC15" />
     </radialGradient>
-    <linearGradient id="goldChain" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFF" />
-      <stop offset="30%" stop-color="#FFD700" />
-      <stop offset="70%" stop-color="#FFA500" />
-      <stop offset="100%" stop-color="#FF8C00" />
-    </linearGradient>
-    <linearGradient id="shemaghPattern" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#d90429" />
-      <stop offset="50%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#d90429" />
-    </linearGradient>
-    <filter id="glow_avatar_8">
-      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+    <filter id="tear_shine">
+      <feGaussianBlur stdDeviation="1.5" result="blur" />
       <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
   </defs>
 
-  <!-- Background Circle with Neon Border -->
-  <circle cx="100" cy="100" r="95" fill="url(#bg_avatar_8)" stroke="#ffaa00" stroke-width="4" filter="url(#glow_avatar_8)" />
+  <!-- Outer Comic Circle -->
+  <circle cx="150" cy="150" r="142" fill="url(#rofl_bg)" stroke="#1A1A1A" stroke-width="8" />
+  <circle cx="150" cy="150" r="133" fill="none" stroke="#EAB308" stroke-width="3" opacity="0.6" />
 
-  <!-- Fire / Spark Particles -->
-  <circle cx="45" cy="40" r="2.5" fill="#FFF" opacity="0.8"/>
-  <circle cx="155" cy="35" r="3" fill="#FFA500" opacity="0.9"/>
-  <circle cx="170" cy="80" r="2" fill="#FF4500" opacity="0.7"/>
-  <circle cx="30" cy="120" r="3.5" fill="#FFD700" opacity="0.85"/>
+  <!-- Action Laughing Lines in Background -->
+  <line x1="55" y1="90" x2="80" y2="105" stroke="#1A1A1A" stroke-width="3.5" stroke-linecap="round" />
+  <line x1="50" y1="120" x2="75" y2="125" stroke="#1A1A1A" stroke-width="3.5" stroke-linecap="round" />
+  <line x1="245" y1="90" x2="220" y2="105" stroke="#1A1A1A" stroke-width="3.5" stroke-linecap="round" />
+  <line x1="250" y1="120" x2="225" y2="125" stroke="#1A1A1A" stroke-width="3.5" stroke-linecap="round" />
 
-  <!-- Character Torso / Outfit -->
-  <path d="M 40 200 C 40 145, 160 145, 160 200 Z" fill="#141416" stroke="#2a2a2e" stroke-width="2" />
-  <path d="M 75 155 L 100 185 L 125 155 Z" fill="#ffe0bd" />
+  <g clip-path="url(#roflClip)">
+    <clipPath id="roflClip">
+      <circle cx="150" cy="150" r="138" />
+    </clipPath>
 
-  <!-- Neck -->
-  <rect x="86" y="125" width="28" height="35" fill="#ffe0bd" />
-  <path d="M 86 135 L 100 150 L 114 135 Z" fill="#000" opacity="0.15" />
+    <!-- Bright Orange Hoodie / Shoulders -->
+    <path d="M 45 300 C 55 215, 95 200, 150 200 C 205 200, 245 215, 255 300 Z" fill="#FB923C" stroke="#1A1A1A" stroke-width="5" />
+    <!-- White Inner Shirt -->
+    <path d="M 125 200 L 150 235 L 175 200 Z" fill="#FFF" stroke="#1A1A1A" stroke-width="3.5" />
+    <!-- Hoodie Strings Shaking with Laughter -->
+    <path d="M 135 215 Q 130 240 138 260" stroke="#FFF" stroke-width="4" stroke-linecap="round" fill="none" />
+    <path d="M 165 215 Q 170 240 162 260" stroke="#FFF" stroke-width="4" stroke-linecap="round" fill="none" />
 
-  <!-- Head / Face Base -->
-  <path d="M 65 80 C 65 130, 100 145, 100 145 C 100 145, 135 130, 135 80 C 135 50, 65 50, 65 80 Z" fill="#ffe0bd" stroke="#000" stroke-width="1.5" />
+    <!-- Neck -->
+    <rect x="130" y="160" width="40" height="40" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4" />
 
-  <!-- Ears -->
-  <circle cx="63" cy="88" r="8" fill="#ffe0bd" />
-  <circle cx="137" cy="88" r="8" fill="#ffe0bd" />
-  
+    <!-- Ears -->
+    <ellipse cx="94" cy="145" rx="14" ry="18" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4.5" />
+    <ellipse cx="206" cy="145" rx="14" ry="18" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4.5" />
 
-  
-    <!-- Anime Hair Base -->
-    <path d="M 55 75 C 50 35, 150 35, 145 75 C 155 40, 115 15, 95 18 C 70 20, 45 45, 55 75 Z" fill="#ff6f61" />
-    <!-- Dynamic Spiky Bangs -->
-    <path d="M 58 70 L 72 90 L 80 68 L 95 96 L 105 68 L 120 92 L 132 68 L 142 80 L 135 55 L 65 55 Z" fill="#ff6f61" />
-  
+    <!-- Face Base (Tilted Back in Roaring Laughter) -->
+    <path d="M 104 105 C 104 75, 196 75, 196 105 C 196 160, 175 190, 150 195 C 125 190, 104 160, 104 105 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="5" />
 
-  <!-- Eyes & Eyebrows -->
-  
-    <!-- Fierce Anime Eyes -->
-    <path d="M 72 78 Q 85 72 94 80 Q 85 86 72 78 Z" fill="#FFF" stroke="#000" stroke-width="2" />
-    <circle cx="84" cy="80" r="4.5" fill="#ff6b00" />
-    <circle cx="85" cy="79" r="1.5" fill="#FFF" />
+    <!-- Bright Cherry Cheeks from Laughing So Hard -->
+    <ellipse cx="114" cy="148" rx="15" ry="9" fill="#FB7185" opacity="0.6" />
+    <ellipse cx="186" cy="148" rx="15" ry="9" fill="#FB7185" opacity="0.6" />
 
-    <path d="M 106 80 Q 115 72 128 78 Q 115 86 106 80 Z" fill="#FFF" stroke="#000" stroke-width="2" />
-    <circle cx="116" cy="80" r="4.5" fill="#ff6b00" />
-    <circle cx="117" cy="79" r="1.5" fill="#FFF" />
+    <!-- Messy Brown Spiky Anime Hair -->
+    <path d="M 90 105 C 80 50, 115 30, 150 28 C 185 30, 220 50, 210 105 C 225 75, 208 42, 185 34 C 160 26, 135 26, 112 36 C 94 45, 84 75, 90 105 Z" fill="#78350F" stroke="#1A1A1A" stroke-width="5" />
+    <path d="M 96 95 L 115 118 L 128 96 L 146 122 L 158 96 L 176 120 L 194 95 Z" fill="#92400E" stroke="#1A1A1A" stroke-width="3.5" />
 
-    <!-- Sharp Eyebrows -->
-    <path d="M 70 72 L 95 76" stroke="#000" stroke-width="3.5" stroke-linecap="round" />
-    <path d="M 130 72 L 105 76" stroke="#000" stroke-width="3.5" stroke-linecap="round" />
-  
+    <!-- Anime Laughter Eyes: Closed `> <` Style! 😆 -->
+    <!-- Left Squeezed Eye '>' -->
+    <path d="M 115 120 L 134 127 L 115 134" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    <!-- Right Squeezed Eye '<' -->
+    <path d="M 185 120 L 166 127 L 185 134" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
 
-  <!-- Nose -->
-  <path d="M 98 94 L 102 99 L 97 101" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8" />
+    <!-- Highly Curved Happy Laughing Eyebrows -->
+    <path d="M 112 108 Q 125 96 138 108" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
+    <path d="M 162 108 Q 175 96 188 108" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
 
-  <!-- Mouth -->
-  <path d="M 90 115 Q 100 120 112 114" stroke="#000" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <!-- TEARS OF JOY GUSHING OUT! 🤣💧 -->
+    <!-- Left Stream of Tears -->
+    <path d="M 112 127 C 88 118, 76 140, 68 135 C 62 130, 72 110, 95 118 Z" fill="#38BDF8" stroke="#1A1A1A" stroke-width="2.5" filter="url(#tear_shine)" />
+    <ellipse cx="80" cy="126" rx="4" ry="2" fill="#FFF" opacity="0.8" />
+    <circle cx="58" cy="142" r="4.5" fill="#38BDF8" stroke="#1A1A1A" stroke-width="2" />
+    <!-- Right Stream of Tears -->
+    <path d="M 188 127 C 212 118, 224 140, 232 135 C 238 130, 228 110, 205 118 Z" fill="#38BDF8" stroke="#1A1A1A" stroke-width="2.5" filter="url(#tear_shine)" />
+    <ellipse cx="220" cy="126" rx="4" ry="2" fill="#FFF" opacity="0.8" />
+    <circle cx="242" cy="142" r="4.5" fill="#38BDF8" stroke="#1A1A1A" stroke-width="2" />
 
-  
+    <!-- Tiny Nose -->
+    <circle cx="150" cy="138" r="2.5" fill="#1A1A1A" />
 
-  
+    <!-- Huge Laughing Open Mouth! 🤣 -->
+    <path d="M 125 152 Q 150 146 175 152 C 178 185, 122 185, 125 152 Z" fill="#991B1B" stroke="#1A1A1A" stroke-width="4.5" />
+    <!-- Top White Teeth Bar -->
+    <path d="M 127 153 Q 150 148 173 153 L 171 160 Q 150 156 129 160 Z" fill="#FFF" stroke="#1A1A1A" stroke-width="1.5" />
+    <!-- Big Bouncing Pink Tongue -->
+    <path d="M 135 174 C 142 164, 158 164, 165 174 C 158 184, 142 184, 135 174 Z" fill="#F43F5E" />
+  </g>
 
-  
-
-  <!-- Outer Ring Badge Style -->
-  <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+  <circle cx="150" cy="150" r="142" fill="none" stroke="#1A1A1A" stroke-width="8" />
 </svg>

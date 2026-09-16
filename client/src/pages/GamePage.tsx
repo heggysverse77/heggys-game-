@@ -75,15 +75,17 @@ export default function GamePage({ gameId, roomCode, onLeaveGame }: GamePageProp
         title={getPhaseTitle()}
         roomCode={roomCode}
         onLeave={onLeaveGame}
-        leaveLabel="مغادرة اللعبة"
+        leaveLabel="مغادرة"
         onLogout={onLeaveGame}
       />
 
-      <div className="flex-1 flex flex-col items-center w-full px-3 sm:px-6 py-4 sm:py-6 max-w-5xl mx-auto">
+      <div className="hv-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', paddingBlock: 24 }}>
+        {/* Timer bar lives at top of each phase (hv-timer-track). Active challenge
+            is highlighted via hv-card-active inside phase components. */}
         {!phase || phase === 'LOBBY' ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <Spinner size="lg" />
-            <p className="font-display font-black text-lg sm:text-xl text-[#F6BD60] drop-shadow-sm">
+            <p className="font-display font-black text-lg sm:text-xl text-[#FFA646] drop-shadow-sm">
               جاري مزامنة بيانات اللعبة...
             </p>
           </div>

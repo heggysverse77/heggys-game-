@@ -1,0 +1,13 @@
+/* ============================================================
+   Heggy Game — Web Font Loading Strategy
+   
+   Arabic fonts (Cairo) and English fonts (Inter) are loaded via Google Fonts
+   @import in index.css with display=swap for optimal LCP.
+   
+   No additional @font-face declarations are needed here.
+   Local font fallbacks are handled by the system font stack
+   in the font-body / font-display CSS variables in tokens.css.
+   
+   If you add locally-hosted fonts in the future, declare them
+   here and reference them in tokens.css.
+   ============================================================ */

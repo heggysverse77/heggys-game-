@@ -1,25 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
   <defs>
-    <linearGradient id="grad_avatar_2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF512F" />
-      <stop offset="100%" stop-color="#DD2476" />
-    </linearGradient>
-    <filter id="glow_avatar_2" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="3" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    <radialGradient id="ninja_bg" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="85%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+    <filter id="ninja_eye_glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
     </filter>
   </defs>
-  
-  <!-- Outer Glow Circle -->
-  <circle cx="60" cy="60" r="56" fill="url(#grad_avatar_2)" stroke="#FF007F" stroke-width="4" />
-  
-  <!-- Inner Subtle Ring -->
-  <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-dasharray="4,4" />
-  
-  <!-- Main Emoji / Character -->
-  <text x="60" y="68" font-size="52" text-anchor="middle" dominant-baseline="central" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.35));">🦊</text>
-  
-  <!-- Accessory Badge (Bottom Right) -->
-  <circle cx="92" cy="92" r="16" fill="#1C1033" stroke="#FF007F" stroke-width="2" />
-  <text x="92" y="94" font-size="16" text-anchor="middle" dominant-baseline="central">🎧</text>
+
+  <!-- Outer Circle -->
+  <circle cx="150" cy="150" r="142" fill="url(#ninja_bg)" stroke="#1A1A1A" stroke-width="8" />
+  <circle cx="150" cy="150" r="133" fill="none" stroke="#38BDF8" stroke-width="3" opacity="0.6" />
+
+  <g clip-path="url(#ninjaClip)">
+    <clipPath id="ninjaClip">
+      <circle cx="150" cy="150" r="138" />
+    </clipPath>
+
+    <!-- Shinobi Robe / Armor Shoulders -->
+    <path d="M 40 300 C 50 215, 95 200, 150 200 C 205 200, 250 215, 260 300 Z" fill="#0F172A" stroke="#1A1A1A" stroke-width="5" />
+    <!-- Armor Plate -->
+    <path d="M 115 220 L 150 255 L 185 220 Z" fill="#1E293B" stroke="#38BDF8" stroke-width="2" />
+
+    <!-- Cowl / Mask Covering Lower Face & Neck -->
+    <path d="M 102 125 C 98 175, 115 210, 150 215 C 185 210, 202 175, 198 125 Z" fill="#1E293B" stroke="#1A1A1A" stroke-width="4.5" />
+    <!-- Mask Fold Lines -->
+    <path d="M 115 155 Q 150 170 185 155" stroke="#0F172A" stroke-width="3" fill="none" />
+    <path d="M 125 175 Q 150 188 175 175" stroke="#0F172A" stroke-width="3" fill="none" />
+
+    <!-- Ninja Headband Metal Plate on Forehead -->
+    <rect x="105" y="70" width="90" height="34" rx="6" fill="#64748B" stroke="#1A1A1A" stroke-width="3.5" />
+    <circle cx="112" cy="87" r="2.5" fill="#1A1A1A" />
+    <circle cx="188" cy="87" r="2.5" fill="#1A1A1A" />
+    <!-- Engraved Ninja Clan Symbol -->
+    <path d="M 144 87 L 150 78 L 156 87 L 150 96 Z" fill="none" stroke="#38BDF8" stroke-width="3" filter="url(#ninja_eye_glow)" />
+
+    <!-- Dark Ninja Hood / Spiky Back Hair -->
+    <path d="M 94 95 C 80 45, 120 25, 150 25 C 180 25, 220 45, 206 95 C 225 65, 215 35, 190 26 C 160 18, 140 18, 110 26 C 85 35, 75 65, 94 95 Z" fill="#020617" stroke="#1A1A1A" stroke-width="5" />
+    <!-- Headband Ribbons Floating on Side -->
+    <path d="M 98 84 Q 70 75 55 90 Q 65 110 88 102" fill="#0F172A" stroke="#1A1A1A" stroke-width="3" />
+    <path d="M 98 88 Q 65 95 48 115 Q 60 130 86 112" fill="#0F172A" stroke="#1A1A1A" stroke-width="3" />
+
+    <!-- Exposed Face Area Between Headband and Mask -->
+    <rect x="105" y="104" width="90" height="30" fill="#E2A67B" stroke="#1A1A1A" stroke-width="2" />
+
+    <!-- Sharp Intense Glowing Cyan Ninja Eyes -->
+    <ellipse cx="127" cy="118" rx="10" ry="6.5" fill="#0F172A" stroke="#1A1A1A" stroke-width="2" />
+    <ellipse cx="173" cy="118" rx="10" ry="6.5" fill="#0F172A" stroke="#1A1A1A" stroke-width="2" />
+    <!-- Glowing Iris & Slit Pupil -->
+    <ellipse cx="127" cy="118" rx="5" ry="5.5" fill="#38BDF8" filter="url(#ninja_eye_glow)" />
+    <ellipse cx="127" cy="118" rx="2" ry="4.5" fill="#FFFFFF" />
+    <ellipse cx="173" cy="118" rx="5" ry="5.5" fill="#38BDF8" filter="url(#ninja_eye_glow)" />
+    <ellipse cx="173" cy="118" rx="2" ry="4.5" fill="#FFFFFF" />
+
+    <!-- Fierce Angled Eyebrows -->
+    <path d="M 114 110 L 138 114" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" />
+    <path d="M 186 110 L 162 114" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" />
+  </g>
+
+  <circle cx="150" cy="150" r="142" fill="none" stroke="#1A1A1A" stroke-width="8" />
 </svg>

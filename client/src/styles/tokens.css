@@ -37,8 +37,17 @@
   --gap-section-mobile:  20px;
   --gap-card:            20px;
 
+  /* Page Top Padding (after sticky header) */
+  --page-pt-mobile:  20px;
+  --page-pt-tablet:  28px;
+  --page-pt-desktop: 40px;
+
+  /* Standard Input Height */
+  --input-h: 52px;
+  --input-h-lg: 56px;
+
   /* --- 3. Interactive Control Heights (Guaranteed Minimums >= 44px) --- */
-  --control-h-sm:   40px;
+  --control-h-sm:   44px;
   --control-h-md:   48px;
   --control-h-lg:   56px;
   --control-h-xl:   64px;
@@ -67,12 +76,12 @@
   --comic-white:       #FFFFFF;
   --comic-black:       #1A1A1A;
   --comic-black-soft:  #2D2D2D;
-  --comic-gold:        #F6BD60;
-  --comic-gold-hover:  #EDA845;
-  --comic-pink:        #F28482;
-  --comic-pink-hover:  #E86A68;
-  --comic-teal:        #38A3A5;
-  --comic-teal-hover:  #2E8B8D;
+  --comic-gold:        #FFA646;
+  --comic-gold-hover:  #F59A33;
+  --comic-pink:        #F86041;
+  --comic-pink-hover:  #E85536;
+  --comic-teal:        #33A9AC;
+  --comic-teal-hover:  #2C999C;
   --comic-blush:       #F5CAC3;
   --comic-sand:        #F7EDE2;
 

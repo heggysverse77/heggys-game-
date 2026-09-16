@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
-import { X } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,11 +13,11 @@ interface ModalProps {
   closeOnBackdrop?: boolean;
 }
 
-const sizeClasses = {
-  sm: 'w-[min(92vw,480px)]',
-  md: 'w-[min(94vw,640px)]',
-  lg: 'w-[min(95vw,760px)]',
-  xl: 'w-[min(96vw,980px)]',
+const sizeMaxWidth: Record<string, string> = {
+  sm: 'min(92vw,480px)',
+  md: 'min(94vw,640px)',
+  lg: 'min(95vw,760px)',
+  xl: 'min(96vw,980px)',
 };
 
 export default function Modal({
@@ -32,19 +31,13 @@ export default function Modal({
   size = 'md',
   closeOnBackdrop = true,
 }: ModalProps) {
-  // Lock body scroll and handle Escape key when open
   useEffect(() => {
     if (!isOpen) return;
-
     document.body.style.overflow = 'hidden';
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && onClose) {
-        onClose();
-      }
+      if (e.key === 'Escape' && onClose) onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
-
     return () => {
       document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
@@ -55,77 +48,59 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/75 backdrop-blur-sm animate-[fadeIn_0.15s_ease] overflow-y-auto"
+      className="hv-modal-backdrop"
       role="dialog"
       aria-modal="true"
       dir="rtl"
+      onClick={closeOnBackdrop ? onClose : undefined}
     >
-      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 pointer-events-auto"
-        onClick={closeOnBackdrop ? onClose : undefined}
-        aria-hidden="true"
-      />
-
-      {/* ── 3-Part Modal Shell: Fixed Header, Scrollable Body, Fixed Footer ── */}
-      <div
-        className={[
-          'relative z-10 my-auto bg-[#FFF6E5] text-[#1A1A1A]',
-          'border-3 border-[#1A1A1A] rounded-2xl sm:rounded-3xl',
-          'shadow-[6px_6px_0px_#1A1A1A] sm:shadow-[8px_8px_0px_#1A1A1A]',
-          'flex flex-col max-h-[min(90vh,840px)] overflow-hidden',
-          'animate-[pop_0.2s_ease] select-none text-right',
-          sizeClasses[size],
-        ].join(' ')}
+        className="hv-modal"
+        style={{ width: sizeMaxWidth[size] }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 1. FIXED HEADER */}
         {(title || onClose) && (
-          <div className="flex-shrink-0 px-5 sm:px-7 py-4 sm:py-5 border-b-2.5 border-[#1A1A1A] bg-[#FFF6E5] flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0">
+          <div className="hv-modal-header">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
               {icon && (
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#F6BD60] border-2 border-[#1A1A1A] flex items-center justify-center text-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] shrink-0">
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 12,
+                    background: 'linear-gradient(135deg,#FFA646,#F86041)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    flexShrink: 0,
+                  }}
+                >
                   {icon}
                 </div>
               )}
-              <div className="min-w-0">
-                {title && (
-                  <h2 className="text-lg sm:text-2xl font-display font-black text-[#1A1A1A] leading-tight truncate">
-                    {title}
-                  </h2>
-                )}
-                {subtitle && (
-                  <p className="text-xs sm:text-sm text-[#1A1A1A]/70 font-body font-bold mt-0.5 truncate">
-                    {subtitle}
-                  </p>
-                )}
+              <div style={{ minWidth: 0 }}>
+                {title && <h2 className="hv-modal-title">{title}</h2>}
+                {subtitle && <p className="hv-modal-subtitle">{subtitle}</p>}
               </div>
             </div>
-
             {onClose && (
               <button
                 type="button"
                 onClick={onClose}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#F28482] hover:text-white flex items-center justify-center transition-all cursor-pointer shrink-0 shadow-[2px_2px_0px_#1A1A1A] active:translate-y-0.5"
+                className="hv-btn hv-btn-ghost hv-btn-sm"
+                style={{ minWidth: 40, padding: '8px 12px' }}
                 aria-label="إغلاق"
               >
-                <X className="w-5 h-5 stroke-[2.5]" />
+                ✕
               </button>
             )}
           </div>
         )}
 
-        {/* 2. SCROLLABLE BODY */}
-        <div className="flex-1 overflow-y-auto px-5 sm:px-7 py-5 sm:py-6 flex flex-col gap-5 sm:gap-6 custom-scrollbar">
-          {children}
-        </div>
+        <div className="hv-modal-body">{children}</div>
 
-        {/* 3. FIXED FOOTER */}
-        {footer && (
-          <div className="flex-shrink-0 px-5 sm:px-7 py-4 sm:py-5 border-t-2.5 border-[#1A1A1A] bg-[#FFF6E5] flex items-center justify-end gap-3 flex-wrap">
-            {footer}
-          </div>
-        )}
+        {footer && <div className="hv-modal-footer">{footer}</div>}
       </div>
     </div>
   );

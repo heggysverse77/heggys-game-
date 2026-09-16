@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { LogIn, Sparkles, ArrowRight } from 'lucide-react';
+import { LogIn, ArrowRight, KeyRound, Play } from 'lucide-react';
 import GameLayout from '../components/layout/GameLayout';
-import GameHeader from '../components/layout/GameHeader';
+import Card from '../components/Card/Card';
+import Button from '../components/Button/Button';
+import Input from '../components/Input/Input';
 import { getRoomByCode } from '../services/game.service';
 import { useSocket } from '../hooks/useSocket';
 import { useAuth } from '../hooks/useAuth';
@@ -58,105 +60,56 @@ export default function JoinPage({ onJoined, onBack }: JoinPageProps) {
 
   return (
     <GameLayout>
-      <GameHeader
-        title="الانضمام لغرفة"
-        onBack={onBack}
-        backLabel="الرئيسية"
-      />
+      <div className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBlock: 64, maxWidth: 560 }}>
+        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'linear-gradient(135deg,#33A9AC,#23787B)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 32px rgba(51,169,172,0.4)', marginBottom: 24 }}>
+          <KeyRound style={{ width: 30, height: 30, color: '#fff' }} />
+        </div>
+        <h1 style={{ fontSize: 32, fontWeight: 800, color: '#fff', margin: '0 0 8px', textAlign: 'center' }}>
+          انضم لغرفة أصحابك
+        </h1>
+        <p style={{ fontSize: 16, fontWeight: 500, color: '#9E9E9E', margin: '0 0 32px', textAlign: 'center' }}>
+          اكتب كود الغرفة المكون من 6 خانات للدخول مباشرة
+        </p>
 
-      <div className="flex flex-col items-center justify-center flex-1 w-full max-w-xl mx-auto px-4 sm:px-6 py-8 sm:py-12 select-none" dir="rtl">
-        <div className="w-full bg-[#FFF6E5] text-[#1A1A1A] border-3 border-[#1A1A1A] shadow-[6px_6px_0px_#1A1A1A] p-6 sm:p-8 rounded-2xl sm:rounded-3xl animate-[pop_0.25s_ease]">
-          
-          <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl font-display font-black text-[#1A1A1A]">
-              انضم لغرفة أصحابك
-            </h2>
-            <p className="text-xs sm:text-sm font-body font-bold text-[#1A1A1A]/70 mt-1">
-              اكتب كود الغرفة المكون من 6 خانات للدخول مباشرة
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs sm:text-sm font-body font-black text-[#1A1A1A]">
-                كود الغرفة
-              </label>
-              <input
-                type="text"
-                placeholder="X7Q2L"
-                value={code}
-                onChange={(e) => {
-                  setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''));
-                  setError('');
-                }}
-                maxLength={8}
-                className="w-full h-15 sm:h-16 rounded-xl sm:rounded-2xl bg-white border-2.5 border-[#1A1A1A] text-center tracking-[0.25em] text-3xl sm:text-4xl font-mono font-black uppercase text-[#1A1A1A] outline-none shadow-inner focus:ring-3 focus:ring-[#F6BD60]/50 transition-all placeholder:text-[#1A1A1A]/30"
-                onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
-                autoFocus
-              />
-              {error && (
-                <span className="text-xs sm:text-sm text-red-600 font-body font-bold mt-1 text-center block">
-                  {error}
-                </span>
-              )}
-            </div>
+        <Card style={{ width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <Input
+              label="كود الغرفة"
+              placeholder="X7Q2L9"
+              value={code}
+              onChange={(e) => { setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '')); setError(''); }}
+              maxLength={8}
+              error={error}
+              dir="ltr"
+              style={{ textAlign: 'center', letterSpacing: '0.25em', fontSize: 24, fontWeight: 800, fontFamily: 'Inter, monospace', minHeight: 64 }}
+              onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
+            />
 
             {!roomInfo ? (
-              <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
-                <button
-                  type="button"
-                  disabled={checking}
-                  onClick={handleCheck}
-                  className="flex-1 h-13 sm:h-14 rounded-xl comic-btn-pink font-body font-black text-base sm:text-lg border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <LogIn className="w-5 h-5" />
-                  <span>{checking ? 'جاري التحقق...' : 'تحقق من الغرفة'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={onBack}
-                  className="sm:w-28 h-13 sm:h-14 rounded-xl bg-white hover:bg-neutral-100 text-[#1A1A1A] border-2 border-[#1A1A1A] font-body font-black text-sm shadow-[2px_2px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center"
-                >
-                  رجوع
-                </button>
-              </div>
+              <Button variant="primary" fullWidth size="lg" loading={checking} disabled={code.length < 4} icon={<Play style={{ width: 18, height: 18 }} />} onClick={handleCheck}>
+                {checking ? 'جاري التحقق...' : 'التحقق من الكود'}
+              </Button>
             ) : (
-              <div className="flex flex-col gap-4 animate-[pop_0.2s_ease] pt-1">
-                {/* Room preview banner */}
-                <div className="bg-white border-2.5 border-[#1A1A1A] rounded-2xl p-4 text-center flex flex-col items-center gap-2 shadow-[3px_3px_0px_#1A1A1A]">
-                  <span className="text-[#38A3A5] font-black font-body text-sm sm:text-base flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#38A3A5] animate-ping" />
-                    الغرفة متاحة وجاهزة!
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 16, borderRadius: 8, background: '#121212', border: '1px solid #2A2A2A' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+                  <span style={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>
+                    الغرفة: <span className="room-code" style={{ color: '#33A9AC' }}>{roomInfo.roomCode}</span>
                   </span>
-                  <p className="text-[#1A1A1A] text-sm sm:text-base font-body font-bold">
-                    كود الغرفة: <span className="font-mono font-black text-[#F28482] tracking-widest text-xl sm:text-2xl">{roomInfo.roomCode}</span>
-                  </p>
-                  <div className="px-3.5 py-1 rounded-full bg-[#FFF6E5] text-xs font-black text-[#1A1A1A] border-1.5 border-[#1A1A1A]">
-                    {roomInfo.currentPlayers} من أصل {roomInfo.maxPlayers} لاعبين
-                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 700, padding: '6px 14px', borderRadius: 9999, background: 'rgba(51,169,172,0.12)', color: '#6FCFD1', border: '1px solid rgba(51,169,172,0.3)' }}>
+                    {roomInfo.currentPlayers} / {roomInfo.maxPlayers} لاعبين
+                  </span>
                 </div>
-
-                <div className="flex flex-col sm:flex-row gap-2.5">
-                  <button
-                    type="button"
-                    onClick={handleJoin}
-                    className="flex-1 h-13 sm:h-14 rounded-xl comic-btn-teal font-body font-black text-base sm:text-lg border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <Sparkles className="w-5 h-5" />
-                    <span>ادخل اللعبة الآن</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRoomInfo(null)}
-                    className="sm:w-28 h-13 sm:h-14 rounded-xl bg-white hover:bg-neutral-100 text-[#1A1A1A] border-2 border-[#1A1A1A] font-body font-black text-xs sm:text-sm shadow-[2px_2px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center"
-                  >
-                    تغيير الكود
-                  </button>
-                </div>
+                <Button variant="secondary" fullWidth size="lg" icon={<LogIn style={{ width: 18, height: 18 }} />} onClick={handleJoin}>
+                  دخول الغرفة الآن!
+                </Button>
               </div>
             )}
+
+            <Button variant="ghost" fullWidth icon={<ArrowRight style={{ width: 16, height: 16 }} />} onClick={onBack}>
+              العودة للرئيسية
+            </Button>
           </div>
-        </div>
+        </Card>
       </div>
     </GameLayout>
   );

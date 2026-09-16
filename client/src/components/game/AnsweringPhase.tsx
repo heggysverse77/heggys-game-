@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Clock, Sparkles } from 'lucide-react';
+import { AlertCircle, Timer, Play } from 'lucide-react';
 import { useGame } from '../../hooks/useGame';
 import { useTimer } from '../../hooks/useTimer';
 import { useSound } from '../../hooks/useSound';
@@ -78,27 +78,17 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
 
   const totalRounds = game?.total_rounds ?? 3;
 
-  // Timer visual states
-  const isCritical = remaining <= 5;
-  const isWarning = remaining > 5 && remaining <= Math.round(totalDuration * 0.4);
-
-  const timerBadgeColor = isCritical
-    ? 'bg-[#F28482] text-white animate-pulse'
-    : isWarning
-    ? 'bg-[#F6BD60] text-[#1A1A1A]'
-    : 'bg-[#38A3A5] text-white';
-
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 gap-5 sm:gap-6 select-none" dir="rtl">
+    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-4 sm:px-6 py-2 sm:py-4 gap-3 sm:gap-5 select-none" dir="rtl">
       
-      {/* ── 1. ROUND PROGRESS ── */}
-      <div className="flex flex-col items-center gap-2 animate-[slideUp_0.2s_ease]">
-        <span className="text-xs sm:text-sm font-body font-black text-[#FFF6E5] drop-shadow-sm">
+      {/* ── 1. ROUND PROGRESS (Identical to Screen 2) ── */}
+      <div className="flex flex-col items-center gap-1.5 animate-[slideUp_0.2s_ease]">
+        <h2 className="text-base sm:text-lg font-display font-black text-[#FFF6E5] drop-shadow-[2px_2px_0px_#1A1A1A]">
           الجولة {currentRoundNumber} من {totalRounds}
-        </span>
+        </h2>
         
         {/* Connected Progress Dots */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1A1A1A]/70 px-4 py-1.5 rounded-full border-1.5 border-[#FFA646]">
           {Array.from({ length: totalRounds }).map((_, idx) => {
             const stepNum = idx + 1;
             const isCompleted = stepNum < currentRoundNumber;
@@ -108,19 +98,19 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
               <div key={idx} className="flex items-center">
                 <div
                   className={[
-                    'w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-[#1A1A1A] transition-all shadow-xs',
+                    'w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-[#1A1A1A] transition-all',
                     isCurrent
-                      ? 'bg-[#F6BD60] ring-3 ring-[#F6BD60]/60 scale-125'
+                      ? 'bg-[#FFA646] ring-3 ring-[#FFA646]/70 scale-125 shadow-[0_0_10px_#FFA646]'
                       : isCompleted
-                      ? 'bg-[#38A3A5]'
-                      : 'bg-[#FFF6E5]/40',
+                      ? 'bg-[#33A9AC]'
+                      : 'bg-white/30',
                   ].join(' ')}
                 />
                 {idx < totalRounds - 1 && (
                   <div
                     className={[
-                      'w-6 sm:w-10 h-1 rounded-full mx-1 transition-all',
-                      isCompleted ? 'bg-[#38A3A5]' : 'bg-[#FFF6E5]/30',
+                      'w-5 sm:w-8 h-1 rounded-full mx-1 transition-all',
+                      isCompleted ? 'bg-[#33A9AC]' : 'bg-white/20',
                     ].join(' ')}
                   />
                 )}
@@ -134,31 +124,30 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
       <CircularGameTable
         players={tablePlayers}
         footerBadge={
-          <div className={`inline-flex items-center gap-2 px-5 py-1.5 rounded-full border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] font-body font-black text-sm sm:text-base ${timerBadgeColor}`}>
-            <Clock className="w-4 h-4 stroke-[2.5]" />
-            <span className="timer-number">{remaining} ثانية</span>
+          /* Red/Coral timer pill from Screen 2 ("⏱️ 20s") */
+          <div className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#F86041] text-white border-2.5 border-[#1A1A1A] shadow-[0_0_16px_rgba(248,96,65,0.5)] font-display font-black text-sm sm:text-base animate-[pop_0.2s_ease] shrink-0 leading-none">
+            <Timer className="w-4.5 h-4.5 stroke-[2.5]" />
+            <span className="timer-number font-mono">{remaining}s</span>
           </div>
         }
       >
-        {/* Center Circular Question Card */}
-        <div className="w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[360px] md:h-[360px] rounded-full bg-[#FFF6E5] border-3 sm:border-4 border-[#1A1A1A] shadow-[6px_6px_0px_#1A1A1A] flex flex-col items-center justify-center text-center p-4 sm:p-7 animate-[pop_0.3s_ease]">
-          <span className="text-[11px] sm:text-xs font-body font-black text-[#1A1A1A]/70 mb-1 bg-[#F6BD60] px-3 py-0.5 rounded-full border-1.5 border-[#1A1A1A] shadow-xs">
+        {/* Center Circular Question Card (Cream circle with question) */}
+        <div className="w-full h-full rounded-full bg-[#FFF6E5] border-3 sm:border-3.5 border-[#1A1A1A] shadow-[6px_6px_0px_#1A1A1A] flex flex-col items-center justify-center text-center animate-[pop_0.3s_ease] overflow-hidden p-3 sm:p-5">
+          <span className="text-xs sm:text-sm font-body font-black text-[#1A1A1A]/75 mb-1">
             السؤال {currentRoundNumber} من {totalRounds}
           </span>
-          <h2 className="text-base sm:text-xl md:text-2xl font-display font-black text-[#1A1A1A] leading-snug max-w-[95%] line-clamp-3 my-1">
-            {currentQuestion?.text_ar ?? 'جاري تحميل السؤال...'}
-          </h2>
-          <div className="w-8 sm:w-12 h-1 bg-[#F28482] rounded-full my-1.5" />
-          <p className="text-[11px] sm:text-xs text-[#1A1A1A]/70 font-body font-bold">
-            جاوب بكلمة أو جملة سريعة
-          </p>
+          <div className="flex-1 flex items-center justify-center overflow-y-auto custom-scrollbar w-full">
+            <h1 className="text-base sm:text-xl md:text-2xl font-display font-black text-[#1A1A1A] leading-snug break-words px-2">
+              {currentQuestion?.text_ar ?? 'جاري تحميل السؤال...'}
+            </h1>
+          </div>
         </div>
       </CircularGameTable>
 
       {/* ── 3. ANSWER INPUT FORM & HOST CTA ── */}
-      <div className="w-full max-w-lg flex flex-col items-center gap-3 animate-[slideUp_0.35s_ease]">
+      <div className="w-full max-w-lg flex flex-col items-center gap-2.5 animate-[slideUp_0.35s_ease]">
         {errorMessage && (
-          <div className="w-full flex items-center gap-2 p-3 rounded-xl bg-[#F28482] text-white border-2 border-[#1A1A1A] font-body font-bold text-xs sm:text-sm shadow-[2px_2px_0px_#1A1A1A] animate-[shake_0.3s_ease]">
+          <div className="w-full flex items-center gap-2 p-3 rounded-xl bg-[#F86041] text-white border-2 border-[#1A1A1A] font-body font-bold text-xs sm:text-sm shadow-[2px_2px_0px_#1A1A1A] animate-[shake_0.3s_ease]">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -176,7 +165,7 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
                 }}
                 placeholder="اكتب إجابتك هنا..."
                 maxLength={60}
-                className="flex-1 w-full h-13 sm:h-14 rounded-xl sm:rounded-2xl bg-[#FFF6E5] border-2.5 border-[#1A1A1A] text-[#1A1A1A] placeholder:text-[#1A1A1A]/40 font-body font-bold text-base sm:text-lg px-4 outline-none shadow-[3px_3px_0px_#1A1A1A] text-center sm:text-right focus:ring-3 focus:ring-[#F6BD60]/50 transition-all"
+                className="flex-1 w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-[#FFF6E5] border-2.5 border-[#1A1A1A] text-[#1A1A1A] placeholder:text-[#1A1A1A]/40 font-body font-bold text-sm sm:text-base px-4 outline-none shadow-[2.5px_2.5px_0px_#1A1A1A] text-center sm:text-right focus:ring-3 focus:ring-[#FFA646]/50 transition-all"
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), submit())}
                 autoFocus
               />
@@ -186,14 +175,28 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
                 onClick={submit}
                 disabled={!answer.trim()}
                 className={[
-                  'w-full sm:w-auto px-6 h-13 sm:h-14 rounded-xl sm:rounded-2xl font-body font-black text-base border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center shrink-0',
+                  'w-full sm:w-auto px-5 sm:px-6 h-11 sm:h-12 rounded-xl sm:rounded-2xl font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center shrink-0 whitespace-nowrap',
                   answer.trim()
-                    ? 'comic-btn-pink active:translate-y-0.5'
+                    ? 'bg-[#F86041] text-white hover:bg-[#E85536] active:translate-y-0.5'
                     : 'bg-white/20 text-white/40 border-white/20 cursor-not-allowed shadow-none',
                 ].join(' ')}
               >
                 إرسال الإجابة
               </button>
+
+              {isHost && targetRoundId && (
+                <button
+                  type="button"
+                  onClick={() => dispatch({ type: 'SKIP_QUESTION' })}
+                  className={[
+                    'w-full sm:w-auto px-5 sm:px-6 h-11 sm:h-12 rounded-xl sm:rounded-2xl font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap',
+                    'bg-[#F86041] text-white hover:bg-[#E85536] active:translate-y-0.5',
+                  ].join(' ')}
+                >
+                  <Skip className="w-4 h-4" />
+                  <span>تخطي السؤال</span>
+                </button>
+              )}
             </div>
 
             {isHost && targetRoundId && (
@@ -208,11 +211,11 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
           </div>
         ) : (
           <div className="w-full flex flex-col gap-3 items-center">
-            <div className="w-full p-5 rounded-2xl bg-[#FFF6E5] border-2.5 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] text-center animate-[pop_0.25s_ease]">
+            <div className="w-full p-4 sm:p-5 rounded-2xl bg-[#FFF6E5] border-3 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] text-center animate-[pop_0.25s_ease]">
               <span className="text-[#1A1A1A] text-xl sm:text-2xl font-display font-black block">
                 ✅ تم استلام إجابتك بنجاح!
               </span>
-              <span className="text-xs sm:text-sm text-[#1A1A1A]/75 font-body font-bold mt-1.5 block">
+              <span className="text-xs sm:text-sm text-[#1A1A1A]/75 font-body font-bold mt-1 block">
                 {isHost
                   ? 'يمكنك الانتقال لمرحلة التوصيل الآن كمضيف أو انتظار باقي اللاعبين.'
                   : `في انتظار باقي أصحابك يخلصوا إجاباتهم... (${answerStatuses?.submittedCount ?? 1}/${answerStatuses?.totalPlayers ?? tablePlayers.length})`}
@@ -223,9 +226,9 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
               <button
                 type="button"
                 onClick={() => emitForceMatching({ gameId, roundId: targetRoundId })}
-                className="w-full h-13 sm:h-14 rounded-xl sm:rounded-2xl comic-btn-teal font-display font-black text-base sm:text-lg border-2.5 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full h-13 sm:h-14 rounded-2xl bg-[#33A9AC] text-white hover:bg-[#23787B] font-display font-black text-base sm:text-lg border-3 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <Sparkles className="w-5 h-5" />
+                <Play className="w-5 h-5" />
                 <span>الانتقال لمرحلة التوصيل والتخمين (المرحلة التالية ⏭️)</span>
               </button>
             )}

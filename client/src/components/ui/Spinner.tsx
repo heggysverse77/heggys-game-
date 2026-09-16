@@ -1,6 +1,6 @@
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg';
-  color?: 'teal' | 'gold' | 'pink' | 'white';
+  color?: 'teal' | 'gold' | 'pink' | 'white' | 'cyan';
   label?: string;
 }
 
@@ -11,15 +11,16 @@ const sizeClasses = {
 };
 
 const colorClasses = {
-  teal:  'border-heggy-teal/30 border-t-heggy-teal',
-  gold:  'border-heggy-gold/30 border-t-heggy-gold',
-  pink:  'border-heggy-pink/30 border-t-heggy-pink',
-  white: 'border-white/20 border-t-white',
+  teal:  'border-[#33A9AC]/30 border-t-[#33A9AC]',
+  cyan:  'border-[#33A9AC]/30 border-t-[#33A9AC]',
+  gold:  'border-[#FFA646]/30 border-t-[#FFA646]',
+  pink:  'border-[#F86041]/30 border-t-[#F86041]',
+  white: 'border-white/30 border-t-white',
 };
 
-export default function Spinner({ size = 'md', color = 'teal', label }: SpinnerProps) {
+export default function Spinner({ size = 'md', color = 'gold', label }: SpinnerProps) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3">
+    <div className="flex flex-col items-center justify-center gap-3 select-none" dir="rtl">
       <div
         className={[
           'rounded-full animate-spin',
@@ -30,7 +31,9 @@ export default function Spinner({ size = 'md', color = 'teal', label }: SpinnerP
         aria-label={label ?? 'جاري التحميل...'}
       />
       {label && (
-        <p className="text-heggy-muted text-sm font-body animate-pulse">{label}</p>
+        <p className="text-[#1A1A1A]/80 dark:text-slate-300 text-xs sm:text-sm font-body font-black animate-pulse">
+          {label}
+        </p>
       )}
     </div>
   );

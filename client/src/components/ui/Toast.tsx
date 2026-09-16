@@ -10,17 +10,17 @@ interface ToastProps {
 }
 
 const typeClasses: Record<ToastType, string> = {
-  success: 'border-heggy-green bg-heggy-green/20 text-heggy-green',
-  error:   'border-heggy-pink bg-heggy-pink/20 text-heggy-pink',
-  info:    'border-heggy-teal bg-heggy-teal/20 text-heggy-teal',
-  warn:    'border-heggy-orange bg-heggy-orange/20 text-heggy-orange',
+  success: 'bg-[#33A9AC] text-white border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A]',
+  error:   'bg-[#F86041] text-white border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A]',
+  info:    'bg-[#FFF6E5] text-[#1A1A1A] border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A]',
+  warn:    'bg-[#FFA646] text-[#1A1A1A] border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A]',
 };
 
 const typeIcons: Record<ToastType, string> = {
-  success: '✅',
-  error:   '❌',
-  info:    'ℹ️',
-  warn:    '⚠️',
+  success: '✨',
+  error:   '💥',
+  info:    '💡',
+  warn:    '⚡',
 };
 
 export default function Toast({
@@ -42,19 +42,20 @@ export default function Toast({
   return (
     <div
       className={[
-        'fixed top-4 right-1/2 translate-x-1/2 z-[100]',
-        'flex items-center gap-3 px-5 py-3 rounded-2xl',
-        'border backdrop-blur-md font-body font-semibold text-sm',
-        'shadow-xl transition-all duration-300',
+        'fixed top-5 right-1/2 translate-x-1/2 z-[100] pointer-events-auto',
+        'inline-flex items-center gap-3 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full',
+        'border-2.5 sm:border-3 font-body font-black text-sm sm:text-base select-none',
+        'transition-all duration-300 shrink-0 whitespace-nowrap max-w-[90vw]',
         typeClasses[type],
         visible
-          ? 'opacity-100 translate-y-0 animate-[slideUp_0.3s_ease]'
-          : 'opacity-0 -translate-y-2',
+          ? 'opacity-100 translate-y-0 scale-100 animate-[pop_0.2s_ease]'
+          : 'opacity-0 -translate-y-3 scale-95',
       ].join(' ')}
       role="alert"
+      dir="rtl"
     >
-      <span>{typeIcons[type]}</span>
-      <span>{message}</span>
+      <span className="text-lg sm:text-xl shrink-0">{typeIcons[type]}</span>
+      <span className="truncate">{message}</span>
     </div>
   );
 }

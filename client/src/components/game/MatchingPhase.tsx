@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Sparkles, Clock, X, Check } from 'lucide-react';
-import { Avatar } from '../ui';
+import { Play, Timer, Check } from 'lucide-react';
 import { useGame } from '../../hooks/useGame';
 import { useAuth } from '../../hooks/useAuth';
 import { useTimer } from '../../hooks/useTimer';
@@ -114,42 +113,35 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
     };
   });
 
-  const isCritical = remaining <= 5;
-  const isWarning = remaining > 5 && remaining <= Math.round(totalDuration * 0.4);
-
-  const timerBadgeColor = isCritical
-    ? 'bg-[#F28482] text-white animate-pulse'
-    : isWarning
-    ? 'bg-[#F6BD60] text-[#1A1A1A]'
-    : 'bg-[#38A3A5] text-white';
-
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-6 gap-5 sm:gap-6 select-none" dir="rtl">
+    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-6 py-2 sm:py-4 gap-3 sm:gap-4 select-none" dir="rtl">
       
-      {/* Header Banner */}
+      {/* ── 1. HEADER BANNER (Identical to Screen 3 Mockup) ── */}
       <div className="text-center animate-[slideUp_0.2s_ease]">
-        <h1 className="text-2xl sm:text-4xl font-display font-black text-[#FFF6E5] drop-shadow-sm">
-          وصل الإجابات لأصحابها 🎭
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-[#FFF6E5] drop-shadow-[2px_2px_0px_#1A1A1A]">
+          وصل الإجابات لأصحابها
         </h1>
-        <p className="text-xs sm:text-sm font-body font-bold text-[#F6BD60] mt-1 drop-shadow-xs">
+        <p className="text-xs sm:text-sm font-body font-bold text-[#FFA646] mt-0.5">
           {selectedAnswerId
-            ? '👈 اضغط الآن على اللاعب صاحب هذه الإجابة'
-            : 'اضغط على إحدى الإجابات ثم اختر اللاعب صاحبها'}
+            ? '👈 اضغط الآن على اللاعب صاحب هذه الإجابة في الدائرة'
+            : 'اسحب كل إجابة أو اضغط عليها وضعها على صاحبها'}
         </p>
       </div>
 
-      {/* ── MOBILE VIEW (< sm): Stacked Cards & Player Selection ── */}
-      <div className="flex sm:hidden flex-col w-full gap-4 animate-[slideUp_0.25s_ease]">
-        {/* Mobile Timer Badge */}
-        <div className="flex justify-center">
-          <div className={`inline-flex items-center gap-2 px-4 py-1 rounded-full border-2 border-[#1A1A1A] shadow-xs font-body font-black text-xs ${timerBadgeColor}`}>
-            <Clock className="w-3.5 h-3.5" />
-            <span className="timer-number">{remaining}s</span>
+      {/* ── 2. CIRCULAR GAME TABLE (Peripheral Avatars + Center Answers Stack) ── */}
+      <CircularGameTable
+        players={tablePlayers}
+        activePlayerId={null}
+        onPlayerClick={handleSelectPlayer}
+        footerBadge={
+          <div className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#F86041] text-white border-2.5 border-[#1A1A1A] shadow-[0_0_16px_rgba(248,96,65,0.5)] font-display font-black text-sm sm:text-base animate-[pop_0.2s_ease] shrink-0 leading-none">
+            <Timer className="w-4.5 h-4.5 stroke-[2.5]" />
+            <span className="timer-number font-mono">{remaining}s</span>
           </div>
-        </div>
-
-        {/* Answers List on Mobile */}
-        <div className="flex flex-col gap-2.5">
+        }
+      >
+        {/* Center Vertical Stack of Cream Answer Cards (Screen 3) */}
+        <div className="flex flex-col gap-2 w-full max-w-[210px] sm:max-w-[240px] max-h-full overflow-y-auto p-1.5 custom-scrollbar">
           {answersToMatch.map((a: any) => {
             const ansId = getAnswerId(a);
             const isSelected = selectedAnswerId === ansId;
@@ -157,132 +149,44 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
             const assignedPlayer = candidatePlayers.find((p: any) => getPlayerId(p) === assignedPlayerId);
 
             return (
-              <div
+              <button
                 key={ansId}
+                type="button"
                 onClick={() => handleSelectAnswer(ansId)}
                 className={[
-                  'p-3.5 rounded-xl border-2 transition-all cursor-pointer flex flex-col gap-2',
+                  'w-full p-2 sm:p-2.5 rounded-xl sm:rounded-2xl border-2 sm:border-2.5 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none',
                   isSelected
-                    ? 'bg-[#F6BD60] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] scale-[1.01]'
+                    ? 'bg-[#FFA646] text-[#1A1A1A] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] scale-[1.03] font-black'
                     : assignedPlayer
-                    ? 'bg-[#DCFCE7] border-[#166534] shadow-xs'
-                    : 'bg-[#FFF6E5] border-[#1A1A1A] shadow-xs',
+                    ? 'bg-[#33A9AC] text-white border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]'
+                    : 'bg-[#FFF6E5] text-[#1A1A1A] border-[#1A1A1A] hover:bg-white shadow-[2px_2px_0px_#1A1A1A]',
                 ].join(' ')}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#1A1A1A]/70">إجابة مجهولة:</span>
-                  {assignedPlayer && (
-                    <button
-                      type="button"
-                      onClick={(e) => handleUnlinkGuess(ansId, e)}
-                      className="text-[11px] font-black text-red-600 bg-white/80 px-2 py-0.5 rounded-full border border-red-300 flex items-center gap-1"
-                    >
-                      <X className="w-3 h-3" />
-                      <span>إلغاء الربط</span>
-                    </button>
-                  )}
-                </div>
-                <p className="text-base font-display font-black text-[#1A1A1A] leading-snug">
-                  "{a.text}"
-                </p>
+                <span className="text-sm sm:text-base font-display font-black leading-tight truncate max-w-full px-1">
+                  {a.text}
+                </span>
+
                 {assignedPlayer && (
-                  <div className="flex items-center gap-2 pt-1 border-t border-[#1A1A1A]/15 text-xs font-bold text-[#14532D]">
-                    <Check className="w-3.5 h-3.5" />
-                    <span>تم التوصيل بـ: {assignedPlayer.nickname}</span>
+                  <div className="flex items-center gap-1 text-[10px] sm:text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full mt-0.5">
+                    <Check className="w-3 h-3" />
+                    <span className="truncate max-w-[90px]">{assignedPlayer.nickname}</span>
+                    <span
+                      onClick={(e) => handleUnlinkGuess(ansId, e)}
+                      className="text-red-300 hover:text-white mr-1 cursor-pointer font-black"
+                      title="إلغاء الربط"
+                    >
+                      ×
+                    </span>
                   </div>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
+      </CircularGameTable>
 
-        {/* Players List on Mobile */}
-        {selectedAnswerId && (
-          <div className="flex flex-col gap-2 p-3.5 rounded-2xl bg-[#1E2826] border-2 border-[#1A1A1A] animate-[pop_0.2s_ease]">
-            <span className="text-xs font-black text-[#F6BD60] text-center">
-              اختر اللاعب صاحب الإجابة المحددة أعلاه:
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              {tablePlayers.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => handleSelectPlayer(p)}
-                  className="flex items-center gap-2 p-2 rounded-xl bg-[#FFF6E5] border-2 border-[#1A1A1A] shadow-xs active:scale-95"
-                >
-                  <Avatar avatarId={p.avatarId ? String(p.avatarId) : undefined} size="sm" ring="none" />
-                  <span className="text-xs font-black text-[#1A1A1A] truncate">{p.nickname}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ── DESKTOP & TABLET VIEW (>= sm): Circular Table ── */}
-      <div className="hidden sm:flex flex-col items-center w-full">
-        <CircularGameTable
-          players={tablePlayers}
-          activePlayerId={null}
-          onPlayerClick={handleSelectPlayer}
-          footerBadge={
-            <div className={`inline-flex items-center gap-2 px-5 py-1.5 rounded-full border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] font-body font-black text-sm sm:text-base ${timerBadgeColor}`}>
-              <Clock className="w-4 h-4 stroke-[2.5]" />
-              <span className="timer-number">{remaining} ثانية</span>
-            </div>
-          }
-        >
-          {/* Inner Answer Cards Column */}
-          <div className="flex flex-col gap-2 sm:gap-2.5 w-full max-h-[300px] overflow-y-auto p-2 custom-scrollbar">
-            {answersToMatch.map((a: any) => {
-              const ansId = getAnswerId(a);
-              const isSelected = selectedAnswerId === ansId;
-              const assignedPlayerId = myGuesses[ansId];
-              const assignedPlayer = candidatePlayers.find((p: any) => getPlayerId(p) === assignedPlayerId);
-
-              return (
-                <button
-                  key={ansId}
-                  type="button"
-                  onClick={() => handleSelectAnswer(ansId)}
-                  className={[
-                    'p-2.5 sm:p-3 rounded-xl border-2 text-right transition-all cursor-pointer flex flex-col gap-1',
-                    isSelected
-                      ? 'bg-[#F6BD60] text-[#1A1A1A] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] scale-102 font-black'
-                      : assignedPlayer
-                      ? 'bg-[#DCFCE7] text-[#14532D] border-[#166534] shadow-xs'
-                      : 'bg-[#FFF6E5] text-[#1A1A1A] border-[#1A1A1A] hover:bg-white shadow-xs',
-                  ].join(' ')}
-                >
-                  <div className="flex items-center justify-between gap-1 w-full">
-                    <span className="text-[10px] font-bold text-[#1A1A1A]/60">إجابة:</span>
-                    {assignedPlayer && (
-                      <span
-                        onClick={(e) => handleUnlinkGuess(ansId, e)}
-                        className="text-[10px] font-bold text-red-600 hover:underline flex items-center gap-0.5"
-                      >
-                        <X className="w-3 h-3" />
-                        <span>إلغاء</span>
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-xs sm:text-sm font-display font-black leading-snug line-clamp-2">
-                    "{a.text}"
-                  </span>
-                  {assignedPlayer && (
-                    <span className="text-[10px] font-bold text-[#166534] mt-0.5 truncate">
-                      ✓ مربوطة بـ: {assignedPlayer.nickname}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </CircularGameTable>
-      </div>
-
-      {/* ── BOTTOM ACTIONS: SUBMIT OR WAITING ── */}
-      <div className="w-full max-w-md flex flex-col items-center gap-3 animate-[slideUp_0.3s_ease]">
+      {/* ── 3. BOTTOM ACTIONS: CONFIRM GUESSES ── */}
+      <div className="w-full max-w-md flex flex-col items-center gap-2.5 animate-[slideUp_0.3s_ease]">
         {!hasSubmittedGuesses ? (
           <div className="w-full flex flex-col gap-2">
             <button
@@ -290,17 +194,17 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
               onClick={handleSubmit}
               disabled={!allGuessed}
               className={[
-                'w-full h-13 sm:h-14 rounded-xl sm:rounded-2xl font-body font-black text-base sm:text-lg border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center gap-2 select-none',
+                'w-full min-h-[46px] sm:min-h-[50px] px-6 rounded-xl sm:rounded-2xl font-display font-black text-base sm:text-lg border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center gap-2 select-none whitespace-nowrap',
                 allGuessed
-                  ? 'comic-btn-pink active:translate-y-0.5'
+                  ? 'bg-[#F86041] text-white hover:bg-[#E85536] active:translate-y-0.5'
                   : 'bg-white/20 text-white/40 border-white/20 cursor-not-allowed shadow-none',
               ].join(' ')}
             >
-              <Sparkles className="w-5 h-5" />
+              <Play className="w-4 h-4" />
               <span>
                 {allGuessed
                   ? 'تأكيد وإرسال التخمينات'
-                  : `قم بتوصيل جميع الإجابات أولاً (${matchedCount}/${totalAnswers})`}
+                  : `وصل باقي الإجابات (${matchedCount}/${totalAnswers})`}
               </span>
             </button>
 
@@ -315,8 +219,8 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
             )}
           </div>
         ) : (
-          <div className="w-full flex flex-col gap-3 items-center">
-            <div className="w-full p-4 rounded-2xl bg-[#FFF6E5] border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] text-center animate-[pop_0.25s_ease]">
+          <div className="w-full flex flex-col gap-2.5 items-center">
+            <div className="w-full p-4 rounded-2xl bg-[#FFF6E5] border-3 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] text-center animate-[pop_0.25s_ease]">
               <span className="text-[#1A1A1A] text-lg sm:text-xl font-display font-black block">
                 ✅ تم إرسال تخميناتك بنجاح!
               </span>
@@ -329,9 +233,9 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
               <button
                 type="button"
                 onClick={() => emitForceResults({ gameId, roundId: currentRoundId || '' })}
-                className="w-full h-13 sm:h-14 rounded-xl sm:rounded-2xl comic-btn-teal font-display font-black text-base sm:text-lg border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full h-13 sm:h-14 rounded-2xl bg-[#33A9AC] text-white font-display font-black text-base sm:text-lg border-3 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <Sparkles className="w-5 h-5" />
+                <Play className="w-5 h-5" />
                 <span>كشف نتائج الجولة (المرحلة التالية ⏭️)</span>
               </button>
             )}

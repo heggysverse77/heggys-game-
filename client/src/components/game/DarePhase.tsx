@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { RefreshCw, Swords, Flame } from 'lucide-react';
+import { RefreshCw, Swords } from 'lucide-react';
 import { useGame } from '../../hooks/useGame';
 import { useSound } from '../../hooks/useSound';
 import { emitDareAssign, onDareAnnounced } from '../../socket/dare.events';
@@ -28,9 +28,9 @@ export default function DarePhase({ gameId }: DarePhaseProps) {
   }, [play]);
 
   const severityLabels: Record<string, { text: string; bg: string }> = {
-    MILD:  { text: 'حكم خفيف 🟢', bg: 'bg-[#38A3A5] text-white' },
-    SPICY: { text: 'حكم حار ومحرج 🌶️', bg: 'bg-[#F6BD60] text-[#1A1A1A]' },
-    CHAOS: { text: 'حكم فوضى وتحدي 🔥', bg: 'bg-[#F28482] text-white' },
+    MILD:  { text: 'حكم خفيف 🟢', bg: 'bg-[#33A9AC] text-white' },
+    SPICY: { text: 'حكم حار ومحرج 🌶️', bg: 'bg-[#FFA646] text-[#1A1A1A]' },
+    CHAOS: { text: 'حكم فوضى وتحدي 🔥', bg: 'bg-[#F86041] text-white' },
   };
 
   return (
@@ -38,14 +38,14 @@ export default function DarePhase({ gameId }: DarePhaseProps) {
       {!announced ? (
         <>
           <div className="text-center animate-[slideUp_0.2s_ease]">
-            <div className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-[#F28482] text-white text-xs font-black mb-2 border-2 border-[#1A1A1A] shadow-xs">
-              <Swords className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-[#F86041] text-white text-xs sm:text-sm font-black mb-2 border-2 border-[#1A1A1A] shadow-xs leading-none">
+              <Swords className="w-4 h-4" />
               <span>مرحلة تنفيذ العقوبة</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-display font-black text-[#FFF6E5] drop-shadow-sm">
               كروت الأحكام والتحديات
             </h1>
-            <p className="text-xs sm:text-sm font-body font-bold text-[#F6BD60] mt-1">
+            <p className="text-xs sm:text-sm font-body font-bold text-[#FFA646] mt-1">
               {isWinner
                 ? `أنت الفائز بالمركز الأول! اختر العقوبة لـ (${finalResults?.loser?.nickname})`
                 : `الفائز (${finalResults?.winner?.nickname}) يراجع الكروت لاختيار العقوبة لـ (${finalResults?.loser?.nickname})...`}
@@ -65,14 +65,14 @@ export default function DarePhase({ gameId }: DarePhaseProps) {
                     style={{ animationDelay: `${i * 80}ms` }}
                   >
                     <div className="flex items-center justify-between">
-                      <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-full border border-[#1A1A1A] ${badge.bg}`}>
+                      <span className={`text-xs sm:text-sm font-black px-3.5 sm:px-4 py-1 rounded-full border-2 border-[#1A1A1A] shadow-xs ${badge.bg}`}>
                         {badge.text}
                       </span>
                     </div>
                     <p className="text-[#1A1A1A] font-body font-black text-sm sm:text-base leading-snug">
                       {dare.text_ar || (dare as any).textAr}
                     </p>
-                    <span className="text-xs text-[#38A3A5] font-black self-start mt-1">
+                    <span className="text-xs text-[#33A9AC] font-black self-start mt-1">
                       👈 اضغط لاختيار هذا الحكم
                     </span>
                   </button>
@@ -99,11 +99,11 @@ export default function DarePhase({ gameId }: DarePhaseProps) {
             العقوبة المختارة 🔥
           </h2>
           <p className="text-[#FFF6E5] font-body font-bold text-xs sm:text-sm drop-shadow-xs">
-            <span className="text-[#F6BD60] font-black">{announced.winnerNickname}</span> اختار لـ{' '}
-            <span className="text-[#F28482] font-black">{announced.loserNickname}</span>:
+            <span className="text-[#FFA646] font-black">{announced.winnerNickname}</span> اختار لـ{' '}
+            <span className="text-[#F86041] font-black">{announced.loserNickname}</span>:
           </p>
           <div className="w-full rounded-2xl sm:rounded-3xl bg-[#FFF6E5] text-[#1A1A1A] border-3 border-[#1A1A1A] p-5 sm:p-7 shadow-[6px_6px_0px_#1A1A1A] flex flex-col items-center gap-2.5">
-            <span className={`text-xs font-black px-3 py-0.5 rounded-full border border-[#1A1A1A] ${(severityLabels[announced.severity] || severityLabels.MILD).bg}`}>
+            <span className={`text-xs sm:text-sm font-black px-4 py-1 rounded-full border-2 border-[#1A1A1A] shadow-xs ${(severityLabels[announced.severity] || severityLabels.MILD).bg}`}>
               {(severityLabels[announced.severity] || severityLabels.MILD).text}
             </span>
             <p className="text-lg sm:text-xl font-display font-black text-[#1A1A1A] leading-relaxed my-2">
@@ -116,9 +116,9 @@ export default function DarePhase({ gameId }: DarePhaseProps) {
             <button
               type="button"
               onClick={() => emitRematch({ gameId })}
-              className="w-full max-w-sm h-13 sm:h-14 rounded-xl sm:rounded-2xl comic-btn-teal font-body font-black text-base sm:text-lg border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 mt-1"
+              className="w-full max-w-sm h-11 sm:h-12 rounded-xl sm:rounded-2xl comic-btn-teal font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 mt-1 whitespace-nowrap"
             >
-              <RefreshCw className="w-5 h-5" />
+              <RefreshCw className="w-4 h-4" />
               <span>العب من جديد (Rematch)</span>
             </button>
           )}

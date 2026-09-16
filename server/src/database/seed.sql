@@ -71,7 +71,8 @@ INSERT INTO canonical_answers (id, canonical_key, display_name_ar, display_name_
 ('11111111-1111-1111-1111-111111111111', 'AMR_DIAB', 'عمرو دياب', 'Amr Diab'),
 ('11111111-1111-1111-1111-111111111112', 'MOHAMED_SALAH', 'محمد صلاح', 'Mohamed Salah'),
 ('11111111-1111-1111-1111-111111111113', 'MESSI', 'ميسي', 'Messi'),
-('11111111-1111-1111-1111-111111111114', 'RONALDO', 'رونالدو', 'Ronaldo')
+('11111111-1111-1111-1111-111111111114', 'RONALDO', 'رونالدو', 'Ronaldo'),
+('11111111-1111-1111-1111-111111111115', 'GUITAR', 'جيتار', 'Guitar')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO answer_aliases (canonical_id, alias_normalized, language) VALUES
@@ -163,5 +164,12 @@ INSERT INTO answer_aliases (canonical_id, alias_normalized, language) VALUES
 ('11111111-1111-1111-1111-111111111114', 'كريستيانو رونالدو', 'ar'),
 ('11111111-1111-1111-1111-111111111114', 'الدون', 'ar'),
 ('11111111-1111-1111-1111-111111111114', 'ronaldo', 'en'),
-('11111111-1111-1111-1111-111111111114', 'cr7', 'en')
+('11111111-1111-1111-1111-111111111114', 'cr7', 'en'),
+
+-- GUITAR
+('11111111-1111-1111-1111-111111111115', 'جيتار', 'ar'),
+('11111111-1111-1111-1111-111111111115', 'الجيتار', 'ar'),
+('11111111-1111-1111-1111-111111111115', 'guitar', 'en'),
+('11111111-1111-1111-1111-111111111115', 'guiter', 'en'),
+('11111111-1111-1111-1111-111111111115', 'gitar', 'en')
 ON CONFLICT (canonical_id, alias_normalized) DO NOTHING;

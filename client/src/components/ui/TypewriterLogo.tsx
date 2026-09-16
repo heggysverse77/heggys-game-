@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Sparkles, Flame } from 'lucide-react';
+import { Flame } from 'lucide-react';
 
 interface TypewriterLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'hero';
@@ -85,11 +85,10 @@ export default function TypewriterLogo({
   return (
     <div className={`relative flex flex-col items-center text-center select-none ${className}`} dir="rtl">
       {/* Optional Top Category Badge */}
-      {showBadge && (
+{showBadge && (
         <div className={`inline-flex items-center gap-2 rounded-full bg-[#FFF6E5] border-2.5 border-[#1A1A1A] text-[#1A1A1A] font-body font-black mb-4 shadow-[3px_3px_0px_#1A1A1A] animate-[slideUp_0.3s_ease] ${currentSize.badge}`}>
           <Flame className="w-4 h-4 text-[#F28482] fill-[#F28482]" />
           <span>لعبة التحديات والتخمين الجماعية للأصدقاء</span>
-          <Sparkles className="w-4 h-4 text-[#F6BD60]" />
         </div>
       )}
 
@@ -102,14 +101,14 @@ export default function TypewriterLogo({
 
         {/* Part 2: وعلّم عليه */}
         {renderedPart2 && (
-          <span className="text-[#F28482] drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)] filter [paint-order:stroke_fill] [-webkit-text-stroke:3px_#1A1A1A]">
+          <span className="text-[#F86041] drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)] filter [paint-order:stroke_fill] [-webkit-text-stroke:3px_#1A1A1A]">
             {renderedPart2}
           </span>
         )}
 
         {/* Blinking Typewriter Cursor */}
         <span
-          className={`inline-block bg-[#F6BD60] border-2 border-[#1A1A1A] rounded-full shadow-[2px_2px_0px_#1A1A1A] transition-opacity duration-100 ${
+          className={`inline-block bg-[#FFA646] border-2 border-[#1A1A1A] rounded-full shadow-[2px_2px_0px_#1A1A1A] transition-opacity duration-100 ${
             isDone ? 'animate-[pulse_1.5s_infinite]' : 'animate-ping'
           } ${currentSize.cursor}`}
         />

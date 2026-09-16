@@ -1,5 +1,5 @@
 import { pool } from '../../config/db.js';
-import { normalizeArabicText, calculateSimilarity } from '../../utils/arabic.nlp.js';
+import { normalizeArabicText, calculateSimilarity, getConceptKey } from '../../utils/arabic.nlp.js';
 
 export interface CanonicalResolution {
   rawText: string;
@@ -24,7 +24,18 @@ export const resolveCanonicalAnswer = async (rawText: string): Promise<Canonical
     };
   }
 
-  // 1. Query the answer_aliases table for exact normalized synonym match
+  // 1. In-memory fast bilingual concepts match (e.g. 'جيتار' / 'guitar' -> 'GUITAR', 'احمر' / 'red' -> 'RED')
+  const conceptKey = getConceptKey(normalizedText);
+  if (conceptKey) {
+    return {
+      rawText,
+      normalizedText,
+      canonicalKey: conceptKey,
+      isCustomSecret: false,
+    };
+  }
+
+  // 2. Query the answer_aliases table for exact normalized synonym match
   const aliasQuery = `
     SELECT ca.canonical_key 
     FROM answer_aliases aa

@@ -1,0 +1,140 @@
+/* Fonts (Cairo + Inter) are loaded via @import at the top of index.css —
+   kept here as variables only so @import order stays valid. */
+:root {
+  /* --- Color System --- */
+  --color-primary: #FFA646;
+  --color-primary-hover: #F59A33;
+  --color-primary-active: #F86041;
+  --color-primary-light: #FFF3E0;
+
+  --color-secondary: #33A9AC;
+  --color-secondary-hover: #2C999C;
+  --color-secondary-active: #23787B;
+  --color-secondary-light: #E0F7FA;
+
+  --color-accent: #F86041;
+  --color-accent-hover: #E85536;
+  --color-accent-active: #C94A2E;
+
+  --color-magenta: #982062;
+  --color-magenta-light: #C13A85;
+  --color-deep: #343779;
+
+  --color-bg: #121212;
+  --color-bg-elevated: #1E1E1E;
+  --color-bg-card: #1E1E1E;
+  --color-bg-card-hover: #2A2A2A;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #E0E0E0;
+  --color-text-tertiary: #9E9E9E;
+  --color-text-inverse: #121212;
+  --color-text-on-primary: #121212;
+
+  --color-border: #424242;
+  --color-border-light: #616161;
+  --color-border-focus: #33A9AC;
+
+  --color-success: #4CAF50;
+  --color-warning: #FFC107;
+  --color-error: #F44336;
+
+  /* --- Modular Type Scale (12, 14, 16, 20, 24, 32, 48, 64) --- */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 48px;
+  --text-4xl: 64px;
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  --font-family-arabic: 'Cairo', sans-serif;
+  --font-family-english: 'Inter', sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --font-display: var(--font-family-arabic);
+  --font-body: var(--font-family-arabic);
+  --font-body-en: var(--font-family-english);
+
+  /* --- Spacing Scale (8px grid) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* --- Layout --- */
+  --container-max: 1200px;
+  --container-padding: 24px;
+  --gutter: 24px;
+
+  --header-height: 64px;
+
+  /* --- Border Radius --- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* --- Shadows (Material 4dp) --- */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5);
+  --shadow-4dp: 0 2px 4px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+  --shadow-8dp: 0 4px 8px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* --- Z-index --- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal-backdrop: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  /* --- Section Spacing --- */
+  --section-py: 64px;
+  --component-py: 24px;
+}
+
+/* Dark mode is default, light mode can be added later if needed */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: #FAFAFA;
+    --color-bg-elevated: #FFFFFF;
+    --color-bg-card: #FFFFFF;
+    --color-bg-card-hover: #F5F5F5;
+    --color-text-primary: #121212;
+    --color-text-secondary: #424242;
+    --color-text-tertiary: #9E9E9E;
+    --color-border: #E0E0E0;
+  }
+}

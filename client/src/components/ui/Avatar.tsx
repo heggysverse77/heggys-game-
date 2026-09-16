@@ -14,13 +14,13 @@ interface AvatarProps {
 }
 
 const sizeClasses = {
-  xs: 'w-8 h-8',
-  sm: 'w-10 h-10',
-  md: 'w-14 h-14',
-  lg: 'w-18 h-18',
-  xl: 'w-24 h-24',
-  '2xl': 'w-32 h-32',
-  '3xl': 'w-40 h-40',
+  xs: 'w-8 h-8 shrink-0',
+  sm: 'w-10 h-10 shrink-0',
+  md: 'w-14 h-14 shrink-0',
+  lg: 'w-16 h-16 sm:w-18 sm:h-18 shrink-0',
+  xl: 'w-20 h-20 sm:w-24 sm:h-24 shrink-0',
+  '2xl': 'w-28 h-28 sm:w-32 sm:h-32 shrink-0',
+  '3xl': 'w-36 h-36 sm:w-40 sm:h-40 shrink-0',
 };
 
 const textSizeClasses = {
@@ -34,12 +34,13 @@ const textSizeClasses = {
 };
 
 const ringClasses = {
-  gold:   'ring-3 ring-heggy-gold shadow-[0_0_15px_rgba(255,183,3,0.5)]',
-  orange: 'ring-3 ring-heggy-orange shadow-[0_0_15px_rgba(255,107,0,0.5)]',
-  teal:   'ring-3 ring-heggy-teal shadow-[0_0_15px_rgba(0,201,177,0.4)]',
-  pink:   'ring-3 ring-heggy-pink shadow-[0_0_15px_rgba(255,56,56,0.4)]',
-  purple: 'ring-3 ring-heggy-orange shadow-[0_0_15px_rgba(255,107,0,0.4)]',
-  none:   '',
+  gold:   'ring-2.5 sm:ring-3 ring-[#FFA646] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
+  cyan:   'ring-2.5 sm:ring-3 ring-[#33A9AC] border-2 border-[#1A1A1A] shadow-[0_0_12px_rgba(51,169,172,0.4)]',
+  teal:   'ring-2.5 sm:ring-3 ring-[#33A9AC] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
+  pink:   'ring-2.5 sm:ring-3 ring-[#F86041] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
+  orange: 'ring-2.5 sm:ring-3 ring-[#FFA646] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
+  purple: 'ring-2.5 sm:ring-3 ring-[#33A9AC] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
+  none:   'border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]',
 };
 
 export default function Avatar({
@@ -62,20 +63,20 @@ export default function Avatar({
 
   return (
     <div 
-      className={`flex flex-col items-center gap-1.5 ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={`flex flex-col items-center gap-1.5 shrink-0 select-none ${onClick ? 'cursor-pointer' : ''} ${className}`}
       onClick={onClick}
     >
-      <div className="relative inline-block transition-transform duration-200 hover:scale-105">
+      <div className="relative inline-block transition-transform duration-200 hover:scale-105 shrink-0">
         {!imgError ? (
           <img
             key={src}
             src={src}
-            alt={nickname ?? 'لاعب'}
+            alt={nickname ?? 'صورة اللاعب'}
             onError={() => setImgError(true)}
             draggable={false}
             className={[
               sizeClasses[size],
-              'rounded-full object-cover select-none bg-heggy-card/90 transition-all duration-300',
+              'rounded-full object-cover select-none bg-[#FFF6E5] transition-all duration-300',
               ringClasses[ring],
               animate ? 'animate-[float_3s_ease-in-out_infinite]' : '',
             ].join(' ')}
@@ -84,12 +85,12 @@ export default function Avatar({
           <div
             className={[
               sizeClasses[size],
-              'rounded-full select-none bg-gradient-to-br from-heggy-orange to-heggy-gold flex items-center justify-center font-bold text-white shadow-md',
+              'rounded-full select-none bg-gradient-to-br from-[#FFA646] to-[#F86041] flex items-center justify-center font-display font-black text-[#1A1A1A]',
               ringClasses[ring],
               textSizeClasses[size],
             ].join(' ')}
           >
-            {nickname ? nickname.slice(0, 2).toUpperCase() : '🔥'}
+            🔥
           </div>
         )}
 
@@ -97,9 +98,9 @@ export default function Avatar({
         {isConnected !== undefined && (
           <span
             className={[
-              'absolute bottom-0 left-0 rounded-full border-2 border-heggy-deep shadow-md',
+              'absolute bottom-0 left-0 rounded-full border-2 border-[#1A1A1A] shadow-md',
               size === 'xs' || size === 'sm' ? 'w-3 h-3' : 'w-4 h-4',
-              isConnected ? 'bg-heggy-green animate-pulse' : 'bg-gray-500',
+              isConnected ? 'bg-[#33A9AC] animate-pulse' : 'bg-gray-400',
             ].join(' ')}
           />
         )}
@@ -108,7 +109,7 @@ export default function Avatar({
       {showNickname && nickname && (
         <span
           className={[
-            'font-body font-bold text-white truncate max-w-[7rem] text-center drop-shadow',
+            'font-display font-black text-[#FFF6E5] drop-shadow-[2px_2px_0px_#1A1A1A] truncate max-w-[7.5rem] text-center',
             textSizeClasses[size],
           ].join(' ')}
         >

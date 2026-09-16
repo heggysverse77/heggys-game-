@@ -26,7 +26,29 @@ const testCases = [
   { a: 'ليمون نعناع', b: 'لمون نعناع', expectedDuplicate: true, desc: 'عامية مصرية (ليمون نعناع vs لمون نعناع)' },
   { a: 'سوشي سلمون', b: 'سوشي سالمون', expectedDuplicate: true, desc: 'نطق معرب (سوشي سلمون vs سوشي سالمون)' },
 
-  // 7. Distinct answers (Must NOT be duplicates)
+  // 7. English & Franco Articles (the, a, an, el, al)
+  { a: 'guiter', b: 'the guiter', expectedDuplicate: true, desc: 'أداة التعريف the بالإنجليزية (guiter vs the guiter)' },
+  { a: 'guitar', b: 'the guitar', expectedDuplicate: true, desc: 'أداة التعريف the بالإنجليزية (guitar vs the guitar)' },
+  { a: 'guiter', b: 'the guitar', expectedDuplicate: true, desc: 'أداة التعريف the + خطأ إملائي (guiter vs the guitar)' },
+  { a: 'guitar', b: 'a guitar', expectedDuplicate: true, desc: 'أداة النكرة a بالإنجليزية (guitar vs a guitar)' },
+  { a: 'apple', b: 'an apple', expectedDuplicate: true, desc: 'أداة النكرة an بالإنجليزية (apple vs an apple)' },
+  { a: 'el guitar', b: 'guitar', expectedDuplicate: true, desc: 'أداة التعريف فرانكو el (el guitar vs guitar)' },
+
+  // 8. Arabic Article Variants (ال مع مسافة وبدون)
+  { a: 'الجيتار', b: 'جيتار', expectedDuplicate: true, desc: 'أداة التعريف ال (الجيتار vs جيتار)' },
+  { a: 'ال جيتار', b: 'جيتار', expectedDuplicate: true, desc: 'أداة التعريف ال مفصولة بمسافة (ال جيتار vs جيتار)' },
+  { a: 'ال-جيتار', b: 'جيتار', expectedDuplicate: true, desc: 'أداة التعريف ال مفصولة بواصلة (ال-جيتار vs جيتار)' },
+
+  // 9. Cross-lingual Bilingual Equivalents (عربي وإنجليزي نفس الإجابة)
+  { a: 'الجيتار', b: 'guitar', expectedDuplicate: true, desc: 'عربي وإنجليزي (الجيتار vs guitar)' },
+  { a: 'جيتار', b: 'the guiter', expectedDuplicate: true, desc: 'عربي وإنجليزي مع the وخطأ إملائي (جيتار vs the guiter)' },
+  { a: 'ال جيتار', b: 'the guitar', expectedDuplicate: true, desc: 'عربي وإنجليزي كلاهما بأداة تعريف (ال جيتار vs the guitar)' },
+  { a: 'احمر', b: 'red', expectedDuplicate: true, desc: 'ألوان عربي وإنجليزي (احمر vs red)' },
+  { a: 'اسد', b: 'lion', expectedDuplicate: true, desc: 'حيوانات عربي وإنجليزي (اسد vs lion)' },
+  { a: 'الاهلي', b: 'al ahly', expectedDuplicate: true, desc: 'نوادي عربي وفرانكو (الاهلي vs al ahly)' },
+  { a: 'باتمان', b: 'the batman', expectedDuplicate: true, desc: 'سوبر هيرو عربي وإنجليزي (باتمان vs the batman)' },
+
+  // 8. Distinct answers (Must NOT be duplicates)
   { a: 'شاورما لحمة', b: 'شاورما دجاج', expectedDuplicate: false, desc: 'إجابات مختلفة (شاورما لحمة vs شاورما دجاج)' },
   { a: 'مانجو', b: 'فراولة', expectedDuplicate: false, desc: 'إجابات مختلفة تماماً (مانجو vs فراولة)' },
   { a: 'إيطاليا', b: 'إسبانيا', expectedDuplicate: false, desc: 'إجابات مختلفة (إيطاليا vs إسبانيا)' },

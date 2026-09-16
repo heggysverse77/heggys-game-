@@ -9,4 +9,5 @@ export { default as Modal } from './Modal';
 export { default as Spinner } from './Spinner';
 export { default as Toast, ToastProvider, useToast } from './Toast';
 export { default as TypewriterLogo } from './TypewriterLogo';
+export { default as ComicLogo } from './ComicLogo';
 export { default as AppLoadingSplash } from './AppLoadingSplash';

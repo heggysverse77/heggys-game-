@@ -1,96 +1,100 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
   <defs>
-    <radialGradient id="bg_avatar_7" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#ff7700" />
-      <stop offset="100%" stop-color="#0f172a" />
+    <radialGradient id="bubble_bg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFF0F5" />
+      <stop offset="70%" stop-color="#FFD1DC" />
+      <stop offset="100%" stop-color="#FF99C8" />
     </radialGradient>
-    <linearGradient id="goldChain" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFF" />
-      <stop offset="30%" stop-color="#FFD700" />
-      <stop offset="70%" stop-color="#FFA500" />
-      <stop offset="100%" stop-color="#FF8C00" />
-    </linearGradient>
-    <linearGradient id="shemaghPattern" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#d90429" />
-      <stop offset="50%" stop-color="#ffffff" />
-      <stop offset="100%" stop-color="#d90429" />
-    </linearGradient>
-    <filter id="glow_avatar_7">
-      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+    <radialGradient id="gum_gradient" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FFAFCC" />
+      <stop offset="60%" stop-color="#FF6392" />
+      <stop offset="100%" stop-color="#D90429" />
+    </radialGradient>
+    <filter id="gum_shine">
+      <feGaussianBlur stdDeviation="2" result="blur" />
       <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
   </defs>
 
-  <!-- Background Circle with Neon Border -->
-  <circle cx="100" cy="100" r="95" fill="url(#bg_avatar_7)" stroke="#ff8800" stroke-width="4" filter="url(#glow_avatar_7)" />
+  <!-- Outer Comic Circle -->
+  <circle cx="150" cy="150" r="142" fill="url(#bubble_bg)" stroke="#1A1A1A" stroke-width="8" />
+  <circle cx="150" cy="150" r="133" fill="none" stroke="#FF6392" stroke-width="3" opacity="0.6" />
 
-  <!-- Fire / Spark Particles -->
-  <circle cx="45" cy="40" r="2.5" fill="#FFF" opacity="0.8"/>
-  <circle cx="155" cy="35" r="3" fill="#FFA500" opacity="0.9"/>
-  <circle cx="170" cy="80" r="2" fill="#FF4500" opacity="0.7"/>
-  <circle cx="30" cy="120" r="3.5" fill="#FFD700" opacity="0.85"/>
+  <g clip-path="url(#bubbleClip)">
+    <clipPath id="bubbleClip">
+      <circle cx="150" cy="150" r="138" />
+    </clipPath>
 
-  <!-- Character Torso / Outfit -->
-  <path d="M 40 200 C 40 145, 160 145, 160 200 Z" fill="#141416" stroke="#2a2a2e" stroke-width="2" />
-  <path d="M 75 155 L 100 185 L 125 155 Z" fill="#fbd38d" />
+    <!-- Black Biker Jacket / Denim Shoulders -->
+    <path d="M 45 300 C 55 215, 95 200, 150 200 C 205 200, 245 215, 255 300 Z" fill="#1C1924" stroke="#1A1A1A" stroke-width="5" />
+    <path d="M 90 215 L 125 255 L 115 300" fill="#2B2D42" stroke="#1A1A1A" stroke-width="3.5" />
+    <path d="M 210 215 L 175 255 L 185 300" fill="#2B2D42" stroke="#1A1A1A" stroke-width="3.5" />
+    <!-- White Inner Crop Tank -->
+    <path d="M 125 200 L 150 235 L 175 200 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3.5" />
+    <!-- Choker Necklace with Little Silver Star -->
+    <rect x="130" y="186" width="40" height="7" fill="#1A1A1A" rx="2" />
+    <polygon points="150,186 152,192 157,192 153,195 155,200 150,197 145,200 147,195 143,192 148,192" fill="#E2E8F0" />
 
-  <!-- Neck -->
-  <rect x="86" y="125" width="28" height="35" fill="#fbd38d" />
-  <path d="M 86 135 L 100 150 L 114 135 Z" fill="#000" opacity="0.15" />
+    <!-- Neck -->
+    <rect x="130" y="155" width="40" height="40" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4" />
 
-  <!-- Head / Face Base -->
-  <path d="M 65 80 C 65 130, 100 145, 100 145 C 100 145, 135 130, 135 80 C 135 50, 65 50, 65 80 Z" fill="#fbd38d" stroke="#000" stroke-width="1.5" />
+    <!-- Silver Hoop Earrings -->
+    <circle cx="92" cy="148" r="11" fill="none" stroke="#E2E8F0" stroke-width="3.5" />
+    <circle cx="92" cy="148" r="11" fill="none" stroke="#1A1A1A" stroke-width="1.5" />
+    <circle cx="208" cy="148" r="11" fill="none" stroke="#E2E8F0" stroke-width="3.5" />
+    <circle cx="208" cy="148" r="11" fill="none" stroke="#1A1A1A" stroke-width="1.5" />
 
-  <!-- Ears -->
-  <circle cx="63" cy="88" r="8" fill="#fbd38d" />
-  <circle cx="137" cy="88" r="8" fill="#fbd38d" />
-  
+    <!-- Face Base -->
+    <path d="M 104 105 C 104 75, 196 75, 196 105 C 196 160, 175 190, 150 195 C 125 190, 104 160, 104 105 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="5" />
 
-  
-    <!-- Anime Hair Base -->
-    <path d="M 55 75 C 50 35, 150 35, 145 75 C 155 40, 115 15, 95 18 C 70 20, 45 45, 55 75 Z" fill="#00f2fe" />
-    <!-- Dynamic Spiky Bangs -->
-    <path d="M 58 70 L 72 90 L 80 68 L 95 96 L 105 68 L 120 92 L 132 68 L 142 80 L 135 55 L 65 55 Z" fill="#00f2fe" />
-  
+    <!-- Stylish Lavender-Violet Bob Haircut with Bangs -->
+    <path d="M 85 105 C 75 45, 115 25, 150 25 C 185 25, 225 45, 215 105 C 228 150, 210 185, 195 190 C 205 145, 210 100, 204 80 C 180 38, 120 38, 96 80 C 90 100, 95 145, 105 190 C 90 185, 72 150, 85 105 Z" fill="#7209B7" stroke="#1A1A1A" stroke-width="5" />
+    <!-- Straight Sharp Bangs Across Forehead -->
+    <path d="M 94 92 C 105 110, 195 110, 206 92 C 185 75, 115 75, 94 92 Z" fill="#560BAD" stroke="#1A1A1A" stroke-width="3.5" />
 
-  <!-- Eyes & Eyebrows -->
-  
-    <!-- Fierce Anime Eyes -->
-    <path d="M 72 78 Q 85 72 94 80 Q 85 86 72 78 Z" fill="#FFF" stroke="#000" stroke-width="2" />
-    <circle cx="84" cy="80" r="4.5" fill="#ff6b00" />
-    <circle cx="85" cy="79" r="1.5" fill="#FFF" />
+    <!-- Piercing Cat-Eyes Peering Over Shades -->
+    <ellipse cx="127" cy="116" rx="9" ry="8" fill="#FFF" stroke="#1A1A1A" stroke-width="3" />
+    <circle cx="127" cy="116" r="5.5" fill="#4CC9F0" />
+    <circle cx="127" cy="116" r="3" fill="#1A1A1A" />
+    <circle cx="125" cy="114" r="1.5" fill="#FFF" />
+    <!-- Sassy Winged Eyeliner -->
+    <path d="M 136 112 L 143 108" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" />
 
-    <path d="M 106 80 Q 115 72 128 78 Q 115 86 106 80 Z" fill="#FFF" stroke="#000" stroke-width="2" />
-    <circle cx="116" cy="80" r="4.5" fill="#ff6b00" />
-    <circle cx="117" cy="79" r="1.5" fill="#FFF" />
+    <ellipse cx="173" cy="116" rx="9" ry="8" fill="#FFF" stroke="#1A1A1A" stroke-width="3" />
+    <circle cx="173" cy="116" r="5.5" fill="#4CC9F0" />
+    <circle cx="173" cy="116" r="3" fill="#1A1A1A" />
+    <circle cx="171" cy="114" r="1.5" fill="#FFF" />
+    <!-- Sassy Winged Eyeliner -->
+    <path d="M 182 112 L 189 108" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" />
 
-    <!-- Sharp Eyebrows -->
-    <path d="M 70 72 L 95 76" stroke="#000" stroke-width="3.5" stroke-linecap="round" />
-    <path d="M 130 72 L 105 76" stroke="#000" stroke-width="3.5" stroke-linecap="round" />
-  
+    <!-- Sassy Raised Eyebrows -->
+    <path d="M 116 104 Q 128 98 138 104" stroke="#1A1A1A" stroke-width="4.5" stroke-linecap="round" fill="none" />
+    <path d="M 162 102 Q 174 94 186 100" stroke="#1A1A1A" stroke-width="4.5" stroke-linecap="round" fill="none" />
 
-  <!-- Nose -->
-  <path d="M 98 94 L 102 99 L 97 101" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8" />
+    <!-- Retro Oval Sunglasses Tilted Down on Nose Bridge -->
+    <g transform="rotate(2 150 128)">
+      <!-- Left Lens -->
+      <ellipse cx="124" cy="130" rx="20" ry="12" fill="#181824" stroke="#F72585" stroke-width="3" />
+      <path d="M 112 126 L 122 134" stroke="#FFF" stroke-width="2" opacity="0.6" stroke-linecap="round" />
+      <!-- Right Lens -->
+      <ellipse cx="176" cy="130" rx="20" ry="12" fill="#181824" stroke="#F72585" stroke-width="3" />
+      <path d="M 164 126 L 174 134" stroke="#FFF" stroke-width="2" opacity="0.6" stroke-linecap="round" />
+      <!-- Bridge -->
+      <path d="M 144 128 Q 150 125 156 128" stroke="#F72585" stroke-width="3.5" fill="none" />
+    </g>
 
-  <!-- Mouth -->
-  <path d="M 90 115 Q 100 120 112 114" stroke="#000" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <!-- Cute Nose -->
+    <circle cx="150" cy="144" r="2.5" fill="#1A1A1A" />
 
-  
+    <!-- GIANT BUBBLEGUM BUBBLE! 🫧 -->
+    <circle cx="150" cy="170" r="28" fill="url(#gum_gradient)" stroke="#1A1A1A" stroke-width="4.5" filter="url(#gum_shine)" />
+    <!-- Bubble 3D Curved Highlights -->
+    <path d="M 134 154 C 142 147, 160 148, 168 156" stroke="#FFF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.8" />
+    <circle cx="134" cy="178" r="4" fill="#FFF" opacity="0.6" />
+  </g>
 
-  
-
-  
-    <!-- Cyberpunk Glowing Headset -->
-    <path d="M 52 80 C 52 25, 148 25, 148 80" stroke="#00f2fe" stroke-width="6" fill="none" />
-    <rect x="46" y="75" width="14" height="26" rx="6" fill="#111" stroke="#00f2fe" stroke-width="2" />
-    <rect x="140" y="75" width="14" height="26" rx="6" fill="#111" stroke="#00f2fe" stroke-width="2" />
-    <path d="M 52 95 Q 70 120 85 116" stroke="#ff7700" stroke-width="3" fill="none" />
-    <circle cx="86" cy="116" r="3.5" fill="#ff7700" />
-  
-
-  <!-- Outer Ring Badge Style -->
-  <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+  <circle cx="150" cy="150" r="142" fill="none" stroke="#1A1A1A" stroke-width="8" />
 </svg>
