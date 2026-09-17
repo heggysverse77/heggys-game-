@@ -1,77 +1,80 @@
-interface ComicLogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'hero';
+export interface ComicLogoProps {
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'hero';
   className?: string;
   showSubtitle?: boolean;
+  animate?: boolean;
+  onClick?: () => void;
 }
 
 export default function ComicLogo({
   size = 'hero',
   className = '',
   showSubtitle = false,
+  animate = true,
+  onClick,
 }: ComicLogoProps) {
-  const sizeConfig = {
+  // Height and max-width scaling for the logo image
+  const sizeStyles = {
+    xs: {
+      imgClass: 'h-8 max-w-[140px]',
+      glowClass: 'blur-md -inset-1 opacity-40',
+    },
     sm: {
-      t1: 'text-2xl sm:text-3xl',
-      t2: 'text-xl sm:text-2xl',
-      shadow: 'drop-shadow-[3px_3px_0px_#1A1A1A]',
-      stroke: '2px',
+      imgClass: 'h-11 sm:h-12 max-w-[180px]',
+      glowClass: 'blur-lg -inset-2 opacity-50',
     },
     md: {
-      t1: 'text-3xl sm:text-4xl',
-      t2: 'text-2xl sm:text-3xl',
-      shadow: 'drop-shadow-[4px_4px_0px_#1A1A1A]',
-      stroke: '3px',
+      imgClass: 'h-16 sm:h-20 max-w-[260px]',
+      glowClass: 'blur-xl -inset-3 opacity-60',
     },
     lg: {
-      t1: 'text-4xl sm:text-5xl md:text-6xl',
-      t2: 'text-3xl sm:text-4xl md:text-5xl',
-      shadow: 'drop-shadow-[5px_5px_0px_#1A1A1A]',
-      stroke: '4px',
+      imgClass: 'h-24 sm:h-32 md:h-36 max-w-[380px]',
+      glowClass: 'blur-2xl -inset-4 opacity-70',
     },
     hero: {
-      t1: 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl',
-      t2: 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl',
-      shadow: 'drop-shadow-[6px_6px_0px_#1A1A1A]',
-      stroke: '4px',
+      imgClass: 'h-36 sm:h-48 md:h-56 lg:h-64 max-w-[460px] sm:max-w-[540px]',
+      glowClass: 'blur-3xl -inset-6 opacity-75',
     },
   }[size];
 
   return (
-    <div className={`flex flex-col items-center select-none text-center relative ${className}`} dir="rtl">
-      {/* Decorative comic starburst / glow in hero size */}
-      {size === 'hero' && (
-        <div className="absolute -inset-6 bg-[#FFA646]/20 rounded-full blur-2xl -z-10 pointer-events-none animate-pulse" />
-      )}
+    <div
+      className={`inline-flex flex-col items-center select-none text-center relative group ${
+        onClick ? 'cursor-pointer' : ''
+      } ${className}`}
+      dir="rtl"
+      onClick={onClick}
+    >
+      {/* Dynamic ambient color glow matching the palette (#FFA646, #33A9AC, #982062) */}
+      <div
+        className={`absolute rounded-full pointer-events-none -z-10 transition-transform duration-700 ${sizeStyles.glowClass} ${
+          animate ? 'animate-pulse' : ''
+        }`}
+        style={{
+          background:
+            'radial-gradient(circle, rgba(255,166,70,0.35) 0%, rgba(51,169,172,0.25) 45%, rgba(152,32,98,0.2) 75%, transparent 100%)',
+        }}
+      />
 
-      {/* Main 3D Comic Title */}
-      <div className="flex flex-col items-center leading-none tracking-tight font-display font-black">
-        {/* Line 1: اعرف صاحبك */}
-        <span
-          className={`${sizeConfig.t1} text-transparent bg-clip-text bg-gradient-to-b from-[#FFF275] via-[#FFB703] to-[#FB8500] font-black`}
-          style={{
-            WebkitTextStroke: '2.5px #1A1A1A',
-            filter: 'drop-shadow(4px 4px 0px #1A1A1A) drop-shadow(6px 6px 0px #023E8A)',
-          }}
-        >
-          اعرف صاحبك
-        </span>
-
-        {/* Line 2: وعلّم عليه */}
-        <span
-          className={`${sizeConfig.t2} -mt-1 sm:-mt-2 text-transparent bg-clip-text bg-gradient-to-b from-[#FFFDF0] via-[#FEE440] to-[#F77F00] font-black`}
-          style={{
-            WebkitTextStroke: '2.5px #1A1A1A',
-            filter: 'drop-shadow(4px 4px 0px #1A1A1A) drop-shadow(6px 6px 0px #D62828)',
-          }}
-        >
-          وعلّم عليه
-        </span>
+      {/* The official brand 3D illustrated logo */}
+      <div className="relative">
+        <img
+          src="/images/logo.png"
+          alt="اعرف صاحبك وعلّم عليه"
+          className={`w-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)] transition-transform duration-300 ${sizeStyles.imgClass} ${
+            animate ? 'hover:scale-105 active:scale-95' : ''
+          }`}
+          loading="eager"
+          decoding="async"
+        />
       </div>
 
+      {/* Optional sub-badge */}
       {showSubtitle && (
-        <p className="mt-3 text-sm sm:text-base font-body font-bold text-[#FFF6E5] bg-[#1A1A1A]/70 px-4 py-1.5 rounded-full border-1.5 border-[#FFA646] shadow-[2px_2px_0px_#1A1A1A]">
-          لعبة الحفلات المصرية الأكثر حماساً وفضايح! 🔥
-        </p>
+        <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1e2044]/90 border border-[#343779] text-[#FFF6E5] text-xs sm:text-sm font-body font-bold shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+          <span className="w-2 h-2 rounded-full bg-[#33A9AC] animate-ping" />
+          <span>لعبة التحديات والتخمين الجماعية للأصدقاء</span>
+        </div>
       )}
     </div>
   );

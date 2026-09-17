@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Flame, Gamepad2 } from 'lucide-react';
+import { Sparkles, Crown, Users, HelpCircle, CheckCircle2 } from 'lucide-react';
 
 interface AppLoadingSplashProps {
   onFinished?: () => void;
@@ -8,31 +8,21 @@ interface AppLoadingSplashProps {
 
 export default function AppLoadingSplash({
   onFinished,
-  minDurationMs = 2300,
+  minDurationMs = 2600,
 }: AppLoadingSplashProps) {
-  const fullText = 'اعرف صاحبك وعلّم عليه';
-  const part1 = 'اعرف صاحبك';
-
-  const [displayedCount, setDisplayedCount] = useState(0);
-  const [progress, setProgress] = useState(15);
+  const [progress, setProgress] = useState(10);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [isMounted, setIsMounted] = useState(true);
+  const [phraseIdx, setPhraseIdx] = useState(0);
 
-  // Typewriter typing effect
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
+  const phrases = [
+    'بنجهز الأسئلة والمقالب...',
+    'بنرتب كروت التحديات...',
+    'بنولع المنافسة بين الصحاب...',
+    'جاهز تفضح صاحبك؟ يلا بينا! 🔥',
+  ];
 
-    if (displayedCount < fullText.length) {
-      const delay = Math.floor(Math.random() * 30) + 45;
-      timeout = setTimeout(() => {
-        setDisplayedCount((prev) => prev + 1);
-      }, delay);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [displayedCount, fullText.length]);
-
-  // Loading progress bar simulation
+  // Progress simulation
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -40,110 +30,155 @@ export default function AppLoadingSplash({
           clearInterval(interval);
           return 100;
         }
-        return Math.min(100, prev + Math.floor(Math.random() * 15) + 8);
+        const jump = Math.floor(Math.random() * 14) + 12;
+        return Math.min(100, prev + jump);
       });
-    }, 110);
+    }, 120);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Dismiss splash after typing & minimum duration
+  // Cycle phrases
+  useEffect(() => {
+    const phraseTimer = setInterval(() => {
+      setPhraseIdx((prev) => (prev + 1) % phrases.length);
+    }, 700);
+
+    return () => clearInterval(phraseTimer);
+  }, [phrases.length]);
+
+  // Finish splash screen
+  const finishSplash = () => {
+    if (isFadingOut) return;
+    setIsFadingOut(true);
+    setTimeout(() => {
+      setIsMounted(false);
+      if (onFinished) onFinished();
+    }, 450);
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsFadingOut(true);
-      setTimeout(() => {
-        setIsMounted(false);
-        if (onFinished) onFinished();
-      }, 500); // fade out duration
+      finishSplash();
     }, minDurationMs);
 
     return () => clearTimeout(timer);
-  }, [minDurationMs, onFinished]);
+  }, [minDurationMs]);
 
   if (!isMounted) return null;
 
-  const currentText = fullText.slice(0, displayedCount);
-  let renderedPart1 = '';
-  let renderedPart2 = '';
-
-  if (currentText.length <= part1.length) {
-    renderedPart1 = currentText;
-  } else {
-    renderedPart1 = part1;
-    renderedPart2 = currentText.slice(part1.length);
-  }
-
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center text-center select-none transition-all duration-500 ease-out px-4 sm:px-6 overflow-hidden ${
-        isFadingOut ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'
+      onClick={finishSplash}
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center text-center select-none transition-all duration-500 ease-out px-4 sm:px-6 overflow-hidden cursor-pointer ${
+        isFadingOut ? 'opacity-0 scale-110 pointer-events-none' : 'opacity-100 scale-100'
       }`}
+      style={{
+        backgroundColor: '#FDF9EE',
+        backgroundImage: "url('/images/comic_city_bg.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+      }}
       dir="rtl"
     >
-      {/* ── 1. Retro Egypt Background with Depth Blur ────────────────── */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat filter blur-[8px] scale-110"
-        style={{
-          backgroundImage: "url('/images/retro_egypt_bg.jpg')",
-        }}
-      />
+      {/* ── Background Floating Glow Orbs ─────────────────── */}
+      <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-[#33A9AC]/15 blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute top-1/3 right-1/4 w-80 h-80 rounded-full bg-[#FFA646]/15 blur-3xl pointer-events-none animate-pulse delay-700" />
+      <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-[#982062]/20 blur-3xl pointer-events-none animate-pulse delay-1000" />
 
-      {/* Cinematic Vignette Overlay */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#0B1519]/50 via-[#0B1519]/30 to-[#0B1519]/70"
-        aria-hidden="true"
-      />
-
-      {/* ── 2. Center Comic Pop Card ─────────────────────────────────── */}
-      <div className="relative z-10 w-full max-w-xl bg-[#FFF6E5] text-[#1A1A1A] border-3.5 sm:border-4 border-[#1A1A1A] rounded-[2.5rem] p-8 sm:p-12 shadow-[8px_8px_0px_#1A1A1A] sm:shadow-[10px_10px_0px_#1A1A1A] flex flex-col items-center gap-6 sm:gap-7 animate-[pop_0.4s_ease] overflow-hidden">
+      {/* ── Centerpiece: Animated Logo & Floating Badges ── */}
+      <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
         
-        {/* Flame Emblem */}
-        <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-3xl bg-[#FFA646] border-3 border-[#1A1A1A] flex items-center justify-center text-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] animate-[bounce_2s_infinite]">
-          <Flame className="w-10 h-10 fill-[#1A1A1A] stroke-[2.5]" />
-        </div>
+        {/* Halo Glow Rings around the Logo */}
+        <div className="relative flex items-center justify-center">
+          {/* Outer rotating color ring */}
+          <div
+            className="absolute -inset-10 sm:-inset-14 rounded-full opacity-60 blur-2xl animate-spin pointer-events-none"
+            style={{
+              background: 'conic-gradient(from 0deg, #33A9AC, #FFA646, #F86041, #982062, #343779, #33A9AC)',
+              animationDuration: '10s',
+            }}
+          />
 
-        {/* ── Typewriter Comic Title ─────────────────────────────────── */}
-        <div className="flex flex-col items-center gap-2">
-          <h1 className="font-display font-black text-3xl sm:text-5xl tracking-tight leading-tight flex items-center justify-center flex-wrap gap-2 text-center">
-            {/* Part 1: اعرف صاحبك */}
-            <span className="text-[#1A1A1A]">
-              {renderedPart1}
-            </span>
-
-            {/* Part 2: وعلّم عليه */}
-            {renderedPart2 && (
-              <span className="text-[#F86041] drop-shadow-[2px_2px_0px_#1A1A1A]">
-                {renderedPart2}
-              </span>
-            )}
-
-            {/* Blinking Typewriter Cursor */}
-            <span className="inline-block h-8 sm:h-11 w-1.5 sm:w-2 bg-[#FFA646] border-2 border-[#1A1A1A] rounded-full shadow-[1px_1px_0px_#1A1A1A] animate-pulse ml-1" />
-          </h1>
-
-          {/* Subtitle Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border-2 border-[#1A1A1A] text-[#1A1A1A] text-xs sm:text-sm font-body font-black shadow-[2px_2px_0px_#1A1A1A] mt-1">
-            <Gamepad2 className="w-3.5 h-3.5 text-[#F86041]" />
-            <span>لعبة التحديات والتخمين الجماعية للأصدقاء</span>
+          {/* Floating mini badges representing the 3 cards in the logo */}
+          <div className="absolute -top-6 -right-4 sm:-right-8 animate-bounce delay-100 z-20">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-[#FFA646] text-[#121212] font-black text-xs shadow-[2.5px_2.5px_0px_#1A1A1A] border-2 border-[#1A1A1A]">
+              <Users className="w-3.5 h-3.5" />
+              <span>صحابك</span>
+            </div>
           </div>
-        </div>
 
-        {/* ── 3. Comic Progress Bar ──────────────────────────────────── */}
-        <div className="flex flex-col items-center gap-3 w-full max-w-sm mt-2">
-          <div className="w-full h-5 rounded-full bg-white border-2.5 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] overflow-hidden p-0.5 relative">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-[#FFA646] to-[#F86041] border-r-2 border-[#1A1A1A] transition-all duration-200 ease-out"
-              style={{ width: `${Math.min(100, progress)}%` }}
+          <div className="absolute top-0 -left-4 sm:-left-8 animate-bounce delay-300 z-20">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-[#33A9AC] text-white font-black text-xs shadow-[2.5px_2.5px_0px_#1A1A1A] border-2 border-[#1A1A1A]">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>علم عليه</span>
+            </div>
+          </div>
+
+          <div className="absolute -bottom-4 -right-3 sm:-right-6 animate-pulse delay-500 z-20">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-[#982062] text-white font-black text-xs shadow-[2.5px_2.5px_0px_#1A1A1A] border-2 border-[#1A1A1A]">
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>أسئلة وحكاوي</span>
+            </div>
+          </div>
+
+          {/* Crown sparkle accent */}
+          <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-1 text-[#FFA646] animate-pulse">
+            <Sparkles className="w-5 h-5 text-[#FFA646]" />
+            <Crown className="w-7 h-7 text-[#FFC107] fill-[#FFC107] drop-shadow-[0_0_12px_#FFC107]" />
+            <Sparkles className="w-5 h-5 text-[#FFA646]" />
+          </div>
+
+          {/* The Main Logo with 3D scale-in & gentle float */}
+          <div className="relative animate-[pop_0.6s_cubic-bezier(0.34,1.56,0.64,1)]">
+            <img
+              src="/images/logo.png"
+              alt="اعرف صاحبك وعلّم عليه"
+              className="w-auto h-48 sm:h-64 md:h-72 max-w-[90vw] object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.3)] animate-[float_4s_ease-in-out_infinite]"
             />
           </div>
+        </div>
 
-          <div className="flex items-center justify-between w-full px-1 text-xs font-body font-black text-[#1A1A1A]/70">
-            <span>جاري تجهيز سيرفر اللعبة...</span>
-            <span className="font-mono text-[#F86041] font-black">{Math.min(100, progress)}%</span>
+        {/* ── Subtitle / Game tagline ──────────────────────── */}
+        <div className="mt-4 flex items-center gap-2 px-5 py-2 rounded-full bg-[#FFF6E5] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#33A9AC] animate-ping" />
+          <span className="text-xs sm:text-sm font-body font-black text-[#1A1A1A]">
+            لعبة التحديات والتخمين الجماعية للأصدقاء
+          </span>
+        </div>
+
+        {/* ── Progress Bar in Palette Gradient ──────────────── */}
+        <div className="w-full max-w-xs sm:max-w-sm mt-8 flex flex-col items-center gap-2.5">
+          {/* Bar track */}
+          <div className="w-full h-3.5 sm:h-4 rounded-full bg-[#FFF0D4] border-2 border-[#1A1A1A] p-0.5 overflow-hidden shadow-[2px_2px_0px_#1A1A1A] relative">
+            <div
+              className="h-full rounded-full transition-all duration-200 ease-out relative overflow-hidden"
+              style={{
+                width: `${Math.min(100, progress)}%`,
+                background: 'linear-gradient(90deg, #33A9AC 0%, #FFA646 35%, #F86041 70%, #982062 100%)',
+                boxShadow: '0 0 14px rgba(255,166,70,0.6)',
+              }}
+            >
+              {/* Shimmer light sweep */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
+            </div>
           </div>
+
+          {/* Dynamic Cheeky Phrase & Percentage */}
+          <div className="w-full flex items-center justify-between text-xs font-body font-semibold px-1">
+            <span className="text-[#33A9AC] transition-all duration-300 font-bold">
+              {phrases[phraseIdx]}
+            </span>
+            <span className="font-mono text-[#FFA646] font-bold">
+              {Math.min(100, progress)}%
+            </span>
+          </div>
+
+          <span className="text-[11px] text-[#1A1A1A]/60 mt-1 font-bold hover:text-[#1A1A1A] transition-colors">
+            (اضغط في أي مكان للدخول مباشرة)
+          </span>
         </div>
       </div>
     </div>
   );
 }
-

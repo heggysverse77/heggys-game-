@@ -1,9 +1,4 @@
-import pg from 'pg';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const { Pool } = pg;
+import { pool } from '../config/db.js';
 
 const QUESTIONS: string[] = [
   'إيه أكتر فيلم بتحبه؟',
@@ -93,12 +88,6 @@ function shuffleArray<T>(array: T[]): T[] {
 
 async function seedDatabase() {
   console.log(`🌱 Seeding & Shuffling ${QUESTIONS.length} specific questions into Heggy Game Database...\n`);
-
-  const pool = new Pool({
-    connectionString:
-      process.env.DATABASE_URL ||
-      'postgresql://postgres:postgres@localhost:5432/heggy_game',
-  });
 
   try {
     const client = await pool.connect();

@@ -17,6 +17,7 @@ import {
   getRoundRevealedAnswers,
   getFinishedGameData,
 } from '../modules/games/round.service.js';
+import { addBotToGame, removeBotFromGame } from '../modules/games/bot.service.js';
 
 export interface AuthenticatedSocket extends Socket {
   user?: JwtPayload;
@@ -45,13 +46,18 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
       }
 
       const { game, players: existingPlayers } = gameDetails;
-      const isExistingPlayer = existingPlayers.some((p) => p.user_id === user.userId);
+      const playerNickname = (nickname || user.username).trim();
 
-      // 2. Validation for NEW players attempting to join
+      const existingPlayer = existingPlayers.find(
+        (p) => p.user_id === user.userId || p.nickname.toLowerCase() === playerNickname.toLowerCase()
+      );
+      const isExistingPlayer = Boolean(existingPlayer);
+
+      // 2. Validation for players attempting to join / reconnect
       if (!isExistingPlayer) {
-        if (game.status !== 'LOBBY') {
+        if (game.status !== 'LOBBY' && game.status !== 'IN_PROGRESS') {
           return socket.emit('LOBBY:ERROR', {
-            message: 'Cannot join. Game is already in progress.',
+            message: 'Cannot join. Game is already finished or unavailable.',
           });
         }
 
@@ -62,7 +68,13 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
         }
       }
 
-      const playerNickname = nickname || user.username;
+      // If reconnected with same nickname under another guest ID, migrate player mapping
+      if (existingPlayer && existingPlayer.user_id !== user.userId) {
+        await pool.query(
+          'UPDATE game_players SET user_id = $1, is_connected = true WHERE id = $2;',
+          [user.userId, existingPlayer.id]
+        );
+      }
 
       // 3. Register or update player connection state (is_connected = true) in DB
       await joinGameRoom(gameId, user.userId, playerNickname);
@@ -192,6 +204,70 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
     } catch (error: any) {
       console.error('Error in LOBBY:UPDATE_SETTINGS handler:', error);
       socket.emit('LOBBY:ERROR', { message: error.message || 'Failed to update settings' });
+    }
+  });
+
+  /**
+   * Event: LOBBY:ADD_BOT
+   * Host adds a test bot to the room
+   */
+  socket.on('LOBBY:ADD_BOT', async (payload: { gameId: string }) => {
+    try {
+      const { gameId } = payload;
+      if (!gameId) return;
+
+      const gameDetails = await getGameDetailsById(gameId);
+      if (!gameDetails || gameDetails.game.host_user_id !== user.userId) {
+        return socket.emit('LOBBY:ERROR', { message: 'Only the host can add bots' });
+      }
+
+      if (gameDetails.players.length >= gameDetails.game.max_players) {
+        return socket.emit('LOBBY:ERROR', { message: 'Room has reached max capacity' });
+      }
+
+      await addBotToGame(gameId);
+      const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+      const roomChannel = `game_${gameId}`;
+
+      io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
+        gameId,
+        players: updatedPlayers,
+      });
+
+      console.log(`🤖 Bot added to game [${gameId}] by host [${user.username}]`);
+    } catch (error: any) {
+      console.error('Error in LOBBY:ADD_BOT:', error);
+      socket.emit('LOBBY:ERROR', { message: 'Failed to add bot' });
+    }
+  });
+
+  /**
+   * Event: LOBBY:REMOVE_BOT
+   * Host removes a test bot from the room
+   */
+  socket.on('LOBBY:REMOVE_BOT', async (payload: { gameId: string }) => {
+    try {
+      const { gameId } = payload;
+      if (!gameId) return;
+
+      const gameDetails = await getGameDetailsById(gameId);
+      if (!gameDetails || gameDetails.game.host_user_id !== user.userId) {
+        return socket.emit('LOBBY:ERROR', { message: 'Only the host can remove bots' });
+      }
+
+      await removeBotFromGame(gameId);
+      const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+      const roomChannel = `game_${gameId}`;
+
+      io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
+        gameId,
+        players: updatedPlayers,
+      });
+
+      console.log(`🤖 Bot removed from game [${gameId}] by host [${user.username}]`);
+    } catch (error: any) {
+      console.error('Error in LOBBY:REMOVE_BOT:', error);
+      socket.emit('LOBBY:ERROR', { message: 'Failed to remove bot' });
     }
   });
 

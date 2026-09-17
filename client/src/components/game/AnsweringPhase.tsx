@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Timer, Play } from 'lucide-react';
+import { AlertCircle, Timer, Play, SkipForward } from 'lucide-react';
 import { useGame } from '../../hooks/useGame';
 import { useTimer } from '../../hooks/useTimer';
 import { useSound } from '../../hooks/useSound';
@@ -187,27 +187,18 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
               {isHost && targetRoundId && (
                 <button
                   type="button"
-                  onClick={() => dispatch({ type: 'SKIP_QUESTION' })}
+                  onClick={() => emitForceMatching({ gameId, roundId: targetRoundId })}
                   className={[
                     'w-full sm:w-auto px-5 sm:px-6 h-11 sm:h-12 rounded-xl sm:rounded-2xl font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap',
-                    'bg-[#F86041] text-white hover:bg-[#E85536] active:translate-y-0.5',
+                    'bg-[#FFA646] text-[#1A1A1A] hover:bg-[#F59A33] active:translate-y-0.5',
                   ].join(' ')}
+                  title="الانتقال لمرحلة التخمين فوراً (للمضيف)"
                 >
-                  <Skip className="w-4 h-4" />
+                  <SkipForward className="w-4 h-4" />
                   <span>تخطي السؤال</span>
                 </button>
               )}
             </div>
-
-            {isHost && targetRoundId && (
-              <button
-                type="button"
-                onClick={() => emitForceMatching({ gameId, roundId: targetRoundId })}
-                className="text-xs sm:text-sm font-body font-bold text-[#FFF6E5] bg-[#1A1A1A]/85 hover:bg-[#1A1A1A] px-4 py-1.5 rounded-full border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] transition-all cursor-pointer inline-flex items-center gap-1.5 active:translate-y-0.5 mt-1"
-              >
-                <span>الانتقال لمرحلة التخمين فوراً (المضيف) ⏭️</span>
-              </button>
-            )}
           </div>
         ) : (
           <div className="w-full flex flex-col gap-3 items-center">

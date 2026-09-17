@@ -26,6 +26,8 @@ export default function JoinPage({ onJoined, onBack }: JoinPageProps) {
     currentPlayers: number;
     maxPlayers: number;
     canJoin: boolean;
+    status?: string;
+    isInProgress?: boolean;
   } | null>(null);
   const [error, setError] = useState('');
 
@@ -40,7 +42,11 @@ export default function JoinPage({ onJoined, onBack }: JoinPageProps) {
     try {
       const info = await getRoomByCode(normalized);
       if (!info.canJoin) {
-        setError('الغرفة ممتلئة أو اللعبة بدأت بالفعل');
+        if (info.status === 'FINISHED' || info.status === 'ABANDONED') {
+          setError('هذه اللعبة قد انتهت بالفعل');
+        } else {
+          setError('الغرفة ممتلئة بالكامل');
+        }
       } else {
         setRoomInfo(info);
       }
@@ -60,15 +66,15 @@ export default function JoinPage({ onJoined, onBack }: JoinPageProps) {
 
   return (
     <GameLayout>
-      <div className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBlock: 64, maxWidth: 560 }}>
-        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'linear-gradient(135deg,#33A9AC,#23787B)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 32px rgba(51,169,172,0.4)', marginBottom: 24 }}>
+      <div className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBlock: 'clamp(24px, 5vw, 48px)', maxWidth: 540, width: '100%' }}>
+        <div style={{ width: 64, height: 64, borderRadius: 18, background: 'linear-gradient(135deg,#33A9AC,#23787B)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 32px rgba(51,169,172,0.4)', marginBottom: 20 }}>
           <KeyRound style={{ width: 30, height: 30, color: '#fff' }} />
         </div>
-        <h1 style={{ fontSize: 32, fontWeight: 800, color: '#fff', margin: '0 0 8px', textAlign: 'center' }}>
+        <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, color: '#fff', margin: '0 0 8px', textAlign: 'center' }}>
           انضم لغرفة أصحابك
         </h1>
-        <p style={{ fontSize: 16, fontWeight: 500, color: '#9E9E9E', margin: '0 0 32px', textAlign: 'center' }}>
-          اكتب كود الغرفة المكون من 6 خانات للدخول مباشرة
+        <p style={{ fontSize: 'clamp(14px, 3.5vw, 16px)', fontWeight: 500, color: '#8F94B8', margin: '0 0 24px', textAlign: 'center' }}>
+          اكتب كود الغرفة المكون من 6 خانات للدخول أو استئناف اللعب
         </p>
 
         <Card style={{ width: '100%' }}>
@@ -81,7 +87,7 @@ export default function JoinPage({ onJoined, onBack }: JoinPageProps) {
               maxLength={8}
               error={error}
               dir="ltr"
-              style={{ textAlign: 'center', letterSpacing: '0.25em', fontSize: 24, fontWeight: 800, fontFamily: 'Inter, monospace', minHeight: 64 }}
+              style={{ textAlign: 'center', letterSpacing: '0.25em', fontSize: 'clamp(20px, 6vw, 24px)', fontWeight: 800, fontFamily: 'Inter, monospace', minHeight: 56 }}
               onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
             />
 
@@ -90,17 +96,24 @@ export default function JoinPage({ onJoined, onBack }: JoinPageProps) {
                 {checking ? 'جاري التحقق...' : 'التحقق من الكود'}
               </Button>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 16, borderRadius: 8, background: '#121212', border: '1px solid #2A2A2A' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 16, borderRadius: 12, background: '#FFF0D4', border: '2px solid #1A1A1A', boxShadow: '2px 2px 0px #1A1A1A' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-                  <span style={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>
+                  <span style={{ fontWeight: 800, fontSize: 16, color: '#1A1A1A' }}>
                     الغرفة: <span className="room-code" style={{ color: '#33A9AC' }}>{roomInfo.roomCode}</span>
                   </span>
-                  <span style={{ fontSize: 13, fontWeight: 700, padding: '6px 14px', borderRadius: 9999, background: 'rgba(51,169,172,0.12)', color: '#6FCFD1', border: '1px solid rgba(51,169,172,0.3)' }}>
-                    {roomInfo.currentPlayers} / {roomInfo.maxPlayers} لاعبين
+                  <span style={{ fontSize: 13, fontWeight: 800, padding: '6px 14px', borderRadius: 9999, background: roomInfo.status === 'IN_PROGRESS' ? '#FFF3E0' : '#E0F7FA', color: roomInfo.status === 'IN_PROGRESS' ? '#E65100' : '#23787B', border: '1.5px solid #1A1A1A', boxShadow: '1.5px 1.5px 0px #1A1A1A' }}>
+                    {roomInfo.status === 'IN_PROGRESS' ? '🎮 اللعبة جارية الآن' : `${roomInfo.currentPlayers} / ${roomInfo.maxPlayers} لاعبين`}
                   </span>
                 </div>
-                <Button variant="secondary" fullWidth size="lg" icon={<LogIn style={{ width: 18, height: 18 }} />} onClick={handleJoin}>
-                  دخول الغرفة الآن!
+
+                {roomInfo.status === 'IN_PROGRESS' && (
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#D97706', background: 'rgba(217,119,6,0.1)', padding: '8px 12px', borderRadius: 8, border: '1px dashed #D97706' }}>
+                    ⚡ اللعبة بدأت بالفعل! يمكنك الدخول فوراً ومتابعة اللعب مع أصحابك.
+                  </div>
+                )}
+
+                <Button variant={roomInfo.status === 'IN_PROGRESS' ? 'primary' : 'secondary'} fullWidth size="lg" icon={<LogIn style={{ width: 18, height: 18 }} />} onClick={handleJoin}>
+                  {roomInfo.status === 'IN_PROGRESS' ? 'دخول واستئناف اللعبة ⚡' : 'دخول الغرفة الآن!'}
                 </Button>
               </div>
             )}

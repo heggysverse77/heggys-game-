@@ -85,10 +85,10 @@
   --comic-blush:       #F5CAC3;
   --comic-sand:        #F7EDE2;
 
-  /* Atmospheric Dark Surfaces */
-  --bg-deep:           #121816;
-  --bg-card:           #1B2321;
-  --bg-card-hover:     #242F2C;
+  /* Atmospheric Cream Surfaces */
+  --bg-deep:           #FDF9EE;
+  --bg-card:           #FFF6E5;
+  --bg-card-hover:     #FFFDF5;
 
   /* --- 7. Crisp Comic Borders & Shadows --- */
   --border-comic-sm:   2px solid #1A1A1A;

@@ -54,10 +54,10 @@ export default function CircularGameTable({
             cy="50"
             r={radiusPercent}
             fill="none"
-            stroke="#1A1A1A"
-            strokeWidth="0.9"
-            strokeDasharray="2.5 2.5"
-            opacity="0.85"
+            stroke="rgba(51, 169, 172, 0.45)"
+            strokeWidth="1.2"
+            strokeDasharray="2 3"
+            opacity="0.9"
           />
         </svg>
 

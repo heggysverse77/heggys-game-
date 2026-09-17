@@ -25,9 +25,20 @@ export default function Navbar({
         {/* Logo — inline-start (right in RTL, left in LTR) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
           {leading}
-          {logo ?? <div className="hv-logo-mark">H</div>}
+          {logo ?? (
+            <img
+              src="/images/logo.png"
+              alt="اعرف صاحبك وعلّم عليه"
+              style={{
+                height: 38,
+                width: 'auto',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))',
+              }}
+            />
+          )}
           <span className="hv-logo" style={{ fontSize: 20 }}>
-            {title}
+            {title === 'HeggyVerse' ? 'اعرف صاحبك' : title}
           </span>
           {roomCode && (
             <button

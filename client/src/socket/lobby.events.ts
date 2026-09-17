@@ -43,6 +43,14 @@ export function onSettingsUpdated(cb: (payload: LobbySettingsUpdatedPayload) => 
   return () => socket.off(SOCKET_EVENTS.LOBBY_SETTINGS_UPDATED, cb);
 }
 
+export function emitAddBot(payload: { gameId: string }): void {
+  getSocket().emit(SOCKET_EVENTS.LOBBY_ADD_BOT, payload);
+}
+
+export function emitRemoveBot(payload: { gameId: string }): void {
+  getSocket().emit(SOCKET_EVENTS.LOBBY_REMOVE_BOT, payload);
+}
+
 export function emitRematch(payload: { gameId: string }): void {
   getSocket().emit(SOCKET_EVENTS.LOBBY_REMATCH, payload);
 }

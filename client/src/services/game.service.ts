@@ -21,6 +21,7 @@ export interface RoomCodeCheckResponse {
   currentPlayers: number;
   maxPlayers: number;
   canJoin: boolean;
+  isInProgress?: boolean;
 }
 
 export interface GameDetailsResponse {

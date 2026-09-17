@@ -4,10 +4,16 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const isRemoteDb =
+  process.env.DATABASE_URL?.includes('supabase') ||
+  process.env.DATABASE_URL?.includes('pooler.supabase.com') ||
+  process.env.NODE_ENV === 'production';
+
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/heggy_game',
   max: 20, // Max 20 concurrent connections
   idleTimeoutMillis: 30000,
+  ssl: isRemoteDb ? { rejectUnauthorized: false } : undefined,
 });
 
 export const testDbConnection = async () => {

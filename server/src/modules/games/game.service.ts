@@ -106,13 +106,17 @@ export const getGameByRoomCode = async (roomCode: string) => {
   }
 
   const row = result.rows[0];
+  const isLobbyJoinable = row.status === 'LOBBY' && row.current_players < row.max_players;
+  const isInProgress = row.status === 'IN_PROGRESS';
+
   return {
     gameId: row.id,
     roomCode: row.room_code,
     status: row.status,
     currentPlayers: row.current_players,
     maxPlayers: row.max_players,
-    canJoin: row.status === 'LOBBY' && row.current_players < row.max_players,
+    canJoin: isLobbyJoinable || isInProgress,
+    isInProgress,
   };
 };
 

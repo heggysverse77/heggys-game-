@@ -74,11 +74,11 @@ export default function RoomSettingsModal({
 
   const groupLabel = (icon: React.ReactNode, text: string, value: string) => (
     <div className="hv-settings-row">
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 700, color: '#fff' }}>
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>
         {icon}
         {text}
       </span>
-      <span style={{ fontSize: 14, fontWeight: 700, padding: '8px 18px', borderRadius: 9999, background: 'linear-gradient(135deg,#33A9AC,#23787B)', color: '#fff' }}>
+      <span style={{ fontSize: 13, fontWeight: 800, padding: '6px 16px', borderRadius: 9999, background: 'linear-gradient(135deg,#33A9AC,#23787B)', color: '#fff', border: '1.5px solid #1A1A1A', boxShadow: '2px 2px 0px #1A1A1A' }}>
         {value}
       </span>
     </div>
@@ -107,12 +107,12 @@ export default function RoomSettingsModal({
       <div className="hv-settings-group">
         <div className="hv-settings-row">
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ width: 40, height: 40, borderRadius: 10, background: dareEnabled ? 'linear-gradient(135deg,#FFA646,#F86041)' : '#2A2A2A', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+            <span style={{ width: 40, height: 40, borderRadius: 10, background: dareEnabled ? 'linear-gradient(135deg,#FFA646,#F86041)' : '#E0E0E0', border: '2px solid #1A1A1A', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: dareEnabled ? '#fff' : '#666', boxShadow: '2px 2px 0px #1A1A1A' }}>
               <Flame style={{ width: 20, height: 20 }} />
             </span>
             <span>
-              <span style={{ display: 'block', fontSize: 16, fontWeight: 700, color: '#fff' }}>نظام التحديات والأحكام</span>
-              <span style={{ display: 'block', fontSize: 13, color: '#9E9E9E' }}>
+              <span style={{ display: 'block', fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>نظام التحديات والأحكام</span>
+              <span style={{ display: 'block', fontSize: 13, color: '#555555', fontWeight: 600 }}>
                 {dareEnabled ? 'الفائز يختار حكماً طريفاً للمركز الأخير' : 'لعب ودي بدون عقوبات'}
               </span>
             </span>
@@ -123,15 +123,16 @@ export default function RoomSettingsModal({
             aria-checked={dareEnabled}
             onClick={() => setDareEnabled(!dareEnabled)}
             style={{
-              width: 56, height: 32, borderRadius: 9999, cursor: 'pointer', border: '1px solid #424242',
-              background: dareEnabled ? '#FFA646' : '#2A2A2A', position: 'relative', transition: 'background 0.2s',
+              width: 56, height: 32, borderRadius: 9999, cursor: 'pointer', border: '2px solid #1A1A1A',
+              background: dareEnabled ? '#FFA646' : '#E0E0E0', position: 'relative', transition: 'background 0.2s',
+              boxShadow: '2px 2px 0px #1A1A1A',
             }}
           >
             <span
               style={{
-                position: 'absolute', top: 3, width: 24, height: 24, borderRadius: 9999, background: '#fff',
+                position: 'absolute', top: 2, width: 24, height: 24, borderRadius: 9999, background: '#fff', border: '1.5px solid #1A1A1A',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                insetInlineStart: dareEnabled ? 27 : 3, transition: 'inset-inline-start 0.2s',
+                insetInlineStart: dareEnabled ? 26 : 2, transition: 'inset-inline-start 0.2s',
               }}
             >
               {dareEnabled && <Check style={{ width: 14, height: 14, color: '#FFA646' }} />}

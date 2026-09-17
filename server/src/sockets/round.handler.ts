@@ -15,6 +15,7 @@ import {
   GuessSubmission,
 } from '../modules/games/round.service.js';
 import { pool } from '../config/db.js';
+import { handleBotAnswering, handleBotMatching } from '../modules/games/bot.service.js';
 
 export const triggerMatchingPhase = async (io: Server, roundId: string, gameId: string) => {
   const roomChannel = `game_${gameId}`;
@@ -29,6 +30,9 @@ export const triggerMatchingPhase = async (io: Server, roundId: string, gameId: 
     totalPlayers: guessStatuses.totalPlayers,
     players: guessStatuses.players,
   });
+
+  // Trigger bots to submit matching guesses
+  handleBotMatching(io, roundId, gameId);
 };
 
 export const triggerResultsPhase = async (io: Server, roundId: string, gameId: string) => {
@@ -112,6 +116,9 @@ export const registerRoundHandlers = (io: Server, socket: AuthenticatedSocket) =
         totalPlayers: answerStatuses.totalPlayers,
         players: answerStatuses.players,
       });
+
+      // Trigger bots to answer secret questions automatically
+      handleBotAnswering(io, result.round.id, gameId);
 
       console.log(`🎮 Game [${gameId}] started by host [${user.username}]. Round 1 initiated.`);
     } catch (error: any) {
@@ -356,6 +363,9 @@ export const registerRoundHandlers = (io: Server, socket: AuthenticatedSocket) =
           totalPlayers: answerStatuses.totalPlayers,
           players: answerStatuses.players,
         });
+
+        // Trigger bots to answer secret questions for the new round
+        handleBotAnswering(io, round.id, gameId);
 
         console.log(`🔁 Game [${gameId}] advanced to Round [${round.round_number}].`);
       }

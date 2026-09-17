@@ -22,6 +22,7 @@ import RoomSettingsModal from '../components/game/RoomSettingsModal';
 import { AVATAR_LIST } from '../utils/avatar.utils';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../components/ui/Toast';
+import ComicLogo from '../components/ui/ComicLogo';
 import type { CreateGameOptions } from '../services/game.service';
 
 type HomeTab = 'guest' | 'login';
@@ -93,11 +94,7 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
             لعبة التحديات والتخمين الجماعية للأصدقاء
           </span>
 
-          <h1 className="hv-hero-title">
-            <span className="hl-orange">اعرف صاحبك</span>
-            <br />
-            <span className="hl-teal">وعلّم عليه</span>
-          </h1>
+          <ComicLogo size="hero" animate={true} />
 
           <p className="hv-hero-subtitle">
             جاوب على أسئلة حماسية، خمن إجابات أصحابك، واقترح أحكام تضحك على الخسران!
@@ -120,15 +117,17 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
           {!isAuthenticated ? (
             <Card style={{ maxWidth: 560, marginInline: 'auto' }}>
               {/* Tabs */}
-              <div style={{ display: 'flex', gap: 8, padding: 4, borderRadius: 8, background: '#121212', border: '1px solid #2A2A2A', marginBottom: 24 }}>
+              <div style={{ display: 'flex', gap: 8, padding: 4, borderRadius: 12, background: '#FFF0D4', border: '2px solid #1A1A1A', boxShadow: '2px 2px 0px #1A1A1A', marginBottom: 24 }}>
                 <button
                   type="button"
                   onClick={() => setTab('guest')}
                   style={{
-                    flex: 1, minHeight: 44, borderRadius: 6, fontWeight: 700, fontSize: 14, cursor: 'pointer',
-                    border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    flex: 1, minHeight: 44, borderRadius: 8, fontWeight: 800, fontSize: 14, cursor: 'pointer',
+                    border: tab === 'guest' ? '2px solid #1A1A1A' : '2px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     background: tab === 'guest' ? 'linear-gradient(135deg,#FFA646,#F86041)' : 'transparent',
-                    color: tab === 'guest' ? '#fff' : '#9E9E9E',
+                    color: tab === 'guest' ? '#fff' : '#1A1A1A',
+                    boxShadow: tab === 'guest' ? '2px 2px 0px #1A1A1A' : 'none',
+                    transition: 'all 0.2s ease',
                   }}
                 >
                   <UserRound style={{ width: 16, height: 16 }} />
@@ -138,10 +137,12 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
                   type="button"
                   onClick={() => setTab('login')}
                   style={{
-                    flex: 1, minHeight: 44, borderRadius: 6, fontWeight: 700, fontSize: 14, cursor: 'pointer',
-                    border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    flex: 1, minHeight: 44, borderRadius: 8, fontWeight: 800, fontSize: 14, cursor: 'pointer',
+                    border: tab === 'login' ? '2px solid #1A1A1A' : '2px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     background: tab === 'login' ? 'linear-gradient(135deg,#33A9AC,#23787B)' : 'transparent',
-                    color: tab === 'login' ? '#fff' : '#9E9E9E',
+                    color: tab === 'login' ? '#fff' : '#1A1A1A',
+                    boxShadow: tab === 'login' ? '2px 2px 0px #1A1A1A' : 'none',
+                    transition: 'all 0.2s ease',
                   }}
                 >
                   <LogIn style={{ width: 16, height: 16 }} />
@@ -153,7 +154,7 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                   <div>
                     <p className="hv-label" style={{ marginBottom: 12 }}>اختر شخصيتك الرمزية</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 8, padding: 12, background: '#121212', borderRadius: 8, border: '1px solid #2A2A2A' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 8, padding: 12, background: '#FFF0D4', borderRadius: 12, border: '2px solid #1A1A1A' }}>
                       {AVATAR_LIST.map((item) => {
                         const isSelected = avatarId === item.id;
                         return (
@@ -164,9 +165,9 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
                             title="اختر الصورة"
                             style={{
                               padding: 6, borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              background: isSelected ? 'rgba(255,166,70,0.15)' : 'transparent',
-                              border: isSelected ? '2px solid #FFA646' : '2px solid transparent',
-                              boxShadow: isSelected ? '0 0 16px rgba(255,166,70,0.25)' : 'none',
+                              background: isSelected ? 'rgba(255,166,70,0.3)' : 'transparent',
+                              border: isSelected ? '2px solid #1A1A1A' : '2px solid transparent',
+                              boxShadow: isSelected ? '2px 2px 0px #1A1A1A' : 'none',
                               transform: isSelected ? 'scale(1.08)' : 'none',
                               transition: 'all 0.15s ease',
                             }}
@@ -229,10 +230,10 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                     <Avatar avatarId={user?.avatar_id} size="md" ring="none" />
                     <div style={{ minWidth: 0 }}>
-                      <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#fff' }}>
-                        أهلاً بك، <span style={{ color: '#FFA646' }}>{user?.username}</span>
+                      <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#1A1A1A' }}>
+                        أهلاً بك، <span style={{ color: '#F86041' }}>{user?.username}</span>
                       </h3>
-                      <p style={{ margin: '4px 0 0', fontSize: 14, color: '#9E9E9E' }}>
+                      <p style={{ margin: '4px 0 0', fontSize: 14, color: '#4A4A4A', fontWeight: 600 }}>
                         اختر إنشاء غرفة جديدة أو انضم لأصحابك فوراً
                       </p>
                     </div>
@@ -252,7 +253,7 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 24 }}>
                 <Card variant="glow-orange" onClick={() => setCreateRoomModalOpen(true)}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12, paddingBlock: 12 }}>
-                    <div style={{ width: 60, height: 60, borderRadius: 9999, background: 'linear-gradient(135deg,#FFA646,#F86041)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 28px rgba(255,166,70,0.4)' }}>
+                    <div style={{ width: 60, height: 60, borderRadius: 9999, background: 'linear-gradient(135deg,#FFA646,#F86041)', border: '2px solid #1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '2.5px 2.5px 0px #1A1A1A' }}>
                       <Plus style={{ width: 28, height: 28, color: '#fff' }} />
                     </div>
                     <h3 className="hv-card-title">إنشاء غرفة جديدة</h3>
@@ -261,7 +262,7 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
                 </Card>
                 <Card variant="glow-teal" onClick={onJoinRoom}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12, paddingBlock: 12 }}>
-                    <div style={{ width: 60, height: 60, borderRadius: 9999, background: 'linear-gradient(135deg,#33A9AC,#23787B)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 28px rgba(51,169,172,0.4)' }}>
+                    <div style={{ width: 60, height: 60, borderRadius: 9999, background: 'linear-gradient(135deg,#33A9AC,#23787B)', border: '2px solid #1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '2.5px 2.5px 0px #1A1A1A' }}>
                       <KeyRound style={{ width: 26, height: 26, color: '#fff' }} />
                     </div>
                     <h3 className="hv-card-title">الانضمام بكود</h3>
@@ -275,7 +276,7 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
 
         {/* ── INSTRUCTIONS — 3 equal cards, 64px section spacing ── */}
         <section style={{ paddingBottom: 64 }}>
-          <h2 style={{ textAlign: 'center', fontSize: 24, fontWeight: 700, color: '#fff', margin: '0 0 24px' }}>
+          <h2 style={{ textAlign: 'center', fontSize: 24, fontWeight: 800, color: '#1A1A1A', margin: '0 0 24px' }}>
             طريقة اللعب في 3 خطوات بسيطة
           </h2>
           <StepIndicator

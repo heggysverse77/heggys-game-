@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Settings2, UsersRound, Share2, Crown, Play, Copy, Check, LogOut } from 'lucide-react';
+import { Settings2, UsersRound, Share2, Crown, Play, Copy, Check, LogOut, Bot } from 'lucide-react';
 import GameLayout from '../components/layout/GameLayout';
 import GameHeader from '../components/layout/GameHeader';
 import { Avatar } from '../components/ui';
@@ -11,7 +11,15 @@ import { useAuth } from '../hooks/useAuth';
 import { useSocket } from '../hooks/useSocket';
 import { useToast } from '../components/ui/Toast';
 import { useSound } from '../hooks/useSound';
-import { emitStartGame, onUpdatePlayers, emitUpdateSettings, onSettingsUpdated, emitJoinRoom } from '../socket/lobby.events';
+import {
+  emitStartGame,
+  onUpdatePlayers,
+  emitUpdateSettings,
+  onSettingsUpdated,
+  emitJoinRoom,
+  emitAddBot,
+  emitRemoveBot,
+} from '../socket/lobby.events';
 import { onRoundStart } from '../socket/round.events';
 import { updateGameSettings, getRoomById, type CreateGameOptions } from '../services/game.service';
 
@@ -119,6 +127,32 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
     showToast({ message: 'تم نسخ رابط الغرفة', type: 'success' });
   };
 
+  const hasBots = players.some(
+    (p: any) =>
+      p.nickname?.includes('🤖') ||
+      p.nickname?.includes('🦅') ||
+      p.nickname?.includes('⚽') ||
+      p.nickname?.includes('🌯') ||
+      p.nickname?.includes('🍅') ||
+      p.nickname?.includes('🧐') ||
+      p.nickname?.includes('🕵️') ||
+      p.isBot
+  );
+
+  const handleAddBot = () => {
+    if (players.length >= maxPlayers) {
+      showToast({ message: 'الغرفة ممتلئة بالكامل', type: 'warn' });
+      return;
+    }
+    emitAddBot({ gameId });
+    showToast({ message: 'تمت إضافة بوت للعبة 🤖', type: 'success' });
+  };
+
+  const handleRemoveBot = () => {
+    emitRemoveBot({ gameId });
+    showToast({ message: 'تم حذف البوت', type: 'info' });
+  };
+
   const handleStart = () => {
     if (!canStart) {
       showToast({ message: `تحتاج ${minPlayers} لاعبين على الأقل للبدء`, type: 'warn' });
@@ -132,41 +166,41 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
     <GameLayout>
       <GameHeader title={`الغرفة ${roomCode}`} roomCode={roomCode} onLeave={onLeave} leaveLabel="مغادرة" />
 
-      <div className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', gap: 24, paddingBlock: 32, maxWidth: 720 }}>
+      <div className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(16px, 3vw, 24px)', paddingBlock: 'clamp(16px, 4vw, 32px)', width: '100%', maxWidth: 640 }}>
         {/* Room code banner */}
         <Card variant="glow-teal">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-            <div>
-              <p className="hv-helper" style={{ margin: '0 0 4px' }}>كود الغرفة — شاركه مع أصحابك</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+            <div style={{ minWidth: 0, flex: '1 1 auto' }}>
+              <p className="hv-helper" style={{ margin: '0 0 4px', fontSize: 'clamp(12px, 3vw, 14px)' }}>كود الغرفة — شاركه مع أصحابك</p>
               <button
                 type="button"
                 onClick={copyCode}
                 className="room-code"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 32, fontWeight: 800, color: '#fff', padding: 0 }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 'clamp(26px, 7vw, 36px)', fontWeight: 900, color: '#1A1A1A', padding: 0, letterSpacing: '0.05em' }}
                 title="اضغط للنسخ"
               >
                 {roomCode}
               </button>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#9E9E9E' }}>
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#555555', fontWeight: 600 }}>
                 {players.length} / {maxPlayers} لاعبين • {game?.total_rounds ?? 5} جولات
               </p>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
               <button
                 type="button"
                 onClick={copyCode}
                 title="نسخ الكود"
-                style={{ width: 48, height: 48, borderRadius: 8, background: '#FFA646', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}
+                style={{ width: 44, height: 44, borderRadius: 10, background: 'linear-gradient(135deg, #FFA646, #F86041)', border: '2px solid #1A1A1A', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '2.5px 2.5px 0px #1A1A1A' }}
               >
-                {copied ? <Check style={{ width: 20, height: 20 }} /> : <Copy style={{ width: 20, height: 20 }} />}
+                {copied ? <Check style={{ width: 18, height: 18 }} /> : <Copy style={{ width: 18, height: 18 }} />}
               </button>
               <button
                 type="button"
                 onClick={shareRoom}
                 title="مشاركة"
-                style={{ width: 48, height: 48, borderRadius: 8, background: '#33A9AC', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}
+                style={{ width: 44, height: 44, borderRadius: 10, background: 'linear-gradient(135deg, #33A9AC, #23787B)', border: '2px solid #1A1A1A', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '2.5px 2.5px 0px #1A1A1A' }}
               >
-                <Share2 style={{ width: 20, height: 20 }} />
+                <Share2 style={{ width: 18, height: 18 }} />
               </button>
             </div>
           </div>
@@ -174,11 +208,51 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
 
         {/* Player list — each player in a card */}
         <div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <UsersRound style={{ width: 20, height: 20, color: '#33A9AC' }} />
-            اللاعبون ({players.length})
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 8 }}>
+            <h2 style={{ fontSize: 'clamp(17px, 4vw, 20px)', fontWeight: 800, color: '#1A1A1A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <UsersRound style={{ width: 20, height: 20, color: '#33A9AC' }} />
+              اللاعبون ({players.length})
+            </h2>
+            {isHost && (
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={handleAddBot}
+                  disabled={players.length >= maxPlayers}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    padding: '6px 14px', borderRadius: 9999,
+                    background: '#FFF0D4', border: '2px solid #1A1A1A',
+                    boxShadow: '2px 2px 0px #1A1A1A', color: '#1A1A1A',
+                    fontSize: 13, fontWeight: 800, cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                  title="إضافة بوت للاختبار"
+                >
+                  <Bot style={{ width: 16, height: 16, color: '#F86041' }} />
+                  + إضافة بوت 🤖
+                </button>
+                {hasBots && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveBot}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      padding: '6px 12px', borderRadius: 9999,
+                      background: '#FFE5E5', border: '2px solid #1A1A1A',
+                      boxShadow: '2px 2px 0px #1A1A1A', color: '#D32F2F',
+                      fontSize: 12, fontWeight: 800, cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                    title="حذف بوت"
+                  >
+                    - حذف بوت
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {players.map((p: any) => {
               const isHostPlayer = Boolean(p.is_host ?? p.isHost ?? (game?.host_user_id === (p.user_id || p.userId)));
               const isCurrentUser = Boolean(user && ((p.user_id && p.user_id === user.id) || (p.userId && p.userId === user.id) || p.nickname === user.username));
@@ -187,29 +261,29 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
                 <Card
                   key={p.id || p.userId || p.user_id}
                   variant={isHostPlayer ? 'glow-orange' : undefined}
-                  padding={16}
+                  padding={14}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
                       <Avatar avatarId={avatarId} nickname={p.nickname} size="sm" ring="none" />
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-                        <span style={{ fontWeight: 700, fontSize: 16, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+                        <span style={{ fontWeight: 700, fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {p.nickname}
                         </span>
-                        {isHostPlayer && <Crown style={{ width: 16, height: 16, color: '#FFA646', flexShrink: 0 }} />}
+                        {isHostPlayer && <Crown style={{ width: 15, height: 15, color: '#FFA646', flexShrink: 0 }} />}
                         {isCurrentUser && (
-                          <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 9999, background: 'rgba(51,169,172,0.12)', color: '#6FCFD1', border: '1px solid rgba(51,169,172,0.3)' }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 9999, background: 'rgba(51,169,172,0.15)', color: '#23787B', border: '1px solid #33A9AC' }}>
                             أنت
                           </span>
                         )}
                       </div>
                     </div>
                     {isHostPlayer ? (
-                      <span style={{ fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 9999, background: 'linear-gradient(135deg,#FFA646,#F86041)', color: '#fff', flexShrink: 0 }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, padding: '4px 12px', borderRadius: 9999, background: 'linear-gradient(135deg,#FFA646,#F86041)', color: '#fff', border: '1.5px solid #1A1A1A', flexShrink: 0, boxShadow: '2px 2px 0px #1A1A1A' }}>
                         المضيف
                       </span>
                     ) : (
-                      <span style={{ fontSize: 12, fontWeight: 700, padding: '6px 14px', borderRadius: 9999, background: 'rgba(76,175,80,0.12)', color: '#81C784', border: '1px solid rgba(76,175,80,0.35)', flexShrink: 0 }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, padding: '4px 12px', borderRadius: 9999, background: '#E8F5E9', color: '#2E7D32', border: '1.5px solid #1A1A1A', flexShrink: 0, boxShadow: '2px 2px 0px #1A1A1A' }}>
                         جاهز
                       </span>
                     )}
@@ -227,27 +301,33 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
           </Button>
         ) : (
           <Card>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, color: '#E0E0E0', fontWeight: 600 }}>
-              <span style={{ width: 20, height: 20, border: '2px solid #33A9AC', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.8s linear infinite' }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, color: '#1A1A1A', fontWeight: 700, fontSize: 14 }}>
+              <span style={{ width: 18, height: 18, border: '2px solid #33A9AC', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.8s linear infinite' }} />
               بانتظار المضيف لبدء اللعبة...
             </div>
           </Card>
         )}
 
-        {/* Utility row */}
-        <div style={{ display: 'flex', gap: 12 }}>
-          <Button variant="secondary" icon={<Share2 style={{ width: 16, height: 16 }} />} onClick={shareRoom}>
-            دعوة لاعبين
-          </Button>
-          {isHost && (
-            <Button variant="ghost" icon={<Settings2 style={{ width: 16, height: 16 }} />} onClick={() => setEditSettingsModalOpen(true)}>
-              إعدادات الغرفة
+        {/* Utility row — responsive flex wrapping */}
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', width: '100%' }}>
+          <div style={{ flex: '1 1 130px' }}>
+            <Button variant="secondary" fullWidth icon={<Share2 style={{ width: 16, height: 16 }} />} onClick={shareRoom}>
+              دعوة لاعبين
             </Button>
+          </div>
+          {isHost && (
+            <div style={{ flex: '1 1 130px' }}>
+              <Button variant="ghost" fullWidth icon={<Settings2 style={{ width: 16, height: 16 }} />} onClick={() => setEditSettingsModalOpen(true)}>
+                إعدادات الغرفة
+              </Button>
+            </div>
           )}
           {onLeave && (
-            <Button variant="ghost" icon={<LogOut style={{ width: 16, height: 16 }} />} onClick={onLeave}>
-              مغادرة
-            </Button>
+            <div style={{ flex: '1 1 90px' }}>
+              <Button variant="ghost" fullWidth icon={<LogOut style={{ width: 16, height: 16 }} />} onClick={onLeave}>
+                مغادرة
+              </Button>
+            </div>
           )}
         </div>
       </div>

@@ -42,17 +42,19 @@ export default function GameHeader({
   };
 
   const iconBtn: React.CSSProperties = {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    background: 'transparent',
-    border: '1px solid #424242',
-    color: '#E0E0E0',
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    background: '#FFF0D4',
+    border: '2px solid #1A1A1A',
+    color: '#1A1A1A',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
     flexShrink: 0,
+    boxShadow: '2px 2px 0px #1A1A1A',
+    transition: 'all 0.15s ease',
   };
 
   return (
@@ -60,10 +62,10 @@ export default function GameHeader({
       <header className="hv-navbar">
         <div className="hv-navbar-inner">
           {/* Logo / title — inline-start */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: '1 1 auto' }}>
             {onBack && (
               <button type="button" onClick={onBack} style={iconBtn} title={backLabel} aria-label={backLabel}>
-                <ArrowRight style={{ width: 18, height: 18 }} />
+                <ArrowRight style={{ width: 17, height: 17 }} />
               </button>
             )}
             {onLeave && (
@@ -71,54 +73,60 @@ export default function GameHeader({
                 type="button"
                 onClick={onLeave}
                 className="hv-btn hv-btn-sm"
-                style={{ background: 'rgba(244,67,54,0.12)', border: '1px solid rgba(244,67,54,0.4)', color: '#EF9A9A' }}
+                style={{ background: '#FFE5E5', border: '2px solid #1A1A1A', color: '#D32F2F', minHeight: 38, padding: '6px 12px', boxShadow: '2px 2px 0px #1A1A1A' }}
                 title={leaveLabel}
               >
                 <LogOut style={{ width: 15, height: 15 }} />
                 <span className="hv-hide-mobile">{leaveLabel}</span>
               </button>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-              <div className="hv-logo-mark">H</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+              <img
+                src="/images/logo.png"
+                alt="اعرف صاحبك وعلّم عليه"
+                className="h-7 sm:h-9 w-auto object-contain shrink-0"
+              />
               <span
                 style={{
                   fontWeight: 800,
-                  fontSize: 18,
-                  color: '#fff',
+                  fontSize: 'clamp(14px, 3.8vw, 18px)',
+                  color: '#1A1A1A',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                 }}
               >
-                {title || 'HeggyVerse'}
+                {title || 'اعرف صاحبك'}
               </span>
             </div>
           </div>
 
-          {/* Room code chip */}
+          {/* Room code chip — hidden on mobile to avoid cramming header */}
           {roomCode && (
             <button
               type="button"
               onClick={handleCopyCode}
               title="اضغط لنسخ الكود"
+              className="hv-hide-mobile"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                padding: '8px 16px',
+                padding: '6px 14px',
                 borderRadius: 9999,
-                background: 'rgba(51,169,172,0.08)',
-                border: '1px solid rgba(51,169,172,0.3)',
+                background: '#FFF0D4',
+                border: '2px solid #1A1A1A',
+                boxShadow: '2px 2px 0px #1A1A1A',
                 cursor: 'pointer',
                 flexShrink: 0,
               }}
             >
-              <span className="hv-hide-mobile" style={{ fontSize: 12, color: '#9E9E9E', fontWeight: 600 }}>كود الغرفة:</span>
-              <span className="room-code" style={{ color: '#6FCFD1', fontSize: 14 }}>{roomCode}</span>
+              <span style={{ fontSize: 12, color: '#1A1A1A', fontWeight: 700 }}>كود الغرفة:</span>
+              <span className="room-code" style={{ color: '#33A9AC', fontSize: 13, fontWeight: 800 }}>{roomCode}</span>
               {copied ? (
                 <Check style={{ width: 14, height: 14, color: '#4CAF50' }} />
               ) : (
-                <Copy style={{ width: 14, height: 14, color: '#9E9E9E' }} />
+                <Copy style={{ width: 14, height: 14, color: '#1A1A1A' }} />
               )}
             </button>
           )}
@@ -129,7 +137,7 @@ export default function GameHeader({
               {soundEnabled ? (
                 <Volume2 style={{ width: 17, height: 17, color: '#33A9AC' }} />
               ) : (
-                <VolumeX style={{ width: 17, height: 17, color: '#9E9E9E' }} />
+                <VolumeX style={{ width: 17, height: 17, color: '#666666' }} />
               )}
             </button>
             {isAuthenticated && user && (
@@ -142,15 +150,16 @@ export default function GameHeader({
                   alignItems: 'center',
                   gap: 8,
                   padding: '0 12px 0 8px',
-                  borderRadius: 8,
-                  background: '#1E1E1E',
-                  border: '1px solid #424242',
+                  borderRadius: 10,
+                  background: '#FFF0D4',
+                  border: '2px solid #1A1A1A',
+                  boxShadow: '2px 2px 0px #1A1A1A',
                   cursor: 'pointer',
                 }}
                 title="الملف الشخصي"
               >
                 <Avatar avatarId={user.avatar_id} size="xs" ring="none" />
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user.username}
                 </span>
               </button>
