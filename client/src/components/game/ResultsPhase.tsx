@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Check, X, Play, Trophy, Sparkles, MessageSquareQuote, Eye } from 'lucide-react';
+import { Play, Trophy, Sparkles, Eye } from 'lucide-react';
 import { Avatar } from '../ui';
 import Button from '../Button/Button';
 import Card from '../Card/Card';
 import { useGame } from '../../hooks/useGame';
 import { useSound } from '../../hooks/useSound';
-import { emitNextRound, emitShowScoreboard, onScoreboardDisplayed } from '../../socket/round.events';
+import { emitNextRound } from '../../socket/round.events';
 
 interface ResultsPhaseProps {
   gameId: string;
@@ -20,21 +20,8 @@ export default function ResultsPhase({ gameId }: ResultsPhaseProps) {
     play('round_start');
   }, [play]);
 
-  useEffect(() => {
-    const unsub = onScoreboardDisplayed(() => {
-      setStep('scoreboard');
-      play('submit');
-    });
-    return unsub;
-  }, [play]);
-
   const totalRounds = game?.total_rounds ?? 3;
   const isLastRound = currentRoundNumber >= totalRounds;
-
-  const handleShowScoreboard = () => {
-    emitShowScoreboard({ gameId });
-    setStep('scoreboard');
-  };
 
   const handleNextRound = () => {
     emitNextRound({ gameId });
