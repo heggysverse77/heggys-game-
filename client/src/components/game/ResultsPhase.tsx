@@ -42,6 +42,48 @@ export default function ResultsPhase({ gameId }: ResultsPhaseProps) {
 
   return (
     <div className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, maxWidth: 740, paddingBlock: 12 }}>
+      {/* Top Tab Switcher: Available to ALL players equally */}
+      <div style={{ display: 'flex', gap: 8, width: '100%', maxWidth: 440, background: '#FFF6E5', padding: 6, borderRadius: 16, border: '2.5px solid #1A1A1A', boxShadow: '3px 3px 0px #1A1A1A' }}>
+        <button
+          type="button"
+          onClick={() => setStep('answers')}
+          style={{
+            flex: 1,
+            padding: '10px 14px',
+            borderRadius: 12,
+            border: step === 'answers' ? '2px solid #1A1A1A' : '2px solid transparent',
+            background: step === 'answers' ? '#33A9AC' : 'transparent',
+            color: step === 'answers' ? '#FFFFFF' : '#1A1A1A',
+            fontWeight: 900,
+            fontSize: 14,
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            boxShadow: step === 'answers' ? '2px 2px 0px #1A1A1A' : 'none',
+          }}
+        >
+          🎭 كشف الإجابات
+        </button>
+        <button
+          type="button"
+          onClick={() => setStep('scoreboard')}
+          style={{
+            flex: 1,
+            padding: '10px 14px',
+            borderRadius: 12,
+            border: step === 'scoreboard' ? '2px solid #1A1A1A' : '2px solid transparent',
+            background: step === 'scoreboard' ? '#FFA646' : 'transparent',
+            color: '#1A1A1A',
+            fontWeight: 900,
+            fontSize: 14,
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+            boxShadow: step === 'scoreboard' ? '2px 2px 0px #1A1A1A' : 'none',
+          }}
+        >
+          🏅 جدول الترتيب والنقاط
+        </button>
+      </div>
+
       {step === 'answers' && (
         <>
           {/* Header Banner */}
@@ -249,21 +291,6 @@ export default function ResultsPhase({ gameId }: ResultsPhaseProps) {
               </Card>
             )}
           </div>
-
-          {/* Action Button */}
-          <div style={{ width: '100%', maxWidth: 480, marginTop: 8 }}>
-            {isHost ? (
-              <Button variant="primary" fullWidth size="lg" icon={<Trophy style={{ width: 20, height: 20 }} />} onClick={handleShowScoreboard}>
-                عرض الترتيب والنقاط 🏆
-              </Button>
-            ) : (
-              <Card>
-                <p style={{ margin: 0, textAlign: 'center', fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>
-                  ⏳ في انتظار المضيف للانتقال لشاشة الترتيب...
-                </p>
-              </Card>
-            )}
-          </div>
         </>
       )}
 
@@ -364,29 +391,29 @@ export default function ResultsPhase({ gameId }: ResultsPhaseProps) {
               );
             })}
           </div>
-
-          {/* Next Round Action */}
-          <div style={{ width: '100%', maxWidth: 480, marginTop: 8 }}>
-            {isHost ? (
-              <Button
-                variant={isLastRound ? 'primary' : 'secondary'}
-                fullWidth
-                size="lg"
-                icon={isLastRound ? <Sparkles style={{ width: 20, height: 20 }} /> : <Play style={{ width: 18, height: 18 }} />}
-                onClick={handleNextRound}
-              >
-                {isLastRound ? 'التتويج النهائي 🏆' : 'الجولة التالية ⚡'}
-              </Button>
-            ) : (
-              <Card>
-                <p style={{ margin: 0, textAlign: 'center', fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>
-                  {isLastRound ? '⏳ في انتظار المضيف لإعلان الفائز النهائي وتوزيع الأحكام...' : '⏳ في انتظار المضيف لبدء الجولة التالية...'}
-                </p>
-              </Card>
-            )}
-          </div>
         </>
       )}
+
+      {/* Next Round Action: accessible in both views */}
+      <div style={{ width: '100%', maxWidth: 480, marginTop: 12 }}>
+        {isHost ? (
+          <Button
+            variant={isLastRound ? 'primary' : 'secondary'}
+            fullWidth
+            size="lg"
+            icon={isLastRound ? <Sparkles style={{ width: 20, height: 20 }} /> : <Play style={{ width: 18, height: 18 }} />}
+            onClick={handleNextRound}
+          >
+            {isLastRound ? 'التتويج النهائي 🏆' : 'الجولة التالية ⚡'}
+          </Button>
+        ) : (
+          <Card>
+            <p style={{ margin: 0, textAlign: 'center', fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>
+              {isLastRound ? '⏳ في انتظار المضيف لإعلان الفائز النهائي وتوزيع الأحكام...' : '⏳ في انتظار المضيف لبدء الجولة التالية...'}
+            </p>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

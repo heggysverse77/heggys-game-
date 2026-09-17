@@ -130,6 +130,12 @@ export const submitRoundAnswer = async (
   gamePlayerId: string,
   rawText: string
 ) => {
+  // 0. Verify round is in ANSWERING phase
+  const roundRes = await pool.query('SELECT phase FROM game_rounds WHERE id = $1;', [roundId]);
+  if (roundRes.rows.length === 0 || roundRes.rows[0].phase !== 'ANSWERING') {
+    throw new Error('ROUND_NOT_IN_ANSWERING_PHASE');
+  }
+
   // 1. Resolve Canonical Key (e.g. "Hamburger" -> "BURGER")
   const resolution = await resolveCanonicalAnswer(rawText);
 
@@ -375,7 +381,12 @@ export const startMatchingPhase = async (roundId: string, gameId: string) => {
     [roundId]
   );
 
-  const anonymousAnswers: AnonymousAnswerDTO[] = shuffleArray(answersRes.rows);
+  const anonymousAnswers: AnonymousAnswerDTO[] = shuffleArray(
+    answersRes.rows.map((r) => ({
+      answerId: r.answerId,
+      text: r.text,
+    }))
+  );
 
   // Fetch connected players to match against
   const playersRes = await pool.query(
@@ -431,11 +442,16 @@ export const getMatchingPhaseData = async (roundId: string, gameId: string) => {
     [gameId]
   );
 
+  const anonymousAnswers: AnonymousAnswerDTO[] = answersRes.rows.map((r) => ({
+    answerId: r.answerId,
+    text: r.text,
+  }));
+
   return {
     roundId,
     phase: 'MATCHING' as const,
     matchingTimerSec: remainingTimer,
-    anonymousAnswers: answersRes.rows,
+    anonymousAnswers,
     playersToMatch: playersRes.rows,
   };
 };
@@ -452,6 +468,12 @@ export const submitPlayerGuesses = async (
 
   try {
     await client.query('BEGIN');
+
+    // Verify round is in MATCHING phase
+    const roundCheck = await client.query('SELECT phase FROM game_rounds WHERE id = $1;', [roundId]);
+    if (roundCheck.rows.length === 0 || roundCheck.rows[0].phase !== 'MATCHING') {
+      throw new Error('ROUND_NOT_IN_MATCHING_PHASE');
+    }
 
     for (const guess of guesses) {
       // Rule: Cannot guess oneself
