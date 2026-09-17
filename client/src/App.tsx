@@ -16,7 +16,7 @@ import { createRoom, type CreateGameOptions } from './services/game.service';
 import { emitJoinRoom } from './socket/lobby.events';
 
 import { onRoundStart } from './socket/round.events';
-import { onCurrentState, onUpdatePlayers, onSettingsUpdated, onRematchStarted } from './socket/lobby.events';
+import { onCurrentState, onUpdatePlayers, onSettingsUpdated, onRematchStarted, onKicked } from './socket/lobby.events';
 
 type AppPage = 'home' | 'join' | 'lobby' | 'game';
 
@@ -192,12 +192,20 @@ function InnerApp() {
       setPage('lobby');
     });
 
+    const offKicked = onKicked((payload) => {
+      showToast({ message: payload.message || 'تم إخراجك من الغرفة بواسطة المضيف', type: 'warn' });
+      updateRoom(null);
+      dispatch({ type: 'RESET' });
+      setPage('home');
+    });
+
     return () => {
       offRoundStart();
       offCurrentState();
       offPlayers();
       offSettingsUpdated();
       offRematch();
+      offKicked();
     };
   }, [socket, dispatch, user, room?.gameId]);
 

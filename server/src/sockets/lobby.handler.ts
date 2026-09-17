@@ -16,8 +16,9 @@ import {
   calculateRoundScores,
   getRoundRevealedAnswers,
   getFinishedGameData,
+  startGameSession,
 } from '../modules/games/round.service.js';
-import { addBotToGame, removeBotFromGame } from '../modules/games/bot.service.js';
+import { addBotToGame, removeBotFromGame, handleBotAnswering } from '../modules/games/bot.service.js';
 
 export interface AuthenticatedSocket extends Socket {
   user?: JwtPayload;
@@ -341,21 +342,102 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
         [gameId]
       );
 
-      // 4. Fetch updated game & players list
-      const updatedGameRes = await pool.query('SELECT * FROM games WHERE id = $1;', [gameId]);
-      const players = await getGamePlayersWithAvatars(gameId);
-
       const roomChannel = `game_${gameId}`;
-      io.to(roomChannel).emit('LOBBY:REMATCH_STARTED', {
-        gameId,
-        game: updatedGameRes.rows[0],
-        players,
-      });
 
-      console.log(`🔄 Rematch started for game [${gameId}] by host [${user.username}]. Room returned to LOBBY.`);
+      // 5. Try auto-starting a brand new game session immediately with all players
+      try {
+        const result = await startGameSession(gameId, user.userId);
+        const answerStatuses = await getRoundAnswerStatuses(result.round.id, gameId);
+
+        io.to(roomChannel).emit('GAME:STARTED', {
+          gameId,
+          status: 'IN_PROGRESS',
+        });
+
+        io.to(roomChannel).emit('ROUND:START', {
+          gameId,
+          roundId: result.round.id,
+          roundNumber: result.round.round_number,
+          phase: 'ANSWERING',
+          question: {
+            id: result.question.id,
+            text_ar: result.question.text_ar,
+            text_en: result.question.text_en,
+          },
+          answeringTimerSec: result.answeringTimerSec,
+          timer: result.answeringTimerSec,
+          submittedCount: answerStatuses.submittedCount,
+          totalPlayers: answerStatuses.totalPlayers,
+          players: answerStatuses.players,
+        });
+
+        handleBotAnswering(io, result.round.id, gameId);
+        console.log(`🎮 Rematch auto-started immediately for game [${gameId}] by host [${user.username}]. Round 1 initiated.`);
+      } catch (startErr) {
+        // Fallback: If not enough players to auto-start, return to lobby
+        const updatedGameRes = await pool.query('SELECT * FROM games WHERE id = $1;', [gameId]);
+        const players = await getGamePlayersWithAvatars(gameId);
+        io.to(roomChannel).emit('LOBBY:REMATCH_STARTED', {
+          gameId,
+          game: updatedGameRes.rows[0],
+          players,
+        });
+        console.log(`🔄 Rematch returned to LOBBY for game [${gameId}].`);
+      }
     } catch (error: any) {
       console.error('Error in LOBBY:REMATCH handler:', error);
       socket.emit('LOBBY:ERROR', { message: error.message || 'Failed to start rematch' });
+    }
+  });
+
+  /**
+   * Event: LOBBY:KICK_PLAYER
+   * Host removes a player/bot from the lobby
+   */
+  socket.on('LOBBY:KICK_PLAYER', async (payload: { gameId: string; targetPlayerId: string }) => {
+    try {
+      const { gameId, targetPlayerId } = payload;
+      if (!gameId || !targetPlayerId) return;
+
+      const gameRes = await pool.query('SELECT host_user_id, status FROM games WHERE id = $1;', [gameId]);
+      if (gameRes.rows.length === 0) return socket.emit('LOBBY:ERROR', { message: 'Game not found' });
+      if (gameRes.rows[0].host_user_id !== user.userId) {
+        return socket.emit('LOBBY:ERROR', { message: 'Only host can remove players' });
+      }
+
+      const targetRes = await pool.query(
+        'SELECT id, user_id, nickname, is_bot FROM game_players WHERE (id = $1 OR user_id = $1) AND game_id = $2;',
+        [targetPlayerId, gameId]
+      );
+      if (targetRes.rows.length === 0) return;
+      const targetPlayer = targetRes.rows[0];
+
+      // Cannot kick host
+      if (targetPlayer.user_id === user.userId) return;
+
+      await pool.query('DELETE FROM game_players WHERE id = $1;', [targetPlayer.id]);
+
+      const roomChannel = `game_${gameId}`;
+      if (!targetPlayer.is_bot) {
+        const socketsInRoom = await io.in(roomChannel).fetchSockets();
+        for (const s of socketsInRoom) {
+          if ((s as any).user?.userId === targetPlayer.user_id) {
+            s.emit('LOBBY:KICKED', { message: 'تم إخراجك من الغرفة بواسطة المضيف' });
+            await s.leave(roomChannel);
+          }
+        }
+      }
+
+      const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+      io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
+        gameId,
+        players: updatedPlayers,
+      });
+
+      console.log(`👢 Player [${targetPlayer.nickname}] was removed from game [${gameId}] by host [${user.username}]`);
+    } catch (error: any) {
+      console.error('Error in LOBBY:KICK_PLAYER handler:', error);
+      socket.emit('LOBBY:ERROR', { message: error.message || 'Failed to remove player' });
     }
   });
 

@@ -19,6 +19,7 @@ import {
   emitJoinRoom,
   emitAddBot,
   emitRemoveBot,
+  emitKickPlayer,
 } from '../socket/lobby.events';
 import { onRoundStart } from '../socket/round.events';
 import { updateGameSettings, getRoomById, type CreateGameOptions } from '../services/game.service';
@@ -153,6 +154,12 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
     showToast({ message: 'تم حذف البوت', type: 'info' });
   };
 
+  const handleKickPlayer = (targetPlayerId: string, nickname: string) => {
+    if (!confirm(`هل أنت متأكد من طرد اللاعب "${nickname}" من الغرفة؟`)) return;
+    emitKickPlayer({ gameId, targetPlayerId });
+    showToast({ message: `تم طرد ${nickname} من الغرفة`, type: 'info' });
+  };
+
   const handleStart = () => {
     if (!canStart) {
       showToast({ message: `تحتاج ${minPlayers} لاعبين على الأقل للبدء`, type: 'warn' });
@@ -283,9 +290,32 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
                         المضيف
                       </span>
                     ) : (
-                      <span style={{ fontSize: 11, fontWeight: 800, padding: '4px 12px', borderRadius: 9999, background: '#E8F5E9', color: '#2E7D32', border: '1.5px solid #1A1A1A', flexShrink: 0, boxShadow: '2px 2px 0px #1A1A1A' }}>
-                        جاهز
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                        <span style={{ fontSize: 11, fontWeight: 800, padding: '4px 10px', borderRadius: 9999, background: '#E8F5E9', color: '#2E7D32', border: '1.5px solid #1A1A1A', boxShadow: '2px 2px 0px #1A1A1A' }}>
+                          جاهز
+                        </span>
+                        {isHost && (
+                          <button
+                            type="button"
+                            onClick={() => handleKickPlayer(p.id || p.userId || p.user_id, p.nickname)}
+                            title="طرد من الغرفة"
+                            style={{
+                              padding: '3px 8px',
+                              borderRadius: 8,
+                              background: '#FFE5E5',
+                              border: '1.5px solid #1A1A1A',
+                              color: '#D32F2F',
+                              fontSize: 11,
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                              boxShadow: '1.5px 1.5px 0px #1A1A1A',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            طرد ✕
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 </Card>

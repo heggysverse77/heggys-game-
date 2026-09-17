@@ -61,3 +61,14 @@ export function onRematchStarted(cb: (payload: { gameId: string; game: any; play
   return () => socket.off(SOCKET_EVENTS.LOBBY_REMATCH_STARTED, cb);
 }
 
+export function emitKickPlayer(payload: { gameId: string; targetPlayerId: string }): void {
+  getSocket().emit('LOBBY:KICK_PLAYER', payload);
+}
+
+export function onKicked(cb: (payload: { message: string }) => void): () => void {
+  const socket = getSocket();
+  socket.on('LOBBY:KICKED', cb);
+  return () => socket.off('LOBBY:KICKED', cb);
+}
+
+
