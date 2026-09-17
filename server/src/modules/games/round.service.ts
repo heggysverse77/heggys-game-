@@ -381,10 +381,13 @@ export const startMatchingPhase = async (roundId: string, gameId: string) => {
     [roundId]
   );
 
-  const anonymousAnswers: AnonymousAnswerDTO[] = shuffleArray(
+  const anonymousAnswers: any[] = shuffleArray(
     answersRes.rows.map((r) => ({
       answerId: r.answerId,
+      answer_id: r.answerId,
       text: r.text,
+      authorPlayerId: r.authorPlayerId,
+      authorUserId: r.authorUserId,
     }))
   );
 
@@ -442,9 +445,12 @@ export const getMatchingPhaseData = async (roundId: string, gameId: string) => {
     [gameId]
   );
 
-  const anonymousAnswers: AnonymousAnswerDTO[] = answersRes.rows.map((r) => ({
+  const anonymousAnswers: any[] = answersRes.rows.map((r) => ({
     answerId: r.answerId,
+    answer_id: r.answerId,
     text: r.text,
+    authorPlayerId: r.authorPlayerId,
+    authorUserId: r.authorUserId,
   }));
 
   return {
@@ -490,6 +496,8 @@ export const submitPlayerGuesses = async (
       if (authorRes.rows.length === 0) continue;
 
       const actualAuthorId = authorRes.rows[0].game_player_id;
+      if (actualAuthorId === guesserPlayerId) continue;
+
       const isCorrect = actualAuthorId === guess.guessedPlayerId;
       const pointsAwarded = isCorrect ? 100 : 0;
 
@@ -564,6 +572,59 @@ export const calculateRoundScores = async (
 
   try {
     await client.query('BEGIN');
+
+    // Check if round is already in RESULTS phase (e.g. player reconnect or page refresh)
+    const roundCheck = await client.query('SELECT phase FROM game_rounds WHERE id = $1 FOR UPDATE;', [roundId]);
+    const alreadyProcessed = roundCheck.rows[0]?.phase === 'RESULTS';
+
+    if (alreadyProcessed) {
+      // Just fetch the already computed scores from round_scores without updating game_players total_score again
+      const existingScoresRes = await client.query(
+        `SELECT 
+           gp.id AS "gamePlayerId", 
+           gp.user_id AS "userId", 
+           gp.nickname, 
+           u.avatar_id AS "avatarId", 
+           gp.total_score AS "totalScore",
+           COALESCE(rs.points_gained, 0) AS "pointsGained",
+           COALESCE(rs.correct_guesses, 0) AS "correctGuesses",
+           COALESCE(rs.fooled_friends, 0) AS "fooledFriends"
+         FROM game_players gp
+         JOIN users u ON gp.user_id = u.id
+         LEFT JOIN round_scores rs ON rs.game_player_id = gp.id AND rs.round_id = $1
+         WHERE gp.game_id = $2;`,
+        [roundId, gameId]
+      );
+
+      const scoreBreakdowns: PlayerScoreBreakdown[] = [];
+      for (const p of existingScoresRes.rows) {
+        scoreBreakdowns.push({
+          rank: 0,
+          gamePlayerId: p.gamePlayerId,
+          userId: p.userId,
+          nickname: p.nickname,
+          avatarId: p.avatarId,
+          pointsGained: p.pointsGained,
+          correctGuesses: p.correctGuesses,
+          fooledFriends: p.fooledFriends,
+          totalScore: p.totalScore,
+          titleBadge: '',
+          commentary: '',
+        });
+      }
+
+      await client.query('COMMIT');
+
+      scoreBreakdowns.sort((a, b) => b.totalScore - a.totalScore);
+      scoreBreakdowns.forEach((player, idx) => {
+        player.rank = idx + 1;
+        const feedback = getRankFeedback(player.rank, scoreBreakdowns.length);
+        player.titleBadge = feedback.titleBadge;
+        player.commentary = feedback.commentary;
+      });
+
+      return scoreBreakdowns;
+    }
 
     // 1. Get all players in the game
     const playersRes = await client.query(
