@@ -134,6 +134,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         myGuesses: {},
         hasSubmittedGuesses: false,
         roundResults: null,
+        finalResults: null,
+        dareCards: [],
       };
 
     case 'ANSWER_SUBMITTED':

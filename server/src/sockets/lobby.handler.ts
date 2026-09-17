@@ -322,13 +322,11 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
       }
 
       // 2. Clean up previous round data for this game to prevent unique constraint violation on new match
-      await pool.query(`
-        DELETE FROM round_guesses WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
-        DELETE FROM round_scores WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
-        DELETE FROM round_answers WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
-        DELETE FROM game_dare_assignments WHERE game_id = $1;
-        DELETE FROM game_rounds WHERE game_id = $1;
-      `, [gameId]);
+      await pool.query('DELETE FROM round_guesses WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);', [gameId]);
+      await pool.query('DELETE FROM round_scores WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);', [gameId]);
+      await pool.query('DELETE FROM round_answers WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);', [gameId]);
+      await pool.query('DELETE FROM game_dare_assignments WHERE game_id = $1;', [gameId]);
+      await pool.query('DELETE FROM game_rounds WHERE game_id = $1;', [gameId]);
 
       // 3. Reset game status back to 'LOBBY' and current_round_number to 0
       await pool.query(
@@ -348,6 +346,12 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
       try {
         const result = await startGameSession(gameId, user.userId);
         const answerStatuses = await getRoundAnswerStatuses(result.round.id, gameId);
+        const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+
+        io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
+          gameId,
+          players: updatedPlayers,
+        });
 
         io.to(roomChannel).emit('GAME:STARTED', {
           gameId,
@@ -403,13 +407,11 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
       if (gameRes.rows.length === 0) return socket.emit('LOBBY:ERROR', { message: 'Game not found' });
 
       // Clean up previous round data for this game
-      await pool.query(`
-        DELETE FROM round_guesses WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
-        DELETE FROM round_scores WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
-        DELETE FROM round_answers WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
-        DELETE FROM game_dare_assignments WHERE game_id = $1;
-        DELETE FROM game_rounds WHERE game_id = $1;
-      `, [gameId]);
+      await pool.query('DELETE FROM round_guesses WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);', [gameId]);
+      await pool.query('DELETE FROM round_scores WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);', [gameId]);
+      await pool.query('DELETE FROM round_answers WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);', [gameId]);
+      await pool.query('DELETE FROM game_dare_assignments WHERE game_id = $1;', [gameId]);
+      await pool.query('DELETE FROM game_rounds WHERE game_id = $1;', [gameId]);
 
       // Reset game status to 'LOBBY' and current_round_number to 0
       const updatedGameRes = await pool.query(

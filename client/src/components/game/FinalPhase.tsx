@@ -324,13 +324,13 @@ export default function FinalPhase(props: FinalPhaseProps) {
         {isHost && (
           <div style={{ flex: 1, minWidth: 200 }}>
             <Button variant="secondary" fullWidth size="lg" icon={<RefreshCw style={{ width: 18, height: 18 }} />} onClick={handleRematch}>
-              العب من جديد 🔄
+              العب مجدداً 🔄
             </Button>
           </div>
         )}
         <div style={{ flex: 1, minWidth: 200 }}>
           <Button variant="ghost" fullWidth size="lg" icon={<Home style={{ width: 18, height: 18 }} />} onClick={handleBackToLobby}>
-            العودة للغرفة الرئيسية 🏠
+            العودة للرئيسية 🏠
           </Button>
         </div>
       </div>

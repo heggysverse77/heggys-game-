@@ -207,6 +207,12 @@ function InnerApp() {
       });
     });
 
+    const onLobbyError = (payload: { message?: string }) => {
+      console.warn('⚠️ [App] LOBBY:ERROR received:', payload);
+      showToast({ message: payload.message || 'حدث خطأ في الغرفة', type: 'error' });
+    };
+    socket.on('LOBBY:ERROR', onLobbyError);
+
     return () => {
       offRoundStart();
       offCurrentState();
@@ -215,6 +221,7 @@ function InnerApp() {
       offRematch();
       offKicked();
       offHostTransferred();
+      socket.off('LOBBY:ERROR', onLobbyError);
     };
   }, [socket, dispatch, user, room?.gameId]);
 
