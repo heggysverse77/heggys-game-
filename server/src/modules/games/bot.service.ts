@@ -239,13 +239,9 @@ export const handleBotMatching = async (io: Server, roundId: string, gameId: str
           const roundCheck = await pool.query('SELECT phase FROM game_rounds WHERE id = $1;', [roundId]);
           if (roundCheck.rows[0]?.phase !== 'MATCHING') return;
 
-          // For each answer, pick a candidate player (cannot be self if answer is self's)
+          // For each answer, pick a candidate player (cannot guess oneself)
           const guesses = answers.map((ans) => {
-            let candidatePlayers = players.filter((p) => p.id !== ans.authorPlayerId);
-            // Also cannot guess self for own answer
-            if (ans.authorPlayerId === bot.gamePlayerId) {
-              candidatePlayers = players.filter((p) => p.id !== bot.gamePlayerId);
-            }
+            let candidatePlayers = players.filter((p) => p.id !== bot.gamePlayerId);
             if (candidatePlayers.length === 0) {
               candidatePlayers = players;
             }

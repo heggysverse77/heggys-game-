@@ -37,9 +37,14 @@ export default function Navbar({
               }}
             />
           )}
-          <span className="hv-logo" style={{ fontSize: 20 }}>
-            {title === 'HeggyVerse' ? 'اعرف صاحبك' : title}
-          </span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="hv-logo" style={{ fontSize: 20, lineHeight: 1.2 }}>
+              {title === 'HeggyVerse' ? 'اعرف صاحبك' : title}
+            </span>
+            <span style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: '#33A9AC' }}>
+              a3raf-sa7bak.heggyverse.online
+            </span>
+          </div>
           {roomCode && (
             <button
               type="button"

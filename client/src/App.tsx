@@ -57,7 +57,15 @@ function InnerApp() {
   const [showInitialSplash, setShowInitialSplash] = useState(true);
   const { user, token, isAuthenticated } = useAuth();
   const { connect, socket, status } = useSocket();
-  const { dispatch } = useGameContext();
+  const { dispatch, state } = useGameContext();
+  const game = state.game;
+
+  // Return to lobby view if game status returns to LOBBY
+  useEffect(() => {
+    if (page === 'game' && game?.status === 'LOBBY') {
+      setPage('lobby');
+    }
+  }, [page, game?.status]);
 
   // Reconnect socket when token becomes available
   useEffect(() => {
@@ -173,6 +181,7 @@ function InnerApp() {
 
     const offRematch = onRematchStarted((payload) => {
       console.log('🔄 [App] LOBBY:REMATCH_STARTED received! Returning to lobby with room code:', payload.game.room_code);
+      dispatch({ type: 'RESET' });
       dispatch({
         type: 'GAME_JOINED',
         game: payload.game,

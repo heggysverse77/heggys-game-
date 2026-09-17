@@ -3,7 +3,6 @@ import { ArrowRight, LogOut, Volume2, VolumeX, Copy, Check } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth';
 import { useSound } from '../../hooks/useSound';
 import { useToast } from '../ui/Toast';
-import Avatar from '../ui/Avatar';
 import UserProfileModal from '../profile/UserProfileModal';
 
 interface GameHeaderProps {
@@ -80,24 +79,39 @@ export default function GameHeader({
                 <span className="hv-hide-mobile">{leaveLabel}</span>
               </button>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
               <img
                 src="/images/logo.png"
                 alt="اعرف صاحبك وعلّم عليه"
-                className="h-7 sm:h-9 w-auto object-contain shrink-0"
+                className="h-8 sm:h-10 w-auto object-contain shrink-0"
               />
-              <span
-                style={{
-                  fontWeight: 800,
-                  fontSize: 'clamp(14px, 3.8vw, 18px)',
-                  color: '#1A1A1A',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {title || 'اعرف صاحبك'}
-              </span>
+              <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                <span
+                  style={{
+                    fontWeight: 800,
+                    fontSize: 'clamp(14px, 3.8vw, 17px)',
+                    color: '#1A1A1A',
+                    lineHeight: 1.2,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {title || 'اعرف صاحبك'}
+                </span>
+                <span
+                  className="hv-hide-mobile"
+                  style={{
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    color: '#8A5A00',
+                    letterSpacing: '0.01em',
+                  }}
+                >
+                  a3raf-sa7bak.heggyverse.online
+                </span>
+              </div>
             </div>
           </div>
 
@@ -145,11 +159,11 @@ export default function GameHeader({
                 type="button"
                 onClick={onOpenProfile || (() => setProfileOpen(true))}
                 style={{
-                  height: 40,
+                  height: 38,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: 8,
-                  padding: '0 12px 0 8px',
+                  gap: 6,
+                  padding: '0 16px',
                   borderRadius: 10,
                   background: '#FFF0D4',
                   border: '2px solid #1A1A1A',
@@ -158,8 +172,7 @@ export default function GameHeader({
                 }}
                 title="الملف الشخصي"
               >
-                <Avatar avatarId={user.avatar_id} size="xs" ring="none" />
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: 14, fontWeight: 800, color: '#1A1A1A', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user.username}
                 </span>
               </button>

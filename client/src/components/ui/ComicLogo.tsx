@@ -69,9 +69,15 @@ export default function ComicLogo({
         />
       </div>
 
+      {/* Domain badge under logo */}
+      <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1A1A1A]/85 border border-[#FFA646]/70 text-[#FFA646] text-xs sm:text-sm font-mono font-bold tracking-wide shadow-md backdrop-blur-sm">
+        <span className="w-2 h-2 rounded-full bg-[#33A9AC] animate-pulse" />
+        <span>a3raf-sa7bak.heggyverse.online</span>
+      </div>
+
       {/* Optional sub-badge */}
       {showSubtitle && (
-        <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1e2044]/90 border border-[#343779] text-[#FFF6E5] text-xs sm:text-sm font-body font-bold shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+        <div className="mt-2 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1e2044]/90 border border-[#343779] text-[#FFF6E5] text-xs sm:text-sm font-body font-bold shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
           <span className="w-2 h-2 rounded-full bg-[#33A9AC] animate-ping" />
           <span>لعبة التحديات والتخمين الجماعية للأصدقاء</span>
         </div>

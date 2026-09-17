@@ -320,13 +320,22 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
         return socket.emit('LOBBY:ERROR', { message: 'Only host can start a rematch' });
       }
 
-      // 2. Reset game status back to 'LOBBY' and current_round_number to 0
+      // 2. Clean up previous round data for this game to prevent unique constraint violation on new match
+      await pool.query(`
+        DELETE FROM round_guesses WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
+        DELETE FROM round_scores WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
+        DELETE FROM round_answers WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
+        DELETE FROM game_dare_assignments WHERE game_id = $1;
+        DELETE FROM game_rounds WHERE game_id = $1;
+      `, [gameId]);
+
+      // 3. Reset game status back to 'LOBBY' and current_round_number to 0
       await pool.query(
         "UPDATE games SET status = 'LOBBY', current_round_number = 0 WHERE id = $1;",
         [gameId]
       );
 
-      // 3. Reset player scores to 0
+      // 4. Reset player scores to 0
       await pool.query(
         'UPDATE game_players SET total_score = 0 WHERE game_id = $1;',
         [gameId]
