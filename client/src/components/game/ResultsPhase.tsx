@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Play, Trophy, Sparkles, Eye } from 'lucide-react';
+import { Play, Trophy, Sparkles, Eye, MessageSquareQuote, Check, X } from 'lucide-react';
 import { Avatar } from '../ui';
 import Button from '../Button/Button';
 import Card from '../Card/Card';
