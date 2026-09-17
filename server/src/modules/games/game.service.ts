@@ -177,7 +177,7 @@ export const joinGameRoom = async (
 export const handlePlayerDisconnectOrLeave = async (
   gameId: string,
   userId: string
-): Promise<{ newHostUserId: string | null; updatedPlayers: any[] }> => {
+): Promise<{ newHostUserId: string | null; updatedPlayers: any[]; updatedGame: any | null }> => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -192,41 +192,55 @@ export const handlePlayerDisconnectOrLeave = async (
     const gameRes = await client.query('SELECT * FROM games WHERE id = $1', [gameId]);
     if (gameRes.rows.length === 0) {
       await client.query('COMMIT');
-      return { newHostUserId: null, updatedPlayers: [] };
+      return { newHostUserId: null, updatedPlayers: [], updatedGame: null };
     }
 
-    const game = gameRes.rows[0];
+    let game = gameRes.rows[0];
     let newHostUserId: string | null = null;
 
     if (game.host_user_id === userId) {
-      // Find the next connected player (earliest joined)
-      const nextHostRes = await client.query(
+      // Find a random connected REAL player first (excluding bots)
+      let nextHostRes = await client.query(
         `SELECT user_id FROM game_players 
-         WHERE game_id = $1 AND is_connected = true AND user_id != $2 
-         ORDER BY joined_at ASC LIMIT 1`,
+         WHERE game_id = $1 AND is_connected = true AND user_id != $2 AND (is_bot = false OR is_bot IS NULL)
+         ORDER BY RANDOM() LIMIT 1`,
         [gameId, userId]
       );
+
+      // Fallback: If only bots connected, allow any connected player
+      if (nextHostRes.rows.length === 0) {
+        nextHostRes = await client.query(
+          `SELECT user_id FROM game_players 
+           WHERE game_id = $1 AND is_connected = true AND user_id != $2 
+           ORDER BY RANDOM() LIMIT 1`,
+          [gameId, userId]
+        );
+      }
 
       if (nextHostRes.rows.length > 0) {
         newHostUserId = nextHostRes.rows[0].user_id;
 
         // Update games table
-        await client.query('UPDATE games SET host_user_id = $1 WHERE id = $2', [newHostUserId, gameId]);
+        const updatedGameRes = await client.query(
+          'UPDATE games SET host_user_id = $1 WHERE id = $2 RETURNING *',
+          [newHostUserId, gameId]
+        );
+        game = updatedGameRes.rows[0];
 
-        // Update old host
-        await client.query('UPDATE game_players SET is_host = false WHERE game_id = $1 AND user_id = $2', [gameId, userId]);
+        // Ensure ONLY newHostUserId has is_host = true
+        await client.query(
+          'UPDATE game_players SET is_host = (user_id = $1) WHERE game_id = $2',
+          [newHostUserId, gameId]
+        );
 
-        // Update new host
-        await client.query('UPDATE game_players SET is_host = true WHERE game_id = $1 AND user_id = $2', [gameId, newHostUserId]);
-
-        console.log(`👑 Host transferred in game [${gameId}] from user [${userId}] to user [${newHostUserId}]`);
+        console.log(`👑 Host transferred randomly in game [${gameId}] from user [${userId}] to player [${newHostUserId}]`);
       }
     }
 
     await client.query('COMMIT');
 
     const updatedPlayers = await getGamePlayersWithAvatars(gameId);
-    return { newHostUserId, updatedPlayers };
+    return { newHostUserId, updatedPlayers, updatedGame: game };
   } catch (error) {
     await client.query('ROLLBACK');
     throw error;

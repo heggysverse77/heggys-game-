@@ -391,6 +391,55 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
   });
 
   /**
+   * Event: LOBBY:RETURN_TO_LOBBY
+   * Returns all players back to the Room Lobby phase from the Final results screen
+   */
+  socket.on('LOBBY:RETURN_TO_LOBBY', async (payload: { gameId: string }) => {
+    try {
+      const { gameId } = payload;
+      if (!gameId) return;
+
+      const gameRes = await pool.query('SELECT * FROM games WHERE id = $1;', [gameId]);
+      if (gameRes.rows.length === 0) return socket.emit('LOBBY:ERROR', { message: 'Game not found' });
+
+      // Clean up previous round data for this game
+      await pool.query(`
+        DELETE FROM round_guesses WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
+        DELETE FROM round_scores WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
+        DELETE FROM round_answers WHERE round_id IN (SELECT id FROM game_rounds WHERE game_id = $1);
+        DELETE FROM game_dare_assignments WHERE game_id = $1;
+        DELETE FROM game_rounds WHERE game_id = $1;
+      `, [gameId]);
+
+      // Reset game status to 'LOBBY' and current_round_number to 0
+      const updatedGameRes = await pool.query(
+        "UPDATE games SET status = 'LOBBY', current_round_number = 0 WHERE id = $1 RETURNING *;",
+        [gameId]
+      );
+
+      // Reset player scores to 0
+      await pool.query(
+        'UPDATE game_players SET total_score = 0 WHERE game_id = $1;',
+        [gameId]
+      );
+
+      const roomChannel = `game_${gameId}`;
+      const players = await getGamePlayersWithAvatars(gameId);
+
+      io.to(roomChannel).emit('LOBBY:REMATCH_STARTED', {
+        gameId,
+        game: updatedGameRes.rows[0],
+        players,
+      });
+
+      console.log(`🏠 Returned all players to Room Lobby for game [${gameId}] by user [${user.username}].`);
+    } catch (error: any) {
+      console.error('Error in LOBBY:RETURN_TO_LOBBY handler:', error);
+      socket.emit('LOBBY:ERROR', { message: error.message || 'Failed to return to room lobby' });
+    }
+  });
+
+  /**
    * Event: LOBBY:KICK_PLAYER
    * Host removes a player/bot from the lobby
    */
@@ -450,11 +499,28 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
       const { gameId } = payload;
       if (!gameId) return;
 
-      const { updatedPlayers } = await handlePlayerDisconnectOrLeave(gameId, user.userId);
+      const { updatedPlayers, newHostUserId, updatedGame } = await handlePlayerDisconnectOrLeave(gameId, user.userId);
 
       const roomChannel = `game_${gameId}`;
       await socket.leave(roomChannel);
       socket.data.gameId = null;
+
+      if (newHostUserId && updatedGame) {
+        const newHostPlayer = updatedPlayers.find((p) => p.user_id === newHostUserId || p.userId === newHostUserId);
+        const newHostName = newHostPlayer?.nickname || 'أحد اللاعبين';
+
+        io.to(roomChannel).emit('LOBBY:SETTINGS_UPDATED', {
+          gameId,
+          game: updatedGame,
+        });
+
+        io.to(roomChannel).emit('LOBBY:HOST_TRANSFERRED', {
+          gameId,
+          newHostUserId,
+          newHostNickname: newHostName,
+          message: `👑 تم نقل قيادة الغرفة تلقائياً إلى ${newHostName}`,
+        });
+      }
 
       io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
         gameId,
@@ -475,9 +541,27 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
     const gameId = socket.data.gameId;
     if (gameId) {
       try {
-        const { updatedPlayers } = await handlePlayerDisconnectOrLeave(gameId, user.userId);
+        const { updatedPlayers, newHostUserId, updatedGame } = await handlePlayerDisconnectOrLeave(gameId, user.userId);
 
         const roomChannel = `game_${gameId}`;
+
+        if (newHostUserId && updatedGame) {
+          const newHostPlayer = updatedPlayers.find((p) => p.user_id === newHostUserId || p.userId === newHostUserId);
+          const newHostName = newHostPlayer?.nickname || 'أحد اللاعبين';
+
+          io.to(roomChannel).emit('LOBBY:SETTINGS_UPDATED', {
+            gameId,
+            game: updatedGame,
+          });
+
+          io.to(roomChannel).emit('LOBBY:HOST_TRANSFERRED', {
+            gameId,
+            newHostUserId,
+            newHostNickname: newHostName,
+            message: `👑 تم نقل قيادة الغرفة تلقائياً إلى ${newHostName}`,
+          });
+        }
+
         io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
           gameId,
           players: updatedPlayers,

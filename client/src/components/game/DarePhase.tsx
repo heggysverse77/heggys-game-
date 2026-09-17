@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { RefreshCw, Swords } from 'lucide-react';
+import { RefreshCw, Swords, Home } from 'lucide-react';
 import { useGame } from '../../hooks/useGame';
 import { useSound } from '../../hooks/useSound';
 import { emitDareAssign, onDareAnnounced } from '../../socket/dare.events';
-import { emitRematch } from '../../socket/lobby.events';
+import { emitRematch, emitReturnToLobby } from '../../socket/lobby.events';
 import type { DareAnnouncedPayload } from '../../socket/socket.types';
 
 interface DarePhaseProps {
@@ -111,17 +111,27 @@ export default function DarePhase({ gameId }: DarePhaseProps) {
             </p>
           </div>
 
-          {/* Replay action */}
-          {isHost && (
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-sm mt-1">
+            {isHost && (
+              <button
+                type="button"
+                onClick={() => emitRematch({ gameId })}
+                className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl comic-btn-teal font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>العب من جديد 🔄</span>
+              </button>
+            )}
             <button
               type="button"
-              onClick={() => emitRematch({ gameId })}
-              className="w-full max-w-sm h-11 sm:h-12 rounded-xl sm:rounded-2xl comic-btn-teal font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 mt-1 whitespace-nowrap"
+              onClick={() => emitReturnToLobby({ gameId })}
+              className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl comic-btn-cream font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap"
             >
-              <RefreshCw className="w-4 h-4" />
-              <span>العب من جديد (Rematch)</span>
+              <Home className="w-4 h-4" />
+              <span>العودة للغرفة 🏠</span>
             </button>
-          )}
+          </div>
         </div>
       )}
     </div>

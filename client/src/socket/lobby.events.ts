@@ -71,4 +71,15 @@ export function onKicked(cb: (payload: { message: string }) => void): () => void
   return () => socket.off('LOBBY:KICKED', cb);
 }
 
+export function emitReturnToLobby(payload: { gameId: string }): void {
+  getSocket().emit('LOBBY:RETURN_TO_LOBBY', payload);
+}
+
+export function onHostTransferred(cb: (payload: { gameId: string; newHostUserId: string; newHostNickname: string; message: string }) => void): () => void {
+  const socket = getSocket();
+  socket.on('LOBBY:HOST_TRANSFERRED', cb);
+  return () => socket.off('LOBBY:HOST_TRANSFERRED', cb);
+}
+
+
 

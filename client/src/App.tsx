@@ -16,7 +16,7 @@ import { createRoom, type CreateGameOptions } from './services/game.service';
 import { emitJoinRoom } from './socket/lobby.events';
 
 import { onRoundStart } from './socket/round.events';
-import { onCurrentState, onUpdatePlayers, onSettingsUpdated, onRematchStarted, onKicked } from './socket/lobby.events';
+import { onCurrentState, onUpdatePlayers, onSettingsUpdated, onRematchStarted, onKicked, onHostTransferred } from './socket/lobby.events';
 
 type AppPage = 'home' | 'join' | 'lobby' | 'game';
 
@@ -199,6 +199,14 @@ function InnerApp() {
       setPage('home');
     });
 
+    const offHostTransferred = onHostTransferred((payload) => {
+      console.log('👑 [App] LOBBY:HOST_TRANSFERRED received:', payload);
+      showToast({
+        message: payload.message || `👑 تم نقل قيادة الغرفة إلى ${payload.newHostNickname}`,
+        type: 'info',
+      });
+    });
+
     return () => {
       offRoundStart();
       offCurrentState();
@@ -206,6 +214,7 @@ function InnerApp() {
       offSettingsUpdated();
       offRematch();
       offKicked();
+      offHostTransferred();
     };
   }, [socket, dispatch, user, room?.gameId]);
 

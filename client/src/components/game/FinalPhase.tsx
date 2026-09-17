@@ -5,7 +5,7 @@ import Button from '../Button/Button';
 import { useGame } from '../../hooks/useGame';
 import { useConfetti } from '../../hooks/useConfetti';
 import { useSound } from '../../hooks/useSound';
-import { emitRematch } from '../../socket/lobby.events';
+import { emitRematch, emitReturnToLobby } from '../../socket/lobby.events';
 
 interface FinalPhaseProps {
   _gameId?: string;
@@ -30,7 +30,11 @@ export default function FinalPhase(props: FinalPhaseProps) {
   };
 
   const handleBackToLobby = () => {
-    window.location.reload();
+    if (activeGameId) {
+      emitReturnToLobby({ gameId: activeGameId });
+    } else {
+      window.location.reload();
+    }
   };
 
   const isDareEnabled = Boolean(
@@ -326,7 +330,7 @@ export default function FinalPhase(props: FinalPhaseProps) {
         )}
         <div style={{ flex: 1, minWidth: 200 }}>
           <Button variant="ghost" fullWidth size="lg" icon={<Home style={{ width: 18, height: 18 }} />} onClick={handleBackToLobby}>
-            العودة للرئيسية 🏠
+            العودة للغرفة الرئيسية 🏠
           </Button>
         </div>
       </div>
