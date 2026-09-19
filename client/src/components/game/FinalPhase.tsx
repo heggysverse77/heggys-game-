@@ -13,7 +13,7 @@ interface FinalPhaseProps {
 }
 
 export default function FinalPhase(props: FinalPhaseProps) {
-  const { leaderboard, game, isHost, finalResults, dispatch } = useGame();
+  const { leaderboard, game, isHost } = useGame();
   const { celebrate } = useConfetti();
   const { play } = useSound();
 
@@ -37,33 +37,8 @@ export default function FinalPhase(props: FinalPhaseProps) {
     }
   };
 
-  const isDareEnabled = Boolean(
-    finalResults?.dareEnabled ??
-      game?.dare_enabled ??
-      (finalResults?.dareCards && finalResults.dareCards.length > 0)
-  );
-
   const winner = leaderboard[0];
   const rest = leaderboard.slice(1);
-  const lastPlace = leaderboard.length > 0 ? leaderboard[leaderboard.length - 1] : null;
-
-  // Robust dare text extractor to prevent raw JSON strings
-  const getDareText = (d: any): string => {
-    if (!d) return '';
-    if (typeof d === 'string') {
-      const trimmed = d.trim();
-      if (trimmed.startsWith('{') && trimmed.includes('text_ar')) {
-        try {
-          const parsed = JSON.parse(trimmed);
-          return parsed.text_ar || parsed.textAr || parsed.text || parsed.text_en || d;
-        } catch {
-          return d;
-        }
-      }
-      return d;
-    }
-    return d.text_ar || d.textAr || d.text || d.text_en || 'نفذ حكماً يختاره باقي اللاعبين!';
-  };
 
   return (
     <div className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, maxWidth: 740, paddingBlock: 12 }}>
@@ -149,7 +124,6 @@ export default function FinalPhase(props: FinalPhaseProps) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
         {rest.map((entry, i) => {
           const rankNum = i + 2;
-          const isLast = rankNum === leaderboard.length;
 
           return (
             <div
@@ -172,14 +146,14 @@ export default function FinalPhase(props: FinalPhaseProps) {
                     width: 34,
                     height: 34,
                     borderRadius: 10,
-                    background: isLast && isDareEnabled ? '#FFE5E5' : '#FFF0D4',
+                    background: '#FFF0D4',
                     border: '2px solid #1A1A1A',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: 16,
-                    color: isLast && isDareEnabled ? '#D32F2F' : '#1A1A1A',
+                    color: '#1A1A1A',
                     flexShrink: 0,
                     boxShadow: '1.5px 1.5px 0px #1A1A1A',
                   }}
@@ -195,11 +169,6 @@ export default function FinalPhase(props: FinalPhaseProps) {
                   <span style={{ fontWeight: 900, fontSize: 17, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {entry.nickname}
                   </span>
-                  {isLast && isDareEnabled && (
-                    <span style={{ fontSize: 12, fontWeight: 900, padding: '3px 10px', borderRadius: 9999, background: '#F86041', color: '#FFFFFF', border: '1.5px solid #1A1A1A', boxShadow: '1.5px 1.5px 0px #1A1A1A' }}>
-                      عليه العقوبة 🌶️
-                    </span>
-                  )}
                 </div>
               </div>
 
