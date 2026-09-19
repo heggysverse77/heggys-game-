@@ -111,6 +111,8 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
     );
     const hasFinishedGuessing = isMe ? hasSubmittedGuesses : Boolean(statusObj?.hasGuessed);
 
+    // Check if an answer in my current form is assigned to this player
+    const assignedAnswerId = Object.keys(myGuesses).find((ansId) => myGuesses[ansId] === pId);
     const isTargetOfSelected = selectedAnswerId ? myGuesses[selectedAnswerId] === pId : false;
 
     return {
@@ -119,6 +121,8 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
       avatarId: p.avatarId || p.avatar_id,
       isMe,
       hasActed: hasFinishedGuessing,
+      statusText: isMe ? 'تخمن...' : 'يخمن...',
+      isAssignedInMatching: Boolean(assignedAnswerId),
       isSelected: isTargetOfSelected,
       isDisabled: hasSubmittedGuesses || isMe,
     };

@@ -63,16 +63,21 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
   // Map room players into table players with their answered status
   const tablePlayers: TablePlayer[] = (answerStatuses?.players || players || []).map((p: any) => {
     const pId = p.playerId || p.gamePlayerId || p.userId || p.id;
+    const isMe =
+      (user && (p.userId === user.id || p.userId === (user as any).userId)) ||
+      (myPlayerId && (p.gamePlayerId === myPlayerId || p.userId === myPlayerId || p.id === myPlayerId));
     const answered =
       p.hasAnswered !== undefined
         ? p.hasAnswered
-        : answerStatuses?.players?.find((ap) => ap.playerId === pId)?.hasAnswered;
+        : answerStatuses?.players?.find((ap) => ap.playerId === pId || ap.userId === p.userId)?.hasAnswered;
 
     return {
       id: pId,
       nickname: p.nickname || 'لاعب',
       avatarId: p.avatarId || p.avatar_id,
+      isMe,
       hasActed: answered,
+      statusText: isMe ? 'تكتب...' : 'يكتب...',
     };
   });
 

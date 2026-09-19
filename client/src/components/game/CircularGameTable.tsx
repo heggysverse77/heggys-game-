@@ -11,6 +11,8 @@ export interface TablePlayer {
   isMe?: boolean;
   isSelected?: boolean;
   isDisabled?: boolean;
+  statusText?: string;
+  isAssignedInMatching?: boolean;
 }
 
 interface CircularGameTableProps {
@@ -36,14 +38,14 @@ export default function CircularGameTable({
 
   return (
     <div className={`relative flex flex-col items-center justify-center w-full ${className}`}>
-<div
-          className="relative flex items-center justify-center select-none my-2 sm:my-4"
-          style={{
-            width: 'clamp(280px, min(92vw, 80vh), 520px)',
-            height: 'clamp(280px, min(92vw, 50vh), 520px)',
-            maxWidth: '94vw',
-          }}
-        >
+      <div
+        className="relative flex items-center justify-center select-none my-2 sm:my-4"
+        style={{
+          width: 'clamp(280px, min(92vw, 80vh), 520px)',
+          height: 'clamp(280px, min(92vw, 50vh), 520px)',
+          maxWidth: '94vw',
+        }}
+      >
         {/* SVG Orbital Dashed Ring Connecting All Player Nodes */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none z-0"
@@ -97,16 +99,18 @@ export default function CircularGameTable({
                   isClickable ? 'cursor-pointer hover:scale-110 active:scale-95' : 'cursor-default',
                 ].join(' ')}
               >
-                {/* Avatar Badge with Thick Comic Border */}
+                {/* Avatar Badge with Comic Border */}
                 <div className="relative">
                   <div
                     className={[
-                      'rounded-full p-1 transition-all duration-150 shadow-[3px_3px_0px_#1A1A1A] border-2.5 sm:border-3 border-[#1A1A1A]',
+                      'rounded-full p-1 transition-all duration-150 shadow-[3px_3px_0px_#1A1A1A] border-2.5 sm:border-3',
                       isSelected
-                        ? 'bg-[#FFA646] ring-4 ring-[#FFA646] scale-105'
+                        ? 'bg-[#FFA646] border-[#1A1A1A] ring-4 ring-[#FFA646] scale-105'
+                        : player.isAssignedInMatching
+                        ? 'bg-[#33A9AC]/20 border-[#33A9AC] ring-2 ring-[#33A9AC]'
                         : player.hasActed
-                        ? 'bg-[#33A9AC]/30'
-                        : 'bg-[#FFF6E5]',
+                        ? 'bg-[#33A9AC]/30 border-[#1A1A1A]'
+                        : 'bg-[#FFF6E5] border-[#1A1A1A]',
                     ].join(' ')}
                   >
                     <Avatar
@@ -118,25 +122,34 @@ export default function CircularGameTable({
                     />
                   </div>
 
-                  {/* Completed action checkmark */}
-                  {player.hasActed && (
-                    <div className="absolute -top-1 -right-1 z-30 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#33A9AC] border-1.5 border-[#1A1A1A] text-white flex items-center justify-center text-xs font-black shadow-xs animate-[pop_0.2s_ease]">
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  {/* 1. Finished Action Badge (Green Checkmark) */}
+                  {player.hasActed ? (
+                    <div className="absolute -top-1 -right-1 z-30 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#33A9AC] border-2 border-[#1A1A1A] text-white flex items-center justify-center text-xs font-black shadow-[1.5px_1.5px_0px_#1A1A1A] animate-[pop_0.2s_ease]">
+                      <Check className="w-3.5 h-3.5 stroke-[3.5]" />
+                    </div>
+                  ) : (
+                    /* 2. Still Thinking / Answering / Matching Loading Chip */
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 px-1.5 sm:px-2 py-0.5 rounded-full bg-[#FFA646] text-[#1A1A1A] border-1.5 border-[#1A1A1A] text-[9px] sm:text-[10px] font-display font-black shadow-[1px_1px_0px_#1A1A1A] flex items-center gap-1 animate-pulse whitespace-nowrap">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#1A1A1A] animate-ping shrink-0" />
+                      <span>{player.statusText || 'يفكر...'}</span>
                     </div>
                   )}
                 </div>
 
-                {/* Nickname pill badge (Spacious & Clean) */}
+                {/* Nickname pill badge */}
                 <div
                   className={[
-                    'px-3 sm:px-3.5 py-0.5 sm:py-1 rounded-full text-xs sm:text-[13px] font-display font-black border-2 border-[#1A1A1A] transition-all max-w-[100px] sm:max-w-[130px] truncate shadow-[2px_2px_0px_#1A1A1A] z-30 leading-none',
+                    'px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-[13px] font-display font-black border-2 transition-all max-w-[100px] sm:max-w-[130px] truncate shadow-[2px_2px_0px_#1A1A1A] z-30 leading-none flex items-center gap-1',
                     isTop ? 'mb-1' : 'mt-1',
                     isSelected
-                      ? 'bg-[#FFA646] text-[#1A1A1A] scale-105'
-                      : 'bg-[#FFF6E5] text-[#1A1A1A]',
+                      ? 'bg-[#FFA646] text-[#1A1A1A] border-[#1A1A1A] scale-105'
+                      : player.isAssignedInMatching
+                      ? 'bg-[#33A9AC] text-white border-[#1A1A1A]'
+                      : 'bg-[#FFF6E5] text-[#1A1A1A] border-[#1A1A1A]',
                   ].join(' ')}
                 >
-                  {player.nickname}
+                  <span className="truncate">{player.nickname}</span>
+                  {player.isAssignedInMatching && <span className="text-[10px]">🔗</span>}
                 </div>
               </button>
             </div>
