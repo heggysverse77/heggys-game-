@@ -148,7 +148,7 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
           let resultsData: any = null;
 
           if (round.phase === 'MATCHING') {
-            const rawMatching = await getMatchingPhaseData(round.id, gameId);
+            const rawMatching = await getMatchingPhaseData(round.id, gameId, user.userId);
             const myGuessesRes = await pool.query(
               `SELECT rg.* FROM round_guesses rg 
                JOIN game_players gp ON rg.guesser_player_id = gp.id 

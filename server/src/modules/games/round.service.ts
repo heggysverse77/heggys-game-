@@ -412,13 +412,15 @@ export const startMatchingPhase = async (roundId: string, gameId: string) => {
     [roundId]
   );
 
+  const allAnswersWithAuthors = answersRes.rows;
+
   const anonymousAnswers: any[] = shuffleArray(
     answersRes.rows.map((r) => ({
       answerId: r.answerId,
       answer_id: r.answerId,
       text: r.text,
       // Note: authorPlayerId and authorUserId are intentionally NOT included here
-      // to prevent clients from reading answer ownership before the reveal phase.
+      // in public broadcasts to prevent clients from reading answer ownership before the reveal phase.
     }))
   );
 
@@ -436,6 +438,7 @@ export const startMatchingPhase = async (roundId: string, gameId: string) => {
     roundId,
     phase: 'MATCHING' as const,
     matchingTimerSec,
+    allAnswersWithAuthors,
     anonymousAnswers,
     playersToMatch: playersRes.rows,
   };
@@ -444,7 +447,7 @@ export const startMatchingPhase = async (roundId: string, gameId: string) => {
 /**
  * Retrieves existing matching phase data without resetting timer or deadlines (for reconnection)
  */
-export const getMatchingPhaseData = async (roundId: string, gameId: string) => {
+export const getMatchingPhaseData = async (roundId: string, gameId: string, requestingUserId?: string) => {
   const roundRes = await pool.query('SELECT phase_deadline FROM game_rounds WHERE id = $1;', [roundId]);
   const gameRes = await pool.query('SELECT matching_timer_sec FROM games WHERE id = $1;', [gameId]);
   const matchingTimerSec = gameRes.rows[0]?.matching_timer_sec || 45;
@@ -476,12 +479,18 @@ export const getMatchingPhaseData = async (roundId: string, gameId: string) => {
     [gameId]
   );
 
-  const anonymousAnswers: any[] = answersRes.rows.map((r) => ({
-    answerId: r.answerId,
-    answer_id: r.answerId,
-    text: r.text,
-    // Author info intentionally stripped — only revealed in RESULTS phase
-  }));
+  // Filter out the requesting user's own answer so they only match their friends' answers
+  const filteredAnswers = requestingUserId
+    ? answersRes.rows.filter((r) => r.authorUserId !== requestingUserId)
+    : answersRes.rows;
+
+  const anonymousAnswers: any[] = shuffleArray(
+    filteredAnswers.map((r) => ({
+      answerId: r.answerId,
+      answer_id: r.answerId,
+      text: r.text,
+    }))
+  );
 
   return {
     roundId,

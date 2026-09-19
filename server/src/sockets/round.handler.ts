@@ -22,14 +22,35 @@ export const triggerMatchingPhase = async (io: Server, roundId: string, gameId: 
   const matchingData = await startMatchingPhase(roundId, gameId);
   const guessStatuses = await getMatchingGuessStatuses(roundId, gameId);
 
-  io.to(roomChannel).emit('ROUND:START_MATCHING', {
-    gameId,
-    ...matchingData,
-    timer: matchingData.matchingTimerSec,
-    submittedCount: guessStatuses.submittedCount,
-    totalPlayers: guessStatuses.totalPlayers,
-    players: guessStatuses.players,
-  });
+  // Fetch all connected sockets in this game room
+  const socketsInRoom = await io.in(roomChannel).fetchSockets();
+
+  for (const s of socketsInRoom) {
+    const authSocket = s as any;
+    const socketUserId = authSocket.user?.userId;
+
+    // Filter out the answer written by this user so they only match their friends' answers
+    const userAnswers = matchingData.allAnswersWithAuthors
+      .filter((a: any) => a.authorUserId !== socketUserId)
+      .map((a: any) => ({
+        answerId: a.answerId,
+        answer_id: a.answerId,
+        text: a.text,
+      }));
+
+    s.emit('ROUND:START_MATCHING', {
+      gameId,
+      roundId,
+      phase: 'MATCHING',
+      matchingTimerSec: matchingData.matchingTimerSec,
+      anonymousAnswers: shuffleArray(userAnswers),
+      playersToMatch: matchingData.playersToMatch,
+      timer: matchingData.matchingTimerSec,
+      submittedCount: guessStatuses.submittedCount,
+      totalPlayers: guessStatuses.totalPlayers,
+      players: guessStatuses.players,
+    });
+  }
 
   // Trigger bots to submit matching guesses
   handleBotMatching(io, roundId, gameId);
