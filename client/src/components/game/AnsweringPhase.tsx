@@ -3,7 +3,7 @@ import { AlertCircle, Timer, Play, SkipForward } from 'lucide-react';
 import { useGame } from '../../hooks/useGame';
 import { useTimer } from '../../hooks/useTimer';
 import { useSound } from '../../hooks/useSound';
-import { emitSubmitAnswer, emitForceMatching, onRoundError } from '../../socket/round.events';
+import { emitSubmitAnswer, emitForceMatching, emitSkipQuestion, onRoundError } from '../../socket/round.events';
 import CircularGameTable, { type TablePlayer } from './CircularGameTable';
 
 interface AnsweringPhaseProps {
@@ -187,12 +187,12 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
               {isHost && targetRoundId && (
                 <button
                   type="button"
-                  onClick={() => emitForceMatching({ gameId, roundId: targetRoundId })}
+                  onClick={() => emitSkipQuestion({ gameId, roundId: targetRoundId })}
                   className={[
                     'w-full sm:w-auto px-5 sm:px-6 h-11 sm:h-12 rounded-xl sm:rounded-2xl font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap',
                     'bg-[#FFA646] text-[#1A1A1A] hover:bg-[#F59A33] active:translate-y-0.5',
                   ].join(' ')}
-                  title="الانتقال لمرحلة التخمين فوراً (للمضيف)"
+                  title="تخطي هذا السؤال واختيار سؤال جديد (للمضيف)"
                 >
                   <SkipForward className="w-4 h-4" />
                   <span>تخطي السؤال</span>

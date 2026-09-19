@@ -47,7 +47,7 @@ html {
 body {
   font-family: var(--font-body);
   background-color: var(--color-bg);
-  background-image: url('/images/comic_city_bg.jpg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.32)), url('/images/comic_city_bg.jpg');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -61,7 +61,7 @@ body {
 
 @media (max-width: 640px) {
   body {
-    background-image: url('/images/comic_city_bg_mobile.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.32)), url('/images/comic_city_bg_mobile.jpg');
     background-position: center top;
   }
 }
@@ -71,7 +71,7 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image: url('/images/comic_city_bg.jpg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.32)), url('/images/comic_city_bg.jpg');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -79,7 +79,7 @@ body {
 
 @media (max-width: 640px) {
   .hv-bg-wallpaper {
-    background-image: url('/images/comic_city_bg_mobile.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.32)), url('/images/comic_city_bg_mobile.jpg');
     background-position: center top;
   }
 }

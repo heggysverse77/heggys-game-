@@ -85,48 +85,33 @@ export default function GameHeader({
                 alt="اعرف صاحبك وعلّم عليه"
                 className="h-8 sm:h-10 w-auto object-contain shrink-0"
               />
-              <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                <span
-                  style={{
-                    fontWeight: 800,
-                    fontSize: 'clamp(14px, 3.8vw, 17px)',
-                    color: '#1A1A1A',
-                    lineHeight: 1.2,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {title || 'اعرف صاحبك'}
-                </span>
-                <span
-                  className="hv-hide-mobile"
-                  style={{
-                    fontSize: 11,
-                    fontFamily: 'monospace',
-                    fontWeight: 700,
-                    color: '#8A5A00',
-                    letterSpacing: '0.01em',
-                  }}
-                >
-                  a3raf-sa7bak.heggyverse.online
-                </span>
-              </div>
+              <span
+                style={{
+                  fontWeight: 800,
+                  fontSize: 'clamp(14px, 3.8vw, 17px)',
+                  color: '#1A1A1A',
+                  lineHeight: 1.2,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {title || 'اعرف صاحبك'}
+              </span>
             </div>
           </div>
 
-          {/* Room code chip — hidden on mobile to avoid cramming header */}
+          {/* Room code chip — always visible on all devices */}
           {roomCode && (
             <button
               type="button"
               onClick={handleCopyCode}
-              title="اضغط لنسخ الكود"
-              className="hv-hide-mobile"
+              title="اضغط لنسخ كود الغرفة"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 8,
-                padding: '6px 14px',
+                gap: 6,
+                padding: '4px 10px',
                 borderRadius: 9999,
                 background: '#FFF0D4',
                 border: '2px solid #1A1A1A',
@@ -135,12 +120,14 @@ export default function GameHeader({
                 flexShrink: 0,
               }}
             >
-              <span style={{ fontSize: 12, color: '#1A1A1A', fontWeight: 700 }}>كود الغرفة:</span>
-              <span className="room-code" style={{ color: '#33A9AC', fontSize: 13, fontWeight: 800 }}>{roomCode}</span>
+              <span className="hv-hide-mobile" style={{ fontSize: 12, color: '#1A1A1A', fontWeight: 700 }}>كود:</span>
+              <span className="room-code" style={{ color: '#33A9AC', fontSize: 'clamp(12px, 3.5vw, 14px)', fontWeight: 900, letterSpacing: '0.05em' }}>
+                {roomCode}
+              </span>
               {copied ? (
-                <Check style={{ width: 14, height: 14, color: '#4CAF50' }} />
+                <Check style={{ width: 13, height: 13, color: '#4CAF50' }} />
               ) : (
-                <Copy style={{ width: 14, height: 14, color: '#1A1A1A' }} />
+                <Copy style={{ width: 13, height: 13, color: '#1A1A1A' }} />
               )}
             </button>
           )}

@@ -78,16 +78,32 @@ export const startGameSession = async (
       [gameId]
     );
 
-    // 4. Select a random active question from questions bank
-    const questionRes = await client.query(
-      'SELECT * FROM questions WHERE is_active = true ORDER BY RANDOM() LIMIT 1;'
+    // 4. Select a random active question from questions bank excluding questions used in this room
+    let questionRes = await client.query(
+      `SELECT * FROM questions 
+       WHERE is_active = true 
+         AND id NOT IN (SELECT question_id FROM room_used_questions WHERE room_code = $1)
+       ORDER BY RANDOM() LIMIT 1;`,
+      [game.room_code]
     );
 
+    // Fallback: if all questions have been used in this room, reset history for this room and pick again
     if (questionRes.rows.length === 0) {
-      throw new Error('NO_QUESTIONS_AVAILABLE');
+      await client.query('DELETE FROM room_used_questions WHERE room_code = $1;', [game.room_code]);
+      questionRes = await client.query(
+        'SELECT * FROM questions WHERE is_active = true ORDER BY RANDOM() LIMIT 1;'
+      );
     }
 
     const question: Question = questionRes.rows[0];
+
+    // Mark question as used for this room
+    await client.query(
+      `INSERT INTO room_used_questions (room_code, question_id)
+       VALUES ($1, $2)
+       ON CONFLICT (room_code, question_id) DO NOTHING;`,
+      [game.room_code, question.id]
+    );
 
     // 5. Create Round 1 record
     const deadline = new Date(Date.now() + game.answering_timer_sec * 1000);
@@ -200,7 +216,9 @@ export const getRoundAnswerStatuses = async (
     FROM game_players gp
     JOIN users u ON gp.user_id = u.id
     LEFT JOIN round_answers ra ON ra.round_id = $1 AND ra.game_player_id = gp.id
-    WHERE gp.game_id = $2 AND gp.is_connected = true
+    WHERE gp.game_id = $2
+      AND gp.is_connected = true
+      AND gp.status NOT IN ('KICKED', 'LEFT')
     ORDER BY gp.joined_at ASC;
   `;
 
@@ -386,8 +404,8 @@ export const startMatchingPhase = async (roundId: string, gameId: string) => {
       answerId: r.answerId,
       answer_id: r.answerId,
       text: r.text,
-      authorPlayerId: r.authorPlayerId,
-      authorUserId: r.authorUserId,
+      // Note: authorPlayerId and authorUserId are intentionally NOT included here
+      // to prevent clients from reading answer ownership before the reveal phase.
     }))
   );
 
@@ -449,8 +467,7 @@ export const getMatchingPhaseData = async (roundId: string, gameId: string) => {
     answerId: r.answerId,
     answer_id: r.answerId,
     text: r.text,
-    authorPlayerId: r.authorPlayerId,
-    authorUserId: r.authorUserId,
+    // Author info intentionally stripped — only revealed in RESULTS phase
   }));
 
   return {
@@ -545,7 +562,9 @@ export const getMatchingGuessStatuses = async (roundId: string, gameId: string) 
     FROM game_players gp
     JOIN users u ON gp.user_id = u.id
     LEFT JOIN round_guesses rg ON rg.round_id = $1 AND rg.guesser_player_id = gp.id
-    WHERE gp.game_id = $2 AND gp.is_connected = true
+    WHERE gp.game_id = $2
+      AND gp.is_connected = true
+      AND gp.status NOT IN ('KICKED', 'LEFT')
     GROUP BY gp.id, u.avatar_id
     ORDER BY gp.joined_at ASC;
   `;
@@ -777,23 +796,33 @@ export const advanceToNextRound = async (
       return { isGameOver: true, finalResult };
     }
 
-    // 2. Select a random active question not used yet in this game
-    const questionRes = await client.query(
+    // 2. Select a random active question not used yet in this room
+    let questionRes = await client.query(
       `SELECT * FROM questions 
        WHERE is_active = true 
-         AND id NOT IN (SELECT question_id FROM game_rounds WHERE game_id = $1)
+         AND id NOT IN (SELECT question_id FROM room_used_questions WHERE room_code = $1)
        ORDER BY RANDOM() 
        LIMIT 1;`,
-      [gameId]
+      [game.room_code]
     );
 
-    // Fallback if questions run out
-    const finalQuestionRes =
-      questionRes.rows.length > 0
-        ? questionRes
-        : await client.query('SELECT * FROM questions WHERE is_active = true ORDER BY RANDOM() LIMIT 1;');
+    // Fallback if questions run out for this room
+    if (questionRes.rows.length === 0) {
+      await client.query('DELETE FROM room_used_questions WHERE room_code = $1;', [game.room_code]);
+      questionRes = await client.query(
+        'SELECT * FROM questions WHERE is_active = true ORDER BY RANDOM() LIMIT 1;'
+      );
+    }
 
-    const question: Question = finalQuestionRes.rows[0];
+    const question: Question = questionRes.rows[0];
+
+    // Mark question as used for this room
+    await client.query(
+      `INSERT INTO room_used_questions (room_code, question_id)
+       VALUES ($1, $2)
+       ON CONFLICT (room_code, question_id) DO NOTHING;`,
+      [game.room_code, question.id]
+    );
 
     // 3. Update current round number on games table
     await client.query('UPDATE games SET current_round_number = $1 WHERE id = $2;', [
@@ -923,6 +952,94 @@ export const finishGameSession = async (gameId: string): Promise<FinalGameResult
       dareEnabled,
       dareCards,
     };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+/**
+ * Skips the current ANSWERING round without counting it as a completed round.
+ * Marks the existing round as skipped, then creates a fresh round with the same
+ * round_number and a new question. current_round_number is NOT incremented.
+ */
+export const skipCurrentQuestion = async (
+  gameId: string,
+  hostUserId: string,
+  roundId: string
+): Promise<{ round: GameRound; question: Question; answeringTimerSec: number }> => {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // 1. Validate host
+    const gameRes = await client.query('SELECT * FROM games WHERE id = $1 FOR UPDATE;', [gameId]);
+    if (gameRes.rows.length === 0) throw new Error('GAME_NOT_FOUND');
+    const game = gameRes.rows[0];
+    if (game.host_user_id !== hostUserId) throw new Error('NOT_HOST');
+    if (game.status !== 'IN_PROGRESS') throw new Error('GAME_NOT_IN_PROGRESS');
+
+    // 2. Validate the round
+    const roundRes = await client.query(
+      `SELECT * FROM game_rounds WHERE id = $1 AND game_id = $2 FOR UPDATE;`,
+      [roundId, gameId]
+    );
+    if (roundRes.rows.length === 0) throw new Error('ROUND_NOT_FOUND');
+    const currentRound = roundRes.rows[0];
+    if (currentRound.phase !== 'ANSWERING') throw new Error('ROUND_NOT_IN_ANSWERING_PHASE');
+    if (currentRound.is_skipped) throw new Error('ROUND_ALREADY_SKIPPED');
+
+    // 3. Mark the current round as skipped (NOT deleted — tracked for question deduplication)
+    await client.query(
+      `UPDATE game_rounds SET phase = 'FINISHED', is_skipped = true WHERE id = $1;`,
+      [roundId]
+    );
+
+    // 4. Select a NEW question — excluding ALL previously used questions in this room
+    let questionRes = await client.query(
+      `SELECT * FROM questions 
+       WHERE is_active = true 
+         AND id NOT IN (SELECT question_id FROM room_used_questions WHERE room_code = $1)
+       ORDER BY RANDOM() LIMIT 1;`,
+      [game.room_code]
+    );
+
+    // Fallback: all questions exhausted for this room
+    if (questionRes.rows.length === 0) {
+      await client.query('DELETE FROM room_used_questions WHERE room_code = $1;', [game.room_code]);
+      questionRes = await client.query(
+        'SELECT * FROM questions WHERE is_active = true ORDER BY RANDOM() LIMIT 1;'
+      );
+    }
+
+    if (questionRes.rows.length === 0) throw new Error('NO_QUESTIONS_AVAILABLE');
+    const question: Question = questionRes.rows[0];
+
+    // Mark question as used for this room
+    await client.query(
+      `INSERT INTO room_used_questions (room_code, question_id)
+       VALUES ($1, $2)
+       ON CONFLICT (room_code, question_id) DO NOTHING;`,
+      [game.room_code, question.id]
+    );
+
+    // 5. Create a new round with the SAME round_number (skipped don't count)
+    const deadline = new Date(Date.now() + game.answering_timer_sec * 1000);
+    const newRoundRes = await client.query(
+      `INSERT INTO game_rounds (game_id, round_number, question_id, phase, phase_deadline)
+       VALUES ($1, $2, $3, 'ANSWERING', $4)
+       RETURNING *;`,
+      [gameId, currentRound.round_number, question.id, deadline]
+    );
+
+    const round: GameRound = newRoundRes.rows[0];
+
+    await client.query('COMMIT');
+
+    return { round, question, answeringTimerSec: game.answering_timer_sec };
   } catch (error) {
     await client.query('ROLLBACK');
     throw error;

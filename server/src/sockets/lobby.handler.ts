@@ -5,7 +5,10 @@ import {
   joinGameRoom,
   updatePlayerConnectionStatus,
   getGamePlayersWithAvatars,
-  handlePlayerDisconnectOrLeave,
+  handlePlayerDisconnect,
+  markPlayerLeft,
+  kickGamePlayer,
+  transferHost,
   updateGameRoomSettings,
 } from '../modules/games/game.service.js';
 import { pool } from '../config/db.js';
@@ -17,12 +20,19 @@ import {
   getRoundRevealedAnswers,
   getFinishedGameData,
   startGameSession,
+  skipCurrentQuestion,
 } from '../modules/games/round.service.js';
 import { addBotToGame, removeBotFromGame, handleBotAnswering } from '../modules/games/bot.service.js';
 
 export interface AuthenticatedSocket extends Socket {
   user?: JwtPayload;
 }
+
+/** Grace period (ms) before a disconnected player is permanently marked as LEFT */
+const RECONNECT_GRACE_MS = 30_000;
+
+/** Map of userId → reconnect timer, cleared on successful reconnect */
+const reconnectTimers = new Map<string, NodeJS.Timeout>();
 
 export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) => {
   if (!socket.user) return;
@@ -54,6 +64,11 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
       );
       const isExistingPlayer = Boolean(existingPlayer);
 
+      // Guard: blocked kicked player from rejoining
+      if (existingPlayer?.status === 'KICKED') {
+        return socket.emit('LOBBY:ERROR', { message: 'لقد تم استبعادك من هذه الغرفة بواسطة المضيف.' });
+      }
+
       // 2. Validation for players attempting to join / reconnect
       if (!isExistingPlayer) {
         if (game.status !== 'LOBBY' && game.status !== 'IN_PROGRESS') {
@@ -62,7 +77,7 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
           });
         }
 
-        if (existingPlayers.length >= game.max_players) {
+        if (existingPlayers.filter((p: any) => p.status !== 'KICKED').length >= game.max_players) {
           return socket.emit('LOBBY:ERROR', {
             message: 'Cannot join. Game room is full.',
           });
@@ -72,20 +87,31 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
       // If reconnected with same nickname under another guest ID, migrate player mapping
       if (existingPlayer && existingPlayer.user_id !== user.userId) {
         await pool.query(
-          'UPDATE game_players SET user_id = $1, is_connected = true WHERE id = $2;',
-          [user.userId, existingPlayer.id]
+          `UPDATE game_players SET user_id = $1, is_connected = true, status = 'ACTIVE', socket_id = $2 WHERE id = $3;`,
+          [user.userId, socket.id, existingPlayer.id]
         );
       }
 
-      // 3. Register or update player connection state (is_connected = true) in DB
+      // Clear any pending reconnect grace period for this user
+      const timerKey = `${gameId}:${user.userId}`;
+      const existingTimer = reconnectTimers.get(timerKey);
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+        reconnectTimers.delete(timerKey);
+        console.log(`⏰ Grace period cleared for user [${user.username}] in game [${gameId}]`);
+      }
+
+      // 3. Register or update player connection state
       await joinGameRoom(gameId, user.userId, playerNickname);
 
-      // 4. Join Socket.io room channel for real-time room broadcasts
+      // Update socket_id for this connection
+      await updatePlayerConnectionStatus(gameId, user.userId, true, socket.id);
+
+      // 4. Join Socket.io room channel
       const roomChannel = `game_${gameId}`;
       await socket.join(roomChannel);
-
-      // Store gameId in transient socket data for disconnect tracking
       socket.data.gameId = gameId;
+      socket.data.socketId = socket.id;
 
       // 5. Fetch updated player list with avatars
       const updatedPlayers = await getGamePlayersWithAvatars(gameId);
@@ -443,52 +469,116 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
 
   /**
    * Event: LOBBY:KICK_PLAYER
-   * Host removes a player/bot from the lobby
+   * Host removes a player/bot from the lobby (soft-kick — does not delete DB record)
    */
   socket.on('LOBBY:KICK_PLAYER', async (payload: { gameId: string; targetPlayerId: string }) => {
     try {
       const { gameId, targetPlayerId } = payload;
       if (!gameId || !targetPlayerId) return;
 
-      const gameRes = await pool.query('SELECT host_user_id, status FROM games WHERE id = $1;', [gameId]);
-      if (gameRes.rows.length === 0) return socket.emit('LOBBY:ERROR', { message: 'Game not found' });
-      if (gameRes.rows[0].host_user_id !== user.userId) {
-        return socket.emit('LOBBY:ERROR', { message: 'Only host can remove players' });
-      }
-
-      const targetRes = await pool.query(
-        'SELECT id, user_id, nickname, is_bot FROM game_players WHERE (id = $1 OR user_id = $1) AND game_id = $2;',
-        [targetPlayerId, gameId]
+      const { targetUserId, targetNickname, updatedPlayers } = await kickGamePlayer(
+        gameId,
+        user.userId,
+        targetPlayerId
       );
-      if (targetRes.rows.length === 0) return;
-      const targetPlayer = targetRes.rows[0];
-
-      // Cannot kick host
-      if (targetPlayer.user_id === user.userId) return;
-
-      await pool.query('DELETE FROM game_players WHERE id = $1;', [targetPlayer.id]);
 
       const roomChannel = `game_${gameId}`;
-      if (!targetPlayer.is_bot) {
-        const socketsInRoom = await io.in(roomChannel).fetchSockets();
-        for (const s of socketsInRoom) {
-          if ((s as any).user?.userId === targetPlayer.user_id) {
-            s.emit('LOBBY:KICKED', { message: 'تم إخراجك من الغرفة بواسطة المضيف' });
-            await s.leave(roomChannel);
-          }
+
+      // Notify the kicked player's socket(s)
+      const socketsInRoom = await io.in(roomChannel).fetchSockets();
+      for (const s of socketsInRoom) {
+        if ((s as any).user?.userId === targetUserId) {
+          s.emit('LOBBY:KICKED', { message: 'تم إخراجك من الغرفة بواسطة المضيف' });
+          await s.leave(roomChannel);
         }
       }
 
-      const updatedPlayers = await getGamePlayersWithAvatars(gameId);
       io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
         gameId,
         players: updatedPlayers,
       });
 
-      console.log(`👢 Player [${targetPlayer.nickname}] was removed from game [${gameId}] by host [${user.username}]`);
+      console.log(`👢 Player [${targetNickname}] was soft-kicked from game [${gameId}] by host [${user.username}]`);
     } catch (error: any) {
       console.error('Error in LOBBY:KICK_PLAYER handler:', error);
       socket.emit('LOBBY:ERROR', { message: error.message || 'Failed to remove player' });
+    }
+  });
+
+  /**
+   * Event: GAME:TRANSFER_HOST
+   * Host manually transfers their host role to another ACTIVE player
+   */
+  socket.on('GAME:TRANSFER_HOST', async (payload: { gameId: string; targetPlayerId: string }) => {
+    try {
+      const { gameId, targetPlayerId } = payload;
+      if (!gameId || !targetPlayerId) return;
+
+      const { newHostUserId, updatedPlayers, updatedGame } = await transferHost(
+        gameId,
+        user.userId,
+        targetPlayerId
+      );
+
+      const roomChannel = `game_${gameId}`;
+      const newHostPlayer = updatedPlayers.find((p: any) => p.user_id === newHostUserId || p.userId === newHostUserId);
+      const newHostName = newHostPlayer?.nickname || 'أحد اللاعبين';
+
+      io.to(roomChannel).emit('LOBBY:SETTINGS_UPDATED', { gameId, game: updatedGame });
+      io.to(roomChannel).emit('LOBBY:HOST_TRANSFERRED', {
+        gameId,
+        newHostUserId,
+        newHostNickname: newHostName,
+        message: `👑 تم نقل قيادة الغرفة إلى ${newHostName}`,
+      });
+      io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', { gameId, players: updatedPlayers });
+
+      console.log(`👑 Host transferred in game [${gameId}] from [${user.username}] to [${newHostName}]`);
+    } catch (error: any) {
+      console.error('Error in GAME:TRANSFER_HOST:', error);
+      socket.emit('LOBBY:ERROR', { message: error.message || 'Failed to transfer host' });
+    }
+  });
+
+  /**
+   * Event: GAME:SKIP_QUESTION
+   * Host skips the current question. Does NOT increment round counter.
+   * A new question is immediately selected and broadcast.
+   */
+  socket.on('GAME:SKIP_QUESTION', async (payload: { gameId: string; roundId: string }) => {
+    try {
+      const { gameId, roundId } = payload;
+      if (!gameId || !roundId) return;
+
+      const result = await skipCurrentQuestion(gameId, user.userId, roundId);
+      const roomChannel = `game_${gameId}`;
+      const answerStatuses = await getRoundAnswerStatuses(result.round.id, gameId);
+
+      io.to(roomChannel).emit('ROUND:START', {
+        gameId,
+        roundId: result.round.id,
+        roundNumber: result.round.round_number,
+        phase: 'ANSWERING',
+        question: {
+          id: result.question.id,
+          text_ar: result.question.text_ar,
+          text_en: result.question.text_en,
+        },
+        answeringTimerSec: result.answeringTimerSec,
+        timer: result.answeringTimerSec,
+        submittedCount: answerStatuses.submittedCount,
+        totalPlayers: answerStatuses.totalPlayers,
+        players: answerStatuses.players,
+        skipped: true,
+      });
+
+      // Trigger bot answering for the new question
+      handleBotAnswering(io, result.round.id, gameId);
+
+      console.log(`⏭️ Question skipped in game [${gameId}] by host [${user.username}]. New round started.`);
+    } catch (error: any) {
+      console.error('Error in GAME:SKIP_QUESTION:', error);
+      socket.emit('ROUND:ERROR', { message: error.message || 'Failed to skip question' });
     }
   });
 
@@ -501,14 +591,15 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
       const { gameId } = payload;
       if (!gameId) return;
 
-      const { updatedPlayers, newHostUserId, updatedGame } = await handlePlayerDisconnectOrLeave(gameId, user.userId);
+      // Explicit leave = skip grace period, mark LEFT immediately
+      const { updatedPlayers, newHostUserId, updatedGame } = await markPlayerLeft(gameId, user.userId);
 
       const roomChannel = `game_${gameId}`;
       await socket.leave(roomChannel);
       socket.data.gameId = null;
 
       if (newHostUserId && updatedGame) {
-        const newHostPlayer = updatedPlayers.find((p) => p.user_id === newHostUserId || p.userId === newHostUserId);
+        const newHostPlayer = updatedPlayers.find((p: any) => p.user_id === newHostUserId || p.userId === newHostUserId);
         const newHostName = newHostPlayer?.nickname || 'أحد اللاعبين';
 
         io.to(roomChannel).emit('LOBBY:SETTINGS_UPDATED', {
@@ -538,24 +629,33 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
   /**
    * Event: disconnect
    * Socket connection closed (tab closed, internet dropped, etc.)
+   * Starts a 30s grace period before permanently marking the player as LEFT.
    */
   socket.on('disconnect', async () => {
     const gameId = socket.data.gameId;
+    const socketId = socket.data.socketId || socket.id;
     if (gameId) {
       try {
-        const { updatedPlayers, newHostUserId, updatedGame } = await handlePlayerDisconnectOrLeave(gameId, user.userId);
-
         const roomChannel = `game_${gameId}`;
 
+        // Mark DISCONNECTED immediately (not LEFT — grace period running)
+        const { updatedPlayers, newHostUserId, updatedGame } = await handlePlayerDisconnect(
+          gameId,
+          user.userId,
+          socketId
+        );
+
+        // Broadcast immediate DISCONNECTED status so other players see the dot go grey
+        io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
+          gameId,
+          players: updatedPlayers,
+        });
+
         if (newHostUserId && updatedGame) {
-          const newHostPlayer = updatedPlayers.find((p) => p.user_id === newHostUserId || p.userId === newHostUserId);
+          const newHostPlayer = updatedPlayers.find((p: any) => p.user_id === newHostUserId || p.userId === newHostUserId);
           const newHostName = newHostPlayer?.nickname || 'أحد اللاعبين';
 
-          io.to(roomChannel).emit('LOBBY:SETTINGS_UPDATED', {
-            gameId,
-            game: updatedGame,
-          });
-
+          io.to(roomChannel).emit('LOBBY:SETTINGS_UPDATED', { gameId, game: updatedGame });
           io.to(roomChannel).emit('LOBBY:HOST_TRANSFERRED', {
             gameId,
             newHostUserId,
@@ -564,12 +664,43 @@ export const registerLobbyHandlers = (io: Server, socket: AuthenticatedSocket) =
           });
         }
 
-        io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
-          gameId,
-          players: updatedPlayers,
-        });
+        console.log(`🔌 User [${user.username}] disconnected. Grace period started (${RECONNECT_GRACE_MS / 1000}s).`);
 
-        console.log(`🔌 User [${user.username}] disconnected from socket room [${roomChannel}]`);
+        // Start grace period — mark LEFT if they don't reconnect in time
+        const timerKey = `${gameId}:${user.userId}`;
+        const timer = setTimeout(async () => {
+          reconnectTimers.delete(timerKey);
+          try {
+            const leaveResult = await markPlayerLeft(gameId, user.userId);
+            if (leaveResult.updatedPlayers.length > 0) {
+              io.to(roomChannel).emit('LOBBY:UPDATE_PLAYERS', {
+                gameId,
+                players: leaveResult.updatedPlayers,
+              });
+
+              if (leaveResult.newHostUserId && leaveResult.updatedGame) {
+                const newHostPlayer = leaveResult.updatedPlayers.find(
+                  (p: any) => p.user_id === leaveResult.newHostUserId || p.userId === leaveResult.newHostUserId
+                );
+                const newHostName = newHostPlayer?.nickname || 'أحد اللاعبين';
+
+                io.to(roomChannel).emit('LOBBY:SETTINGS_UPDATED', { gameId, game: leaveResult.updatedGame });
+                io.to(roomChannel).emit('LOBBY:HOST_TRANSFERRED', {
+                  gameId,
+                  newHostUserId: leaveResult.newHostUserId,
+                  newHostNickname: newHostName,
+                  message: `👑 تم نقل قيادة الغرفة تلقائياً إلى ${newHostName}`,
+                });
+              }
+
+              console.log(`💀 Grace period expired for user [${user.username}]. Marked as LEFT in game [${gameId}].`);
+            }
+          } catch (err) {
+            console.error('Error in grace period handler:', err);
+          }
+        }, RECONNECT_GRACE_MS);
+
+        reconnectTimers.set(timerKey, timer);
       } catch (error) {
         console.error('Error in socket disconnect handler:', error);
       }

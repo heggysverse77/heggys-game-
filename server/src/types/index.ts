@@ -10,6 +10,9 @@ export type RoundPhase =
 
 export type DareSeverity = 'MILD' | 'SPICY' | 'CHAOS';
 
+/** Status of a player within a game session */
+export type PlayerStatus = 'ACTIVE' | 'DISCONNECTED' | 'KICKED' | 'LEFT';
+
 export interface User {
   id: string;
   username: string;
@@ -42,6 +45,11 @@ export interface GamePlayer {
   nickname: string;
   is_host: boolean;
   is_connected: boolean;
+  /** Player lifecycle status: ACTIVE | DISCONNECTED | KICKED | LEFT */
+  status: PlayerStatus;
+  socket_id?: string | null;
+  disconnected_at?: Date | null;
+  is_bot?: boolean;
   total_score: number;
   final_rank?: number;
   joined_at: Date;
@@ -62,6 +70,8 @@ export interface GameRound {
   phase_started_at: Date;
   phase_deadline: Date;
   completed_at?: Date;
+  /** True when host skipped this question — does not count as a completed round */
+  is_skipped?: boolean;
 }
 
 export interface RoundAnswer {

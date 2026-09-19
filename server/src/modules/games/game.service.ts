@@ -151,19 +151,32 @@ export interface PlayerWithAvatar {
 
 /**
  * Registers or updates a player in an existing game room.
+ * Rejects KICKED players and restores DISCONNECTED/LEFT players to ACTIVE.
  */
 export const joinGameRoom = async (
   gameId: string,
   userId: string,
   nickname: string
 ): Promise<GamePlayer> => {
+  // Check for kicked status first
+  const kickCheck = await pool.query(
+    `SELECT status FROM game_players WHERE game_id = $1 AND user_id = $2`,
+    [gameId, userId]
+  );
+  if (kickCheck.rows.length > 0 && kickCheck.rows[0].status === 'KICKED') {
+    throw new Error('PLAYER_IS_KICKED');
+  }
+
   const query = `
-    INSERT INTO game_players (game_id, user_id, nickname, is_host, is_connected)
-    VALUES ($1, $2, $3, false, true)
+    INSERT INTO game_players (game_id, user_id, nickname, is_host, is_connected, status)
+    VALUES ($1, $2, $3, false, true, 'ACTIVE')
     ON CONFLICT (game_id, user_id) 
     DO UPDATE SET 
       nickname = EXCLUDED.nickname,
-      is_connected = true
+      is_connected = true,
+      status = 'ACTIVE',
+      socket_id = NULL,
+      disconnected_at = NULL
     RETURNING *;
   `;
 
@@ -172,23 +185,39 @@ export const joinGameRoom = async (
 };
 
 /**
- * Handles player leave or disconnect and automatically promotes the next player to host if the host left.
+ * Marks a player as DISCONNECTED (not LEFT). Grace period is handled separately in the socket handler.
+ * Automatically transfers host if the disconnecting player was host.
  */
-export const handlePlayerDisconnectOrLeave = async (
+export const handlePlayerDisconnect = async (
   gameId: string,
-  userId: string
+  userId: string,
+  socketId: string
 ): Promise<{ newHostUserId: string | null; updatedPlayers: any[]; updatedGame: any | null }> => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
-    // 1. Mark player as disconnected
+    // 1. Mark player as DISCONNECTED (not LEFT — grace period still running)
     await client.query(
-      'UPDATE game_players SET is_connected = false WHERE game_id = $1 AND user_id = $2',
-      [gameId, userId]
+      `UPDATE game_players 
+       SET is_connected = false, status = 'DISCONNECTED', disconnected_at = NOW(), socket_id = NULL
+       WHERE game_id = $1 AND user_id = $2 AND socket_id = $3`,
+      [gameId, userId, socketId]
     );
 
-    // 2. Check if game exists and if leaving player is the host
+    // Verify row was actually updated (guard against stale disconnect events)
+    const checkRes = await client.query(
+      `SELECT id FROM game_players WHERE game_id = $1 AND user_id = $2 AND status = 'DISCONNECTED'`,
+      [gameId, userId]
+    );
+    if (checkRes.rows.length === 0) {
+      // Player already reconnected or was not in this game — skip host transfer
+      await client.query('COMMIT');
+      const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+      return { newHostUserId: null, updatedPlayers, updatedGame: null };
+    }
+
+    // 2. Check if the disconnecting player is the host
     const gameRes = await client.query('SELECT * FROM games WHERE id = $1', [gameId]);
     if (gameRes.rows.length === 0) {
       await client.query('COMMIT');
@@ -199,46 +228,30 @@ export const handlePlayerDisconnectOrLeave = async (
     let newHostUserId: string | null = null;
 
     if (game.host_user_id === userId) {
-      // Find a random connected REAL player first (excluding bots)
-      let nextHostRes = await client.query(
+      // Find a random ACTIVE (fully connected) real player to become host
+      const nextHostRes = await client.query(
         `SELECT user_id FROM game_players 
-         WHERE game_id = $1 AND is_connected = true AND user_id != $2 AND (is_bot = false OR is_bot IS NULL)
+         WHERE game_id = $1 AND status = 'ACTIVE' AND user_id != $2 AND (is_bot = false OR is_bot IS NULL)
          ORDER BY RANDOM() LIMIT 1`,
         [gameId, userId]
       );
 
-      // Fallback: If only bots connected, allow any connected player
-      if (nextHostRes.rows.length === 0) {
-        nextHostRes = await client.query(
-          `SELECT user_id FROM game_players 
-           WHERE game_id = $1 AND is_connected = true AND user_id != $2 
-           ORDER BY RANDOM() LIMIT 1`,
-          [gameId, userId]
-        );
-      }
-
       if (nextHostRes.rows.length > 0) {
         newHostUserId = nextHostRes.rows[0].user_id;
-
-        // Update games table
         const updatedGameRes = await client.query(
           'UPDATE games SET host_user_id = $1 WHERE id = $2 RETURNING *',
           [newHostUserId, gameId]
         );
         game = updatedGameRes.rows[0];
-
-        // Ensure ONLY newHostUserId has is_host = true
         await client.query(
           'UPDATE game_players SET is_host = (user_id = $1) WHERE game_id = $2',
           [newHostUserId, gameId]
         );
-
-        console.log(`👑 Host transferred randomly in game [${gameId}] from user [${userId}] to player [${newHostUserId}]`);
+        console.log(`👑 Host transferred in game [${gameId}] from [${userId}] to [${newHostUserId}] due to disconnect`);
       }
     }
 
     await client.query('COMMIT');
-
     const updatedPlayers = await getGamePlayersWithAvatars(gameId);
     return { newHostUserId, updatedPlayers, updatedGame: game };
   } catch (error) {
@@ -250,23 +263,213 @@ export const handlePlayerDisconnectOrLeave = async (
 };
 
 /**
- * Updates a player's connection status (online / offline).
+ * Permanently marks a player as LEFT after the grace period expires.
+ * If they were host, transfers host to a random ACTIVE player.
+ */
+export const markPlayerLeft = async (
+  gameId: string,
+  userId: string
+): Promise<{ newHostUserId: string | null; updatedPlayers: any[]; updatedGame: any | null }> => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Mark as LEFT only if still DISCONNECTED (not already ACTIVE from reconnect)
+    const updateRes = await client.query(
+      `UPDATE game_players SET status = 'LEFT', is_connected = false
+       WHERE game_id = $1 AND user_id = $2 AND status = 'DISCONNECTED'
+       RETURNING id`,
+      [gameId, userId]
+    );
+
+    if (updateRes.rows.length === 0) {
+      // Player already reconnected — no action needed
+      await client.query('COMMIT');
+      const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+      return { newHostUserId: null, updatedPlayers, updatedGame: null };
+    }
+
+    const gameRes = await client.query('SELECT * FROM games WHERE id = $1', [gameId]);
+    if (gameRes.rows.length === 0) {
+      await client.query('COMMIT');
+      return { newHostUserId: null, updatedPlayers: [], updatedGame: null };
+    }
+
+    let game = gameRes.rows[0];
+    let newHostUserId: string | null = null;
+
+    if (game.host_user_id === userId) {
+      const nextHostRes = await client.query(
+        `SELECT user_id FROM game_players 
+         WHERE game_id = $1 AND status = 'ACTIVE' AND user_id != $2 AND (is_bot = false OR is_bot IS NULL)
+         ORDER BY RANDOM() LIMIT 1`,
+        [gameId, userId]
+      );
+
+      if (nextHostRes.rows.length > 0) {
+        newHostUserId = nextHostRes.rows[0].user_id;
+        const updatedGameRes = await client.query(
+          'UPDATE games SET host_user_id = $1 WHERE id = $2 RETURNING *',
+          [newHostUserId, gameId]
+        );
+        game = updatedGameRes.rows[0];
+        await client.query(
+          'UPDATE game_players SET is_host = (user_id = $1) WHERE game_id = $2',
+          [newHostUserId, gameId]
+        );
+        console.log(`👑 Host auto-transferred in game [${gameId}] from LEFT player [${userId}] to [${newHostUserId}]`);
+      }
+    }
+
+    await client.query('COMMIT');
+    const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+    return { newHostUserId, updatedPlayers, updatedGame: game };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+/**
+ * Kicks a player from the game (soft delete — sets status = KICKED).
+ */
+export const kickGamePlayer = async (
+  gameId: string,
+  hostUserId: string,
+  targetPlayerId: string
+): Promise<{ targetUserId: string; targetNickname: string; updatedPlayers: any[] }> => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Verify requester is host
+    const gameRes = await client.query(
+      'SELECT host_user_id FROM games WHERE id = $1',
+      [gameId]
+    );
+    if (gameRes.rows.length === 0) throw new Error('GAME_NOT_FOUND');
+    if (gameRes.rows[0].host_user_id !== hostUserId) throw new Error('NOT_HOST');
+
+    // Find target player
+    const targetRes = await client.query(
+      `SELECT id, user_id, nickname, status FROM game_players 
+       WHERE (id = $1 OR user_id = $1) AND game_id = $2`,
+      [targetPlayerId, gameId]
+    );
+    if (targetRes.rows.length === 0) throw new Error('PLAYER_NOT_FOUND');
+
+    const target = targetRes.rows[0];
+    if (target.user_id === hostUserId) throw new Error('CANNOT_KICK_SELF');
+    if (target.status === 'KICKED') throw new Error('ALREADY_KICKED');
+
+    // Soft kick
+    await client.query(
+      `UPDATE game_players SET status = 'KICKED', is_connected = false WHERE id = $1`,
+      [target.id]
+    );
+
+    await client.query('COMMIT');
+
+    const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+    return {
+      targetUserId: target.user_id,
+      targetNickname: target.nickname,
+      updatedPlayers,
+    };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+/**
+ * Transfers host role to another ACTIVE player.
+ */
+export const transferHost = async (
+  gameId: string,
+  currentHostUserId: string,
+  targetPlayerId: string
+): Promise<{ newHostUserId: string; updatedPlayers: any[]; updatedGame: any }> => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Verify current user is host
+    const gameRes = await client.query(
+      'SELECT * FROM games WHERE id = $1 FOR UPDATE',
+      [gameId]
+    );
+    if (gameRes.rows.length === 0) throw new Error('GAME_NOT_FOUND');
+    if (gameRes.rows[0].host_user_id !== currentHostUserId) throw new Error('NOT_HOST');
+
+    // Verify target is ACTIVE
+    const targetRes = await client.query(
+      `SELECT id, user_id, status FROM game_players 
+       WHERE (id = $1 OR user_id = $1) AND game_id = $2`,
+      [targetPlayerId, gameId]
+    );
+    if (targetRes.rows.length === 0) throw new Error('PLAYER_NOT_FOUND');
+
+    const target = targetRes.rows[0];
+    if (target.status === 'KICKED' || target.status === 'LEFT') throw new Error('INVALID_TARGET');
+    if (target.user_id === currentHostUserId) throw new Error('ALREADY_HOST');
+
+    const newHostUserId = target.user_id;
+
+    const updatedGameRes = await client.query(
+      'UPDATE games SET host_user_id = $1 WHERE id = $2 RETURNING *',
+      [newHostUserId, gameId]
+    );
+    await client.query(
+      'UPDATE game_players SET is_host = (user_id = $1) WHERE game_id = $2',
+      [newHostUserId, gameId]
+    );
+
+    await client.query('COMMIT');
+
+    const updatedPlayers = await getGamePlayersWithAvatars(gameId);
+    return { newHostUserId, updatedPlayers, updatedGame: updatedGameRes.rows[0] };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+/**
+ * Updates a player's socket_id and connection status on reconnect.
  */
 export const updatePlayerConnectionStatus = async (
   gameId: string,
   userId: string,
-  isConnected: boolean
+  isConnected: boolean,
+  socketId?: string
 ): Promise<void> => {
-  const query = `
-    UPDATE game_players
-    SET is_connected = $3
-    WHERE game_id = $1 AND user_id = $2;
-  `;
-  await pool.query(query, [gameId, userId, isConnected]);
+  if (isConnected && socketId) {
+    await pool.query(
+      `UPDATE game_players
+       SET is_connected = true, status = 'ACTIVE', socket_id = $3, disconnected_at = NULL
+       WHERE game_id = $1 AND user_id = $2`,
+      [gameId, userId, socketId]
+    );
+  } else {
+    await pool.query(
+      `UPDATE game_players
+       SET is_connected = $3
+       WHERE game_id = $1 AND user_id = $2`,
+      [gameId, userId, isConnected]
+    );
+  }
 };
 
 /**
  * Fetches all players in a room joined with their avatar information from users table.
+ * Excludes KICKED players from the list (they should not be visible).
  */
 export const getGamePlayersWithAvatars = async (gameId: string): Promise<any[]> => {
   const query = `
@@ -280,6 +483,9 @@ export const getGamePlayersWithAvatars = async (gameId: string): Promise<any[]> 
       gp.is_host AS "isHost",
       gp.is_connected,
       gp.is_connected AS "isConnected",
+      gp.status,
+      gp.is_bot,
+      gp.is_bot AS "isBot",
       gp.total_score,
       gp.total_score AS "totalScore",
       gp.joined_at,
@@ -289,6 +495,7 @@ export const getGamePlayersWithAvatars = async (gameId: string): Promise<any[]> 
     FROM game_players gp
     JOIN users u ON gp.user_id = u.id
     WHERE gp.game_id = $1
+      AND gp.status != 'KICKED'
     ORDER BY gp.joined_at ASC;
   `;
 

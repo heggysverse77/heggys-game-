@@ -38,6 +38,10 @@ export function emitForceMatching(payload: { gameId: string; roundId: string }):
   getSocket().emit('ROUND:FORCE_MATCHING', payload);
 }
 
+export function emitSkipQuestion(payload: { gameId: string; roundId: string }): void {
+  getSocket().emit('GAME:SKIP_QUESTION', payload);
+}
+
 export function emitForceResults(payload: { gameId: string; roundId: string }): void {
   getSocket().emit('ROUND:FORCE_RESULTS', payload);
 }

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Trophy, RefreshCw, Home, Flame, Sparkles } from 'lucide-react';
+import { Trophy, RefreshCw, Home, Sparkles } from 'lucide-react';
 import { Avatar } from '../ui';
 import Button from '../Button/Button';
 import { useGame } from '../../hooks/useGame';
@@ -222,102 +222,6 @@ export default function FinalPhase(props: FinalPhaseProps) {
           );
         })}
       </div>
-
-      {/* Loser penalties section */}
-      {isDareEnabled && lastPlace && (
-        <div
-          style={{
-            width: '100%',
-            background: '#FFF0D4',
-            border: '3px solid #1A1A1A',
-            borderRadius: 18,
-            boxShadow: '5px 5px 0px #1A1A1A',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 14,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: '#F86041', border: '2px solid #1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '2px 2px 0px #1A1A1A' }}>
-                <Flame style={{ width: 22, height: 22, color: '#FFFFFF' }} />
-              </div>
-              <div>
-                <h3 style={{ fontSize: 19, fontWeight: 900, color: '#1A1A1A', margin: 0 }}>
-                  عقوبة المركز الأخير 🔥
-                </h3>
-                <p style={{ fontSize: 13, fontWeight: 700, color: '#D32F2F', margin: '2px 0 0' }}>
-                  الخسران: <span style={{ fontWeight: 900, textDecoration: 'underline' }}>{lastPlace.nickname}</span> — لازم ينفذ حكم من دول!
-                </p>
-              </div>
-            </div>
-            <span style={{ fontSize: 12, fontWeight: 800, padding: '4px 12px', borderRadius: 9999, background: '#FFE5E5', color: '#D32F2F', border: '1.5px solid #1A1A1A' }}>
-              اختيار الفائز 🎯
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {((finalResults?.dareCards && finalResults.dareCards.length > 0
-              ? (finalResults.dareCards as unknown as any[])
-              : ['غني مقطع من أغنية بصوت عالٍ في المكالمة أو الروم', 'قلد طريقة كلام أحد اللاعبين لمدة دقيقة', 'احكِ أكثر موقف محرج حصل لك هذا العام']
-            ) as any[]).map((dare: any, i: number) => {
-              const text = getDareText(dare);
-              return (
-                <div
-                  key={i}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    padding: '12px 16px',
-                    borderRadius: 12,
-                    background: '#FFFFFF',
-                    border: '2px solid #1A1A1A',
-                    boxShadow: '2.5px 2.5px 0px #1A1A1A',
-                    fontSize: 14,
-                    color: '#1A1A1A',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: 9999,
-                      background: '#F86041',
-                      color: '#FFFFFF',
-                      border: '1.5px solid #1A1A1A',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 900,
-                      fontSize: 13,
-                      flexShrink: 0,
-                    }}
-                  >
-                    {i + 1}
-                  </span>
-                  <span style={{ flex: 1, fontWeight: 800, lineHeight: 1.5 }}>
-                    {text}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={{ marginTop: 6 }}>
-            <Button
-              variant="primary"
-              fullWidth
-              size="lg"
-              icon={<Flame style={{ width: 18, height: 18 }} />}
-              onClick={() => dispatch({ type: 'SET_PHASE', phase: 'DARE' })}
-            >
-              تنفيذ الأحكام الآن وتحديد العقوبة 🔥
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* Bottom actions */}
       <div style={{ display: 'flex', gap: 16, width: '100%', maxWidth: 520, flexWrap: 'wrap', marginTop: 8 }}>
