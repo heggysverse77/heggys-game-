@@ -1005,11 +1005,8 @@ export const skipCurrentQuestion = async (
     if (currentRound.phase !== 'ANSWERING') throw new Error('ROUND_NOT_IN_ANSWERING_PHASE');
     if (currentRound.is_skipped) throw new Error('ROUND_ALREADY_SKIPPED');
 
-    // 3. Mark the current round as skipped (NOT deleted — tracked for question deduplication)
-    await client.query(
-      `UPDATE game_rounds SET phase = 'FINISHED', is_skipped = true WHERE id = $1;`,
-      [roundId]
-    );
+    // 3. Clear any partial answers submitted for this skipped round
+    await client.query('DELETE FROM round_answers WHERE round_id = $1;', [roundId]);
 
     // 4. Select a NEW question — excluding ALL previously used questions in this room
     let questionRes = await client.query(
@@ -1039,16 +1036,17 @@ export const skipCurrentQuestion = async (
       [game.room_code, question.id]
     );
 
-    // 5. Create a new round with the SAME round_number (skipped don't count)
+    // 5. Update the existing round in-place with the new question and fresh deadline
     const deadline = new Date(Date.now() + game.answering_timer_sec * 1000);
-    const newRoundRes = await client.query(
-      `INSERT INTO game_rounds (game_id, round_number, question_id, phase, phase_deadline)
-       VALUES ($1, $2, $3, 'ANSWERING', $4)
+    const updatedRoundRes = await client.query(
+      `UPDATE game_rounds 
+       SET question_id = $1, phase = 'ANSWERING', phase_deadline = $2, is_skipped = false 
+       WHERE id = $3 
        RETURNING *;`,
-      [gameId, currentRound.round_number, question.id, deadline]
+      [question.id, deadline, roundId]
     );
 
-    const round: GameRound = newRoundRes.rows[0];
+    const round: GameRound = updatedRoundRes.rows[0];
 
     await client.query('COMMIT');
 

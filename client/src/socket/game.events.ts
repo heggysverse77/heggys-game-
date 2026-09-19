@@ -21,3 +21,9 @@ export function onFinalResults(cb: (payload: GameFinalResultsPayload) => void): 
   socket.on(SOCKET_EVENTS.GAME_FINAL_RESULTS, cb);
   return () => socket.off(SOCKET_EVENTS.GAME_FINAL_RESULTS, cb);
 }
+
+export function onGuessStatuses(cb: (payload: { roundId: string; submittedCount: number; totalPlayers: number; players: Array<{ userId: string; gamePlayerId: string; nickname: string; avatarId: string; hasGuessed: boolean }> }) => void): () => void {
+  const socket = getSocket();
+  socket.on('MATCHING:GUESS_STATUSES', cb);
+  return () => socket.off('MATCHING:GUESS_STATUSES', cb);
+}

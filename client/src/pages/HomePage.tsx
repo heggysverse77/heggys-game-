@@ -89,11 +89,6 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
       <main className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
         {/* ── HERO — Title 48px bold / Subtitle 20px medium / CTAs 24px apart ── */}
         <section className="hv-hero">
-          <span className="hv-badge">
-            <span style={{ width: 8, height: 8, borderRadius: 9999, background: '#33A9AC', boxShadow: '0 0 12px #33A9AC' }} />
-            لعبة التحديات والتخمين الجماعية للأصدقاء
-          </span>
-
           <ComicLogo size="hero" animate={true} />
 
           <p className="hv-hero-subtitle">

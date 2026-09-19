@@ -7,7 +7,7 @@ import { useGame } from '../hooks/useGame';
 import { useAuth } from '../hooks/useAuth';
 import { useSocket } from '../hooks/useSocket';
 import { onRoundStart, onAnswerStatuses, onRoundResults } from '../socket/round.events';
-import { onStartMatching, onFinalResults } from '../socket/game.events';
+import { onStartMatching, onGuessStatuses, onFinalResults } from '../socket/game.events';
 import { onUpdatePlayers } from '../socket/lobby.events';
 
 interface GamePageProps {
@@ -46,7 +46,15 @@ export default function GamePage({ gameId, roomCode, onLeaveGame }: GamePageProp
         answers: p.anonymousAnswers,
         players: p.playersToMatch,
         timer: p.timer,
+        guessStatuses: (p as any).players ? {
+          submittedCount: (p as any).submittedCount,
+          totalPlayers: (p as any).totalPlayers,
+          players: (p as any).players,
+        } : null,
       })),
+
+      // Matching live guess statuses (per-avatar checkmarks during matching)
+      onGuessStatuses((p) => dispatch({ type: 'GUESS_STATUSES', statuses: p })),
 
       // Results
       onRoundResults((p) => dispatch({ type: 'RESULTS_RECEIVED', results: p })),

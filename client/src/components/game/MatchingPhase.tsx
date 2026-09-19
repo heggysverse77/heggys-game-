@@ -16,12 +16,14 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
   const {
     anonymousAnswers,
     playersToMatch,
+    players: allGamePlayers,
     currentRoundId,
     timerSeconds,
     game,
     myPlayerId,
     hasSubmittedGuesses,
     myGuesses,
+    guessStatuses,
     isHost,
     dispatch,
   } = useGame();
@@ -35,19 +37,18 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
   const getAnswerId = (a: any): string => a.answerId || a.answer_id || a.id || '';
   const getPlayerId = (p: any): string => p.gamePlayerId || p.userId || p.id || '';
 
-  const candidatePlayers = playersToMatch.filter((p: any) => {
-    const isMe =
-      (user && (p.userId === user.id || p.userId === (user as any).userId)) ||
-      (myPlayerId && (p.gamePlayerId === myPlayerId || p.userId === myPlayerId || p.id === myPlayerId));
-    return !isMe;
-  });
+  // Use playersToMatch or fallback to allGamePlayers
+  const activePlayers = playersToMatch.length > 0 ? playersToMatch : allGamePlayers;
 
-  const answersToMatch = anonymousAnswers.filter((a: any) => {
-    const isMine =
-      (user && (a.authorUserId === user.id || a.authorUserId === (user as any).userId)) ||
-      (myPlayerId && (a.authorPlayerId === myPlayerId || a.authorPlayerId === (user as any)?.id));
-    return !isMine;
-  });
+  const isMeCheck = (p: any) => {
+    return Boolean(
+      (user && (p.userId === user.id || p.userId === (user as any).userId)) ||
+      (myPlayerId && (p.gamePlayerId === myPlayerId || p.userId === myPlayerId || p.id === myPlayerId))
+    );
+  };
+
+  const candidatePlayers = activePlayers.filter((p: any) => !isMeCheck(p));
+  const answersToMatch = anonymousAnswers;
 
   const totalAnswers = answersToMatch.length;
   const matchedCount = Object.keys(myGuesses).filter(
@@ -61,7 +62,7 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
   };
 
   const handleSelectPlayer = (player: TablePlayer) => {
-    if (!selectedAnswerId || hasSubmittedGuesses) return;
+    if (!selectedAnswerId || hasSubmittedGuesses || player.isMe) return;
     dispatch({ type: 'GUESS_SET', answerId: selectedAnswerId, playerId: player.id });
     play('submit');
     setSelectedAnswerId(null);
@@ -100,16 +101,26 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
     }
   }, [isExpired, hasSubmittedGuesses, currentRoundId, myGuesses, gameId, answersToMatch, dispatch, play]);
 
-  const tablePlayers: TablePlayer[] = candidatePlayers.map((p: any) => {
+  const tablePlayers: TablePlayer[] = activePlayers.map((p: any) => {
     const pId = getPlayerId(p);
-    const assignedAnswerId = Object.keys(myGuesses).find((ansId) => myGuesses[ansId] === pId);
+    const isMe = isMeCheck(p);
+    
+    // Check if player has submitted their matching guesses
+    const statusObj = guessStatuses?.players?.find(
+      (gs) => (gs.userId && gs.userId === p.userId) || (gs.gamePlayerId && (gs.gamePlayerId === p.gamePlayerId || gs.gamePlayerId === pId))
+    );
+    const hasFinishedGuessing = isMe ? hasSubmittedGuesses : Boolean(statusObj?.hasGuessed);
+
+    const isTargetOfSelected = selectedAnswerId ? myGuesses[selectedAnswerId] === pId : false;
 
     return {
       id: pId,
       nickname: p.nickname || 'لاعب',
       avatarId: p.avatarId || p.avatar_id,
-      hasActed: Boolean(assignedAnswerId),
-      isDisabled: hasSubmittedGuesses,
+      isMe,
+      hasActed: hasFinishedGuessing,
+      isSelected: isTargetOfSelected,
+      isDisabled: hasSubmittedGuesses || isMe,
     };
   });
 

@@ -45,6 +45,18 @@ interface GameState {
   playersToMatch: GamePlayer[];
   myGuesses: Record<string, string>; // answerId → guessedPlayerId
   hasSubmittedGuesses: boolean;
+  guessStatuses: {
+    roundId?: string;
+    submittedCount: number;
+    totalPlayers: number;
+    players: Array<{
+      userId: string;
+      gamePlayerId: string;
+      nickname: string;
+      avatarId: string;
+      hasGuessed: boolean;
+    }>;
+  } | null;
 
   // Results
   roundResults: RoundResultsPayload | null;
@@ -66,7 +78,8 @@ type GameAction =
   | { type: 'ANSWER_SUBMITTED' }
   | { type: 'ANSWER_RESET' }
   | { type: 'ANSWER_STATUSES';   statuses: RoundAnswerStatusesPayload }
-  | { type: 'MATCHING_STARTED';  answers: AnonymousAnswerDTO[]; players: GamePlayer[]; timer: number }
+  | { type: 'MATCHING_STARTED';  answers: AnonymousAnswerDTO[]; players: GamePlayer[]; timer: number; guessStatuses?: any }
+  | { type: 'GUESS_STATUSES';    statuses: any }
   | { type: 'GUESS_SET';         answerId: string; playerId: string }
   | { type: 'GUESS_UNSET';       answerId: string }
   | { type: 'GUESSES_SUBMITTED' }
@@ -92,6 +105,7 @@ const initialState: GameState = {
   playersToMatch: [],
   myGuesses: {},
   hasSubmittedGuesses: false,
+  guessStatuses: null,
   roundResults: null,
   leaderboard: [],
   finalResults: null,
@@ -133,6 +147,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         anonymousAnswers: [],
         myGuesses: {},
         hasSubmittedGuesses: false,
+        guessStatuses: null,
         roundResults: null,
         finalResults: null,
         dareCards: [],
@@ -156,6 +171,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         timerSeconds: action.timer,
         myGuesses: {},
         hasSubmittedGuesses: false,
+        guessStatuses: action.guessStatuses || null,
+      };
+
+    case 'GUESS_STATUSES':
+      return {
+        ...state,
+        guessStatuses: action.statuses,
       };
 
     case 'GUESS_SET': {
