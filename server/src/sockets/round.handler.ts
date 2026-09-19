@@ -13,6 +13,7 @@ import {
   assignGameDare,
   completeGameDare,
   GuessSubmission,
+  shuffleArray,
 } from '../modules/games/round.service.js';
 import { pool } from '../config/db.js';
 import { handleBotAnswering, handleBotMatching } from '../modules/games/bot.service.js';
