@@ -2,7 +2,6 @@ export interface ComicLogoProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'hero';
   className?: string;
   showSubtitle?: boolean;
-  showDomain?: boolean;
   animate?: boolean;
   onClick?: () => void;
 }
@@ -11,7 +10,6 @@ export default function ComicLogo({
   size = 'hero',
   className = '',
   showSubtitle = false,
-  showDomain = false,
   animate = true,
   onClick,
 }: ComicLogoProps) {
@@ -70,14 +68,6 @@ export default function ComicLogo({
           decoding="async"
         />
       </div>
-
-      {/* Domain badge under logo (optional) */}
-      {showDomain && (
-        <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1A1A1A]/85 border border-[#FFA646]/70 text-[#FFA646] text-xs sm:text-sm font-mono font-bold tracking-wide shadow-md backdrop-blur-sm">
-          <span className="w-2 h-2 rounded-full bg-[#33A9AC] animate-pulse" />
-          <span>a3raf-sa7bak.heggyverse.online</span>
-        </div>
-      )}
 
       {/* Optional sub-badge */}
       {showSubtitle && (

@@ -211,7 +211,12 @@ function InnerApp() {
       console.warn('⚠️ [App] LOBBY:ERROR received:', payload);
       showToast({ message: payload.message || 'حدث خطأ في الغرفة', type: 'error' });
     };
+    const onGameError = (payload: { message?: string }) => {
+      console.warn('⚠️ [App] GAME:ERROR received:', payload);
+      showToast({ message: payload.message || 'حدث خطأ في اللعبة', type: 'error' });
+    };
     socket.on('LOBBY:ERROR', onLobbyError);
+    socket.on('GAME:ERROR', onGameError);
 
     return () => {
       offRoundStart();
@@ -222,6 +227,7 @@ function InnerApp() {
       offKicked();
       offHostTransferred();
       socket.off('LOBBY:ERROR', onLobbyError);
+      socket.off('GAME:ERROR', onGameError);
     };
   }, [socket, dispatch, user, room?.gameId]);
 

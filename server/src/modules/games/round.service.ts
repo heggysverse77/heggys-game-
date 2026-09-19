@@ -60,9 +60,12 @@ export const startGameSession = async (
       throw new Error('GAME_ALREADY_STARTED');
     }
 
-    // 2. Verify connected player count meets requirement (allow 2+ for friendly party & local testing)
+    // 2. Verify connected player count meets requirement (count active human players + bots)
     const countRes = await client.query(
-      'SELECT COUNT(*)::int AS count FROM game_players WHERE game_id = $1 AND is_connected = true;',
+      `SELECT COUNT(*)::int AS count FROM game_players 
+       WHERE game_id = $1 
+         AND (is_connected = true OR is_bot = true) 
+         AND status NOT IN ('KICKED', 'LEFT');`,
       [gameId]
     );
 
@@ -77,6 +80,16 @@ export const startGameSession = async (
       "UPDATE games SET status = 'IN_PROGRESS', current_round_number = 1 WHERE id = $1;",
       [gameId]
     );
+
+    // Ensure room_used_questions table exists
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS room_used_questions (
+        room_code VARCHAR(10) NOT NULL,
+        question_id VARCHAR(64) NOT NULL,
+        used_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (room_code, question_id)
+      );
+    `);
 
     // 4. Select a random active question from questions bank excluding questions used in this room
     let questionRes = await client.query(

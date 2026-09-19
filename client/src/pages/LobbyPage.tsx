@@ -20,6 +20,7 @@ import {
   emitAddBot,
   emitRemoveBot,
   emitKickPlayer,
+  emitTransferHost,
 } from '../socket/lobby.events';
 import { onRoundStart } from '../socket/round.events';
 import { updateGameSettings, getRoomById, type CreateGameOptions } from '../services/game.service';
@@ -160,6 +161,12 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
     showToast({ message: `تم طرد ${nickname} من الغرفة`, type: 'info' });
   };
 
+  const handleTransferHost = (targetPlayerId: string, nickname: string) => {
+    if (!confirm(`هل أنت متأكد من نقل قيادة الغرفة إلى اللاعب "${nickname}"؟`)) return;
+    emitTransferHost({ gameId, targetPlayerId });
+    showToast({ message: `تم نقل قيادة الغرفة إلى ${nickname}`, type: 'success' });
+  };
+
   const handleStart = () => {
     if (!canStart) {
       showToast({ message: `تحتاج ${minPlayers} لاعبين على الأقل للبدء`, type: 'warn' });
@@ -294,6 +301,31 @@ export default function LobbyPage({ gameId, roomCode, onGameStarted, onLeave }: 
                         <span style={{ fontSize: 11, fontWeight: 800, padding: '4px 10px', borderRadius: 9999, background: '#E8F5E9', color: '#2E7D32', border: '1.5px solid #1A1A1A', boxShadow: '2px 2px 0px #1A1A1A' }}>
                           جاهز
                         </span>
+                        {isHost && !p.isBot && !p.is_bot && (
+                          <button
+                            type="button"
+                            onClick={() => handleTransferHost(p.userId || p.user_id || p.id, p.nickname)}
+                            title="نقل قيادة الغرفة لهذا اللاعب"
+                            style={{
+                              padding: '3px 8px',
+                              borderRadius: 8,
+                              background: '#FFF0D4',
+                              border: '1.5px solid #1A1A1A',
+                              color: '#1A1A1A',
+                              fontSize: 11,
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                              boxShadow: '1.5px 1.5px 0px #1A1A1A',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            <Crown style={{ width: 12, height: 12, color: '#FFA646' }} />
+                            نقل القيادة
+                          </button>
+                        )}
                         {isHost && (
                           <button
                             type="button"

@@ -135,6 +135,10 @@ export const registerRoundHandlers = (io: Server, socket: AuthenticatedSocket) =
       }
 
       socket.emit('GAME:ERROR', { message });
+      socket.emit('LOBBY:ERROR', { message });
+      if (payload.gameId) {
+        io.to(`game_${payload.gameId}`).emit('LOBBY:ERROR', { message });
+      }
     }
   });
 
