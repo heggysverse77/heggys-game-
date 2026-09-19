@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AlertCircle, Timer, Play, SkipForward } from 'lucide-react';
 import { useGame } from '../../hooks/useGame';
+import { useAuth } from '../../hooks/useAuth';
 import { useTimer } from '../../hooks/useTimer';
 import { useSound } from '../../hooks/useSound';
 import { emitSubmitAnswer, emitForceMatching, emitSkipQuestion, onRoundError } from '../../socket/round.events';
@@ -18,11 +19,13 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
     timerSeconds,
     game,
     players,
+    myPlayerId,
     hasSubmittedAnswer,
     answerStatuses,
     isHost,
     dispatch,
   } = useGame();
+  const { user } = useAuth();
   const { play } = useSound();
 
   const totalDuration = timerSeconds || game?.answering_timer_sec || 30;
@@ -69,14 +72,14 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
     const answered =
       p.hasAnswered !== undefined
         ? p.hasAnswered
-        : answerStatuses?.players?.find((ap) => ap.playerId === pId || ap.userId === p.userId)?.hasAnswered;
+        : answerStatuses?.players?.find((ap: any) => ap.playerId === pId || ap.userId === p.userId || ap.gamePlayerId === pId)?.hasAnswered;
 
     return {
       id: pId,
       nickname: p.nickname || 'لاعب',
       avatarId: p.avatarId || p.avatar_id,
       isMe,
-      hasActed: answered,
+      hasActed: Boolean(answered),
       statusText: isMe ? 'تكتب...' : 'يكتب...',
     };
   });
