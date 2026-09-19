@@ -95,7 +95,7 @@ export const startGameSession = async (
     let questionRes = await client.query(
       `SELECT * FROM questions 
        WHERE is_active = true 
-         AND id NOT IN (SELECT question_id FROM room_used_questions WHERE room_code = $1)
+         AND id::text NOT IN (SELECT question_id::text FROM room_used_questions WHERE room_code = $1)
        ORDER BY RANDOM() LIMIT 1;`,
       [game.room_code]
     );
@@ -813,7 +813,7 @@ export const advanceToNextRound = async (
     let questionRes = await client.query(
       `SELECT * FROM questions 
        WHERE is_active = true 
-         AND id NOT IN (SELECT question_id FROM room_used_questions WHERE room_code = $1)
+         AND id::text NOT IN (SELECT question_id::text FROM room_used_questions WHERE room_code = $1)
        ORDER BY RANDOM() 
        LIMIT 1;`,
       [game.room_code]
@@ -1015,7 +1015,7 @@ export const skipCurrentQuestion = async (
     let questionRes = await client.query(
       `SELECT * FROM questions 
        WHERE is_active = true 
-         AND id NOT IN (SELECT question_id FROM room_used_questions WHERE room_code = $1)
+         AND id::text NOT IN (SELECT question_id::text FROM room_used_questions WHERE room_code = $1)
        ORDER BY RANDOM() LIMIT 1;`,
       [game.room_code]
     );
