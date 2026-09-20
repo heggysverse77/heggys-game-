@@ -101,15 +101,14 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
     }
   }, [isExpired, hasSubmittedGuesses, currentRoundId, myGuesses, gameId, answersToMatch, dispatch, play]);
 
-  const tablePlayers: TablePlayer[] = activePlayers.map((p: any) => {
+  const tablePlayers: TablePlayer[] = candidatePlayers.map((p: any) => {
     const pId = getPlayerId(p);
-    const isMe = isMeCheck(p);
     
-    // Check if player has submitted their matching guesses
+    // Check if this friend has submitted their matching guesses
     const statusObj = guessStatuses?.players?.find(
       (gs) => (gs.userId && gs.userId === p.userId) || (gs.gamePlayerId && (gs.gamePlayerId === p.gamePlayerId || gs.gamePlayerId === pId))
     );
-    const hasFinishedGuessing = isMe ? hasSubmittedGuesses : Boolean(statusObj?.hasGuessed);
+    const hasFinishedGuessing = Boolean(statusObj?.hasGuessed);
 
     // Check if an answer in my current form is assigned to this player
     const assignedAnswerId = Object.keys(myGuesses).find((ansId) => myGuesses[ansId] === pId);
@@ -119,12 +118,12 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
       id: pId,
       nickname: p.nickname || 'لاعب',
       avatarId: p.avatarId || p.avatar_id,
-      isMe,
+      isMe: false,
       hasActed: hasFinishedGuessing,
-      statusText: isMe ? 'تخمن...' : 'يخمن...',
+      statusText: 'يخمن...',
       isAssignedInMatching: Boolean(assignedAnswerId),
       isSelected: isTargetOfSelected,
-      isDisabled: hasSubmittedGuesses || isMe,
+      isDisabled: hasSubmittedGuesses,
     };
   });
 
@@ -156,47 +155,55 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
         }
       >
         {/* Center Vertical Stack of Cream Answer Cards (Screen 3) */}
-        <div className="flex flex-col gap-2 w-full max-w-[210px] sm:max-w-[240px] max-h-full overflow-y-auto p-1.5 custom-scrollbar">
-          {answersToMatch.map((a: any) => {
-            const ansId = getAnswerId(a);
-            const isSelected = selectedAnswerId === ansId;
-            const assignedPlayerId = myGuesses[ansId];
-            const assignedPlayer = candidatePlayers.find((p: any) => getPlayerId(p) === assignedPlayerId);
+        <div className="flex flex-col gap-2 w-full max-w-[210px] sm:max-w-[240px] max-h-full overflow-y-auto p-1.5 custom-scrollbar z-20">
+          {answersToMatch.length === 0 ? (
+            <div className="p-3 text-center bg-[#FFF6E5] rounded-2xl border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]">
+              <span className="text-xs sm:text-sm font-display font-black text-[#1A1A1A]">
+                جاري تحميل الإجابات...
+              </span>
+            </div>
+          ) : (
+            answersToMatch.map((a: any) => {
+              const ansId = getAnswerId(a);
+              const isSelected = selectedAnswerId === ansId;
+              const assignedPlayerId = myGuesses[ansId];
+              const assignedPlayer = candidatePlayers.find((p: any) => getPlayerId(p) === assignedPlayerId);
 
-            return (
-              <button
-                key={ansId}
-                type="button"
-                onClick={() => handleSelectAnswer(ansId)}
-                className={[
-                  'w-full p-2 sm:p-2.5 rounded-xl sm:rounded-2xl border-2 sm:border-2.5 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none',
-                  isSelected
-                    ? 'bg-[#FFA646] text-[#1A1A1A] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] scale-[1.03] font-black'
-                    : assignedPlayer
-                    ? 'bg-[#33A9AC] text-white border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]'
-                    : 'bg-[#FFF6E5] text-[#1A1A1A] border-[#1A1A1A] hover:bg-white shadow-[2px_2px_0px_#1A1A1A]',
-                ].join(' ')}
-              >
-                <span className="text-sm sm:text-base font-display font-black leading-tight truncate max-w-full px-1">
-                  {a.text}
-                </span>
+              return (
+                <button
+                  key={ansId}
+                  type="button"
+                  onClick={() => handleSelectAnswer(ansId)}
+                  className={[
+                    'w-full p-2 sm:p-2.5 rounded-xl sm:rounded-2xl border-2 sm:border-2.5 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none',
+                    isSelected
+                      ? 'bg-[#FFA646] text-[#1A1A1A] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] scale-[1.03] font-black'
+                      : assignedPlayer
+                      ? 'bg-[#33A9AC] text-white border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]'
+                      : 'bg-[#FFF6E5] text-[#1A1A1A] border-[#1A1A1A] hover:bg-white shadow-[2px_2px_0px_#1A1A1A]',
+                  ].join(' ')}
+                >
+                  <span className="text-sm sm:text-base font-display font-black leading-tight truncate max-w-full px-1">
+                    {a.text}
+                  </span>
 
-                {assignedPlayer && (
-                  <div className="flex items-center gap-1 text-[10px] sm:text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full mt-0.5">
-                    <Check className="w-3 h-3" />
-                    <span className="truncate max-w-[90px]">{assignedPlayer.nickname}</span>
-                    <span
-                      onClick={(e) => handleUnlinkGuess(ansId, e)}
-                      className="text-red-300 hover:text-white mr-1 cursor-pointer font-black"
-                      title="إلغاء الربط"
-                    >
-                      ×
-                    </span>
-                  </div>
-                )}
-              </button>
-            );
-          })}
+                  {assignedPlayer && (
+                    <div className="flex items-center gap-1 text-[10px] sm:text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full mt-0.5">
+                      <Check className="w-3 h-3" />
+                      <span className="truncate max-w-[90px]">{assignedPlayer.nickname}</span>
+                      <span
+                        onClick={(e) => handleUnlinkGuess(ansId, e)}
+                        className="text-red-300 hover:text-white mr-1 cursor-pointer font-black"
+                        title="إلغاء الربط"
+                      >
+                        ×
+                      </span>
+                    </div>
+                  )}
+                </button>
+              );
+            })
+          )}
         </div>
       </CircularGameTable>
 

@@ -15,7 +15,8 @@ import { AppLoadingSplash } from './components/ui';
 import { createRoom, getRoomByCode, type CreateGameOptions } from './services/game.service';
 import { emitJoinRoom, emitLeaveRoom } from './socket/lobby.events';
 
-import { onRoundStart } from './socket/round.events';
+import { onRoundStart, onRoundResults } from './socket/round.events';
+import { onStartMatching, onFinalResults } from './socket/game.events';
 import { onCurrentState, onUpdatePlayers, onSettingsUpdated, onRematchStarted, onKicked, onHostTransferred } from './socket/lobby.events';
 
 type AppPage = 'home' | 'join' | 'lobby' | 'game';
@@ -237,6 +238,34 @@ function InnerApp() {
       });
     });
 
+    const offStartMatching = onStartMatching((payload) => {
+      console.log('🔗 [App] MATCHING:START broadcast received');
+      dispatch({
+        type: 'MATCHING_STARTED',
+        answers: payload.anonymousAnswers,
+        players: payload.playersToMatch,
+        timer: payload.timer,
+        guessStatuses: (payload as any).players ? {
+          submittedCount: (payload as any).submittedCount,
+          totalPlayers: (payload as any).totalPlayers,
+          players: (payload as any).players,
+        } : null,
+      });
+      setPage('game');
+    });
+
+    const offRoundResults = onRoundResults((payload) => {
+      console.log('📊 [App] ROUND:RESULTS broadcast received');
+      dispatch({ type: 'RESULTS_RECEIVED', results: payload });
+      setPage('game');
+    });
+
+    const offFinalResults = onFinalResults((payload) => {
+      console.log('🏆 [App] GAME:FINAL_RESULTS broadcast received');
+      dispatch({ type: 'FINAL_RESULTS', results: payload });
+      setPage('game');
+    });
+
     const onLobbyError = (payload: { message?: string }) => {
       console.warn('⚠️ [App] LOBBY:ERROR received:', payload);
       showToast({ message: payload.message || 'حدث خطأ في الغرفة', type: 'error' });
@@ -250,6 +279,9 @@ function InnerApp() {
 
     return () => {
       offRoundStart();
+      offStartMatching();
+      offRoundResults();
+      offFinalResults();
       offCurrentState();
       offPlayers();
       offSettingsUpdated();
