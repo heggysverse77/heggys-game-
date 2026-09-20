@@ -311,9 +311,6 @@ export const markPlayerLeft = async (
     client.release();
   }
 };
-    client.release();
-  }
-};
 
 /**
  * Kicks a player from the game (soft delete — sets status = KICKED).
