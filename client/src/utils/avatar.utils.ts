@@ -1,4 +1,3 @@
-/** Returns the public path to an avatar image */
 export function avatarPath(avatarId?: string): string {
   if (!avatarId) return '/avatars/avatar_1.svg';
   if (avatarId.startsWith('/') || avatarId.startsWith('http')) return avatarId;
@@ -34,6 +33,8 @@ export function avatarPath(avatarId?: string): string {
   const match = avatarId.match(/\d+/);
   const num = match ? parseInt(match[0], 10) : 1;
   const clamped = Math.max(1, Math.min(10, num));
+  
+  // All 10 avatars are unified Western vector characters (SVG)
   return `/avatars/avatar_${clamped}.svg`;
 }
 
@@ -45,17 +46,18 @@ export interface AvatarMeta {
 }
 
 export const AVATAR_LIST: AvatarMeta[] = [
-  { id: 'avatar_1', name: 'الروقان 🚬', category: 'شخصيات وردود أفعال', emoji: '🚬' },
-  { id: 'avatar_2', name: 'النينجا 🥷', category: 'شخصيات وردود أفعال', emoji: '🥷' },
-  { id: 'avatar_3', name: 'البرنس 😉', category: 'شخصيات وردود أفعال', emoji: '😉' },
-  { id: 'avatar_4', name: 'المصدومة 😱', category: 'شخصيات وردود أفعال', emoji: '😱' },
-  { id: 'avatar_5', name: 'السايبر 🎧', category: 'شخصيات وردود أفعال', emoji: '🎧' },
-  { id: 'avatar_6', name: 'الشرير 😈', category: 'شخصيات وردود أفعال', emoji: '😈' },
-  { id: 'avatar_7', name: 'باد جيرل 🕶️', category: 'شخصيات وردود أفعال', emoji: '🕶️' },
-  { id: 'avatar_8', name: 'ميت ضحك 🤣', category: 'شخصيات وردود أفعال', emoji: '🤣' },
-  { id: 'avatar_9', name: 'الزعيم 👑', category: 'شخصيات وردود أفعال', emoji: '👑' },
-  { id: 'avatar_10', name: 'المتنح 😵‍💫', category: 'شخصيات وردود أفعال', emoji: '😵‍💫' },
+  { id: 'avatar_1', name: 'الخارج عن القانون 🕶️🚬', category: 'أبطال الغرب الأمريكي', emoji: '🕶️' },
+  { id: 'avatar_2', name: 'الشريف 🤠⭐', category: 'أبطال الغرب الأمريكي', emoji: '⭐' },
+  { id: 'avatar_3', name: 'القناص 🎯🔫', category: 'أبطال الغرب الأمريكي', emoji: '🎯' },
+  { id: 'avatar_4', name: 'الفارسة 🐎🏜️', category: 'أبطال الغرب الأمريكي', emoji: '🐎' },
+  { id: 'avatar_5', name: 'المقامر 🃏💰', category: 'أبطال الغرب الأمريكي', emoji: '🃏' },
+  { id: 'avatar_6', name: 'الملثم 🦹‍♂️🌵', category: 'أبطال الغرب الأمريكي', emoji: '🌵' },
+  { id: 'avatar_7', name: 'المتعقب 🦅🏹', category: 'أبطال الغرب الأمريكي', emoji: '🦅' },
+  { id: 'avatar_8', name: 'أميرة الصالون 👑💃', category: 'أبطال الغرب الأمريكي', emoji: '👑' },
+  { id: 'avatar_9', name: 'صائد الجوائز 💀⚡', category: 'أبطال الغرب الأمريكي', emoji: '💀' },
+  { id: 'avatar_10', name: 'المنقب العجوز ⛏️🪙', category: 'أبطال الغرب الأمريكي', emoji: '⛏️' },
 ];
 
 /** List of all available avatar IDs */
 export const AVATAR_IDS = AVATAR_LIST.map((a) => a.id);
+

@@ -1,0 +1,259 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Sky & Horizon Gradients -->
+    <linearGradient id="skyAtmosphere" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3A0D07" />
+      <stop offset="20%" stop-color="#6B1D0E" />
+      <stop offset="42%" stop-color="#9C3214" />
+      <stop offset="65%" stop-color="#D94E1B" />
+      <stop offset="82%" stop-color="#F58A1F" />
+      <stop offset="94%" stop-color="#FAC246" />
+      <stop offset="100%" stop-color="#FEF08A" />
+    </linearGradient>
+
+    <!-- Sun Halo & Core -->
+    <radialGradient id="sunOuterGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFDF5" stop-opacity="1" />
+      <stop offset="18%" stop-color="#FEF08A" stop-opacity="0.9" />
+      <stop offset="38%" stop-color="#F59E0B" stop-opacity="0.6" />
+      <stop offset="65%" stop-color="#EA580C" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#7C2D12" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Distant Purple-Red Haze Mountains -->
+    <linearGradient id="distantMtnGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6B21A8" stop-opacity="0.45" />
+      <stop offset="50%" stop-color="#831843" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#581C87" stop-opacity="0.75" />
+    </linearGradient>
+
+    <!-- Far Sandstone Mesas -->
+    <linearGradient id="farMesa" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#9A3412" />
+      <stop offset="40%" stop-color="#7C2D12" />
+      <stop offset="80%" stop-color="#581C87" />
+      <stop offset="100%" stop-color="#3B0764" />
+    </linearGradient>
+
+    <!-- Midground Canyon Walls (Red Sandstone Layers) -->
+    <linearGradient id="canyonRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#B45309" />
+      <stop offset="25%" stop-color="#9A3412" />
+      <stop offset="60%" stop-color="#7C2D12" />
+      <stop offset="100%" stop-color="#431407" />
+    </linearGradient>
+
+    <!-- Foreground Desert Plain (Warm Terracotta & Sand) -->
+    <linearGradient id="desertFloor" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#EA580C" />
+      <stop offset="15%" stop-color="#C2410C" />
+      <stop offset="40%" stop-color="#9A3412" />
+      <stop offset="70%" stop-color="#672408" />
+      <stop offset="100%" stop-color="#330D03" />
+    </linearGradient>
+
+    <!-- Trail / Canyon Bed Gradient -->
+    <linearGradient id="canyonTrail" x1="68%" y1="0%" x2="15%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.9" />
+      <stop offset="30%" stop-color="#FBBF24" stop-opacity="0.75" />
+      <stop offset="60%" stop-color="#F59E0B" stop-opacity="0.5" />
+      <stop offset="85%" stop-color="#EA580C" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#9A3412" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Saguaro Rich Organic Gradient -->
+    <linearGradient id="saguaroBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F291E" />
+      <stop offset="25%" stop-color="#1E3E2B" />
+      <stop offset="55%" stop-color="#14532D" />
+      <stop offset="85%" stop-color="#166534" />
+      <stop offset="100%" stop-color="#051B10" />
+    </linearGradient>
+
+    <!-- Rim Light on Left of Objects from Setting Sun -->
+    <linearGradient id="rimLightSun" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#FEF08A" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- 1. SKY & SUNSET ATMOSPHERE -->
+  <rect width="1920" height="1080" fill="url(#skyAtmosphere)" />
+
+  <!-- 2. RADIANT SUNSET GLOW & SUN DISC -->
+  <g transform="translate(1260, 520)">
+    <!-- Giant outer atmospheric glow -->
+    <circle cx="0" cy="0" r="480" fill="url(#sunOuterGlow)" opacity="0.6" />
+    <circle cx="0" cy="0" r="260" fill="url(#sunOuterGlow)" opacity="0.85" />
+    <!-- Bright Sun Core -->
+    <circle cx="0" cy="0" r="125" fill="#FFFDF0" />
+    <circle cx="0" cy="0" r="115" fill="#FFFFFF" />
+  </g>
+
+  <!-- 3. SUNSET CIRRUS CLOUD BANDS -->
+  <path d="M 0 120 Q 360 80 840 140 Q 1320 90 1920 130 L 1920 190 Q 1400 140 860 180 Q 400 130 0 170 Z" fill="#7C2D12" opacity="0.4" />
+  <path d="M 0 210 Q 450 170 1020 230 Q 1550 180 1920 220 L 1920 265 Q 1500 225 1000 270 Q 480 215 0 250 Z" fill="#9A3412" opacity="0.5" />
+  <path d="M 0 310 Q 520 280 1150 330 Q 1620 290 1920 320 L 1920 355 Q 1580 325 1120 360 Q 500 320 0 345 Z" fill="#C2410C" opacity="0.55" />
+  <!-- Clouds passing across the sun -->
+  <path d="M 980 470 Q 1240 450 1560 480 L 1520 496 Q 1220 472 960 488 Z" fill="#EA580C" opacity="0.8" />
+  <path d="M 1060 520 Q 1280 505 1620 530 L 1580 545 Q 1260 525 1030 538 Z" fill="#C2410C" opacity="0.85" />
+
+  <!-- 4. SOARING DESERT EAGLES -->
+  <path d="M 1320 240 Q 1335 228 1352 238 Q 1368 228 1384 240 Q 1368 234 1352 242 Q 1335 234 1320 240 Z" fill="#3B0D05" />
+  <path d="M 1410 285 Q 1422 276 1435 283 Q 1448 276 1460 285 Q 1448 280 1435 287 Q 1422 280 1410 285 Z" fill="#451408" />
+  <path d="M 1240 195 Q 1250 188 1260 193 Q 1270 188 1280 195 Q 1270 191 1260 197 Q 1250 191 1240 195 Z" fill="#581D0B" />
+
+  <!-- 5. ULTRA-DISTANT HAZE MOUNTAIN SILHOUETTES -->
+  <path d="M 0 580 L 0 520 Q 220 475 440 515 Q 680 470 940 525 Q 1180 465 1420 520 Q 1680 470 1920 510 L 1920 610 L 0 610 Z" fill="url(#distantMtnGrad)" />
+
+  <!-- 6. MONUMENT VALLEY MESAS & SANDSTONE BUTTES (MIDGROUND) -->
+  <!-- Left Majestic Stepped Mesa -->
+  <path d="M 0 600 L 0 410 L 60 405 L 110 380 L 260 380 L 300 420 L 340 420 L 380 450 L 450 450 L 510 520 L 590 600 Z" fill="url(#farMesa)" />
+  <!-- Strata bands on left mesa -->
+  <path d="M 110 395 Q 185 390 260 395" stroke="#F59E0B" stroke-width="2.5" opacity="0.4" fill="none" />
+  <path d="M 0 435 Q 160 425 330 435" stroke="#D97706" stroke-width="3" opacity="0.35" fill="none" />
+  <path d="M 0 480 Q 240 465 470 495" stroke="#9A3412" stroke-width="4" opacity="0.4" fill="none" />
+
+  <!-- Center-Left Iconic Spire Butte (Mittens / Chimney) -->
+  <path d="M 520 600 L 570 510 L 595 410 L 618 410 L 635 480 L 665 480 L 685 520 L 740 560 L 800 600 Z" fill="url(#canyonRed)" />
+  <!-- Spire Sunlit edge -->
+  <path d="M 608 410 L 618 410 L 635 480 L 626 480 Z" fill="#FDE047" opacity="0.4" />
+
+  <!-- Center Canyon Ridge Under Sun -->
+  <path d="M 760 600 L 820 540 L 910 495 L 1030 495 L 1075 530 L 1170 530 L 1210 500 L 1320 500 L 1390 555 L 1480 600 Z" fill="url(#canyonRed)" />
+  <!-- Sunlit Rim across canyon ridge -->
+  <path d="M 910 495 L 1030 495 L 1075 530 L 1170 530 L 1210 500 L 1320 500 L 1390 555" stroke="#FFFDF0" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.85" />
+
+  <!-- Right Monument Valley Tower Buttes -->
+  <path d="M 1520 600 L 1580 535 L 1630 455 L 1760 455 L 1800 500 L 1860 500 L 1920 440 L 1920 600 Z" fill="url(#farMesa)" />
+  <!-- Right Sunlit Rim -->
+  <path d="M 1580 535 L 1630 455 L 1760 455 L 1800 500 L 1860 500 L 1920 440" stroke="#FFFDF0" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.8" />
+
+  <!-- 7. DESERT HORIZON & VAST ROLLING DUNES (PERSPECTIVE) -->
+  <path d="M 0 580 Q 480 565 960 585 Q 1440 570 1920 585 L 1920 1080 L 0 1080 Z" fill="url(#desertFloor)" />
+
+  <!-- Dune Perspective Strata Ridges -->
+  <path d="M 0 635 Q 520 615 1100 640 Q 1580 620 1920 635 L 1920 700 Q 1450 675 920 690 Q 420 670 0 690 Z" fill="#C2410C" opacity="0.6" />
+  <path d="M 0 710 Q 580 685 1240 715 Q 1680 690 1920 710 L 1920 795 Q 1380 765 850 780 Q 360 755 0 785 Z" fill="#9A3412" opacity="0.7" />
+  <path d="M 0 815 Q 650 780 1380 825 Q 1740 795 1920 820 L 1920 930 Q 1320 890 760 915 Q 280 885 0 920 Z" fill="#672408" opacity="0.8" />
+  <path d="M 0 950 Q 720 910 1480 960 Q 1800 925 1920 955 L 1920 1080 L 0 1080 Z" fill="#3B1104" opacity="0.9" />
+
+  <!-- 8. WINDING CANYON TRAIL / RIVER (PERSPECTIVE VANISHING POINT) -->
+  <path d="M 1260 585 C 1200 625, 1060 645, 980 690 C 890 745, 750 770, 670 835 C 560 920, 390 965, 270 1055 C 200 1080, 100 1080, 0 1080 L 140 1080 C 260 1080, 420 1005, 530 940 C 650 855, 810 815, 910 735 C 990 675, 1140 655, 1200 605 C 1250 595, 1280 588, 1290 585 Z" fill="url(#canyonTrail)" />
+
+  <!-- 9. DISTANT SCALED SAGUARO CACTI (PERSPECTIVE DEPTH) -->
+  <!-- Distant Cactus 1 (near sun) -->
+  <g transform="translate(1140, 560) scale(0.22)" fill="#431407">
+    <rect x="22" y="10" width="9" height="75" rx="4.5" />
+    <path d="M 11 32 C 11 18, 22 18, 22 32 L 22 40 L 11 40 Z" />
+    <path d="M 31 42 C 31 24, 42 24, 42 42 L 42 48 L 31 48 Z" />
+  </g>
+
+  <!-- Distant Cactus 2 (center-left) -->
+  <g transform="translate(730, 580) scale(0.38)" fill="#3B1104">
+    <rect x="22" y="8" width="10" height="95" rx="5" />
+    <path d="M 9 38 C 9 20, 22 20, 22 38 L 22 48 L 9 48 Z" />
+    <path d="M 32 52 C 32 30, 45 30, 45 52 L 45 60 L 32 60 Z" />
+  </g>
+
+  <!-- Mid-distance Cactus 3 (right side) -->
+  <g transform="translate(1520, 620) scale(0.7)">
+    <ellipse cx="28" cy="170" rx="35" ry="8" fill="#1C0601" opacity="0.6" />
+    <rect x="22" y="5" width="14" height="165" rx="7" fill="url(#saguaroBody)" />
+    <!-- Left Arm -->
+    <path d="M 4 60 C 4 32, 22 32, 22 60 L 22 75 L 4 75 Z" fill="url(#saguaroBody)" />
+    <!-- Right Arm -->
+    <path d="M 36 80 C 36 48, 54 48, 54 80 L 54 95 L 36 95 Z" fill="url(#saguaroBody)" />
+    <!-- Sun Highlight -->
+    <path d="M 22 5 L 25 5 L 25 170 L 22 170 Z" fill="#FBBF24" opacity="0.3" />
+  </g>
+
+  <!-- 10. RIGHT FOREGROUND DETAILED SAGUARO -->
+  <g transform="translate(1580, 680) scale(1.15)">
+    <!-- Deep Cast Shadow -->
+    <ellipse cx="32" cy="270" rx="70" ry="14" fill="#170401" opacity="0.8" />
+    <!-- Trunk -->
+    <rect x="18" y="0" width="28" height="270" rx="14" fill="url(#saguaroBody)" stroke="#170401" stroke-width="2.5" />
+    <!-- Vertical Rib Strata -->
+    <line x1="25" y1="10" x2="25" y2="265" stroke="#166534" stroke-width="2.5" />
+    <line x1="32" y1="5" x2="32" y2="268" stroke="#22C55E" stroke-width="3" opacity="0.4" />
+    <line x1="40" y1="10" x2="40" y2="265" stroke="#051B10" stroke-width="2.5" opacity="0.8" />
+    <!-- Left Arm with Organic Curve -->
+    <path d="M -12 110 C -12 65, 4 55, 10 55 L 10 80 C 6 80, 2 86, 2 110 L 2 135 L 18 135 L 18 160 L -12 160 Z" fill="url(#saguaroBody)" stroke="#170401" stroke-width="2.5" />
+    <!-- Right Arm -->
+    <path d="M 46 150 L 72 150 L 72 90 L 58 90 L 58 128 L 46 128 Z" fill="url(#saguaroBody)" stroke="#170401" stroke-width="2.5" />
+    <!-- Sunlit highlight streak -->
+    <line x1="20" y1="8" x2="20" y2="265" stroke="#FEF08A" stroke-width="2.5" opacity="0.5" />
+  </g>
+
+  <!-- 11. LEFT FOREGROUND MASTERPIECE GIANT SAGUARO CACTUS -->
+  <g transform="translate(190, 480)">
+    <!-- Giant Cast Shadow across desert floor -->
+    <path d="M 45 600 L -190 730 L -240 715 L 45 580 Z" fill="#170401" opacity="0.85" />
+    <ellipse cx="45" cy="600" rx="85" ry="18" fill="#170401" opacity="0.9" />
+
+    <!-- Main Giant Trunk -->
+    <rect x="22" y="0" width="52" height="600" rx="26" fill="url(#saguaroBody)" stroke="#170401" stroke-width="4" />
+    <!-- Vertical Rib Strata -->
+    <line x1="32" y1="15" x2="32" y2="590" stroke="#166534" stroke-width="3.5" />
+    <line x1="44" y1="6" x2="44" y2="595" stroke="#22C55E" stroke-width="4" opacity="0.4" />
+    <line x1="56" y1="10" x2="56" y2="592" stroke="#15803D" stroke-width="3.5" />
+    <line x1="66" y1="20" x2="66" y2="585" stroke="#051B10" stroke-width="4.5" opacity="0.85" />
+
+    <!-- Left High Curved Arm -->
+    <path d="M -50 190 C -50 95, -25 75, -8 75 L -8 120 C -22 120, -24 130, -24 190 L -24 255 L 22 255 L 22 295 L -50 295 Z" fill="url(#saguaroBody)" stroke="#170401" stroke-width="4" />
+    <!-- Left Arm Ribs & Highlight -->
+    <path d="M -36 85 L -36 275 L 22 275" stroke="#22C55E" stroke-width="3" fill="none" opacity="0.35" />
+
+    <!-- Right Lower Curved Arm -->
+    <path d="M 74 340 L 142 340 L 142 195 L 110 195 L 110 305 L 74 305 Z" fill="url(#saguaroBody)" stroke="#170401" stroke-width="4" />
+    <path d="M 126 205 L 126 325 L 74 325" stroke="#22C55E" stroke-width="3" fill="none" opacity="0.35" />
+
+    <!-- Second Left Lower Branch -->
+    <path d="M -35 390 C -35 325, -15 315, -4 315 L -4 352 C -12 352, -15 362, -15 390 L -15 430 L 22 430 L 22 465 L -35 465 Z" fill="url(#saguaroBody)" stroke="#170401" stroke-width="4" />
+
+    <!-- Golden Sunset Rim Lighting on Left Edge of Cactus -->
+    <path d="M 22 0 L 28 0 L 28 600 L 22 600 Z" fill="#FEF08A" opacity="0.65" />
+    <path d="M -50 190 C -50 95, -25 75, -8 75 L -2 75 C -20 75, -44 95, -44 190 L -44 295 L -50 295 Z" fill="#FEF08A" opacity="0.6" />
+  </g>
+
+  <!-- 12. FOREGROUND SANDSTONE BOULDERS & DESERT SHRUBS -->
+  <!-- Left Rock Clustered Group -->
+  <path d="M 40 1080 L 70 970 L 150 930 L 270 950 L 330 1015 L 350 1080 Z" fill="#581D0B" stroke="#170401" stroke-width="4" />
+  <path d="M 70 970 L 150 930 L 220 970 L 140 1035 Z" fill="#B45309" opacity="0.4" />
+  <path d="M 230 1080 L 260 1025 L 370 1005 L 460 1035 L 490 1080 Z" fill="#431407" stroke="#170401" stroke-width="3.5" />
+
+  <!-- Right Monumental Rock Formation -->
+  <path d="M 1400 1080 L 1440 980 L 1550 910 L 1720 900 L 1860 960 L 1920 1000 L 1920 1080 Z" fill="#431407" stroke="#170401" stroke-width="4.5" />
+  <!-- Boulder Sunset Facet Highlights -->
+  <path d="M 1440 980 L 1550 910 L 1720 900 L 1650 975 L 1510 1015 Z" fill="#F59E0B" opacity="0.4" />
+  <path d="M 1650 975 L 1720 900 L 1860 960 L 1780 1035 Z" fill="#EA580C" opacity="0.3" />
+
+  <!-- Desert Agave / Yucca Clumps in Foreground -->
+  <g transform="translate(380, 980)" fill="#14532D" stroke="#170401" stroke-width="2">
+    <polygon points="0,55 -30,-15 -5,45" />
+    <polygon points="0,55 -50,10 -10,50" />
+    <polygon points="0,55 -12,-38 5,40" />
+    <polygon points="0,55 12,-44 18,40" />
+    <polygon points="0,55 38,-22 20,46" />
+    <polygon points="0,55 55,5 22,52" />
+  </g>
+
+  <g transform="translate(1340, 965)" fill="#14532D" stroke="#170401" stroke-width="2">
+    <polygon points="0,55 -35,-12 -5,45" />
+    <polygon points="0,55 -18,-35 5,40" />
+    <polygon points="0,55 15,-40 18,40" />
+    <polygon points="0,55 45,-18 20,46" />
+    <polygon points="0,55 60,8 22,52" />
+  </g>
+
+  <!-- 13. FLOATING SUNSET GOLD DUST MOTES (ATMOSPHERIC GLOW) -->
+  <circle cx="1200" cy="560" r="3.5" fill="#FFFDF0" opacity="0.85" />
+  <circle cx="1140" cy="610" r="3" fill="#FEF08A" opacity="0.75" />
+  <circle cx="1310" cy="540" r="2.5" fill="#FFFDF0" opacity="0.9" />
+  <circle cx="1050" cy="650" r="3.5" fill="#FDE047" opacity="0.65" />
+  <circle cx="940" cy="700" r="4" fill="#F59E0B" opacity="0.55" />
+  <circle cx="820" cy="760" r="3" fill="#FEF08A" opacity="0.65" />
+  <circle cx="680" cy="830" r="3.5" fill="#FDE047" opacity="0.5" />
+  <circle cx="540" cy="890" r="4.5" fill="#F59E0B" opacity="0.45" />
+</svg>

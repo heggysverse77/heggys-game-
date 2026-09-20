@@ -1,69 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
   <defs>
-    <radialGradient id="smug_bg" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#3A0CA3" />
-      <stop offset="70%" stop-color="#240046" />
-      <stop offset="100%" stop-color="#10002B" />
+    <radialGradient id="desperado_bg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="60%" stop-color="#CA8A04" />
+      <stop offset="100%" stop-color="#451A03" />
     </radialGradient>
+    <linearGradient id="bandana_mask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DC2626" />
+      <stop offset="100%" stop-color="#7F1D1D" />
+    </linearGradient>
   </defs>
 
   <!-- Outer Circle -->
-  <circle cx="150" cy="150" r="142" fill="url(#smug_bg)" stroke="#1A1A1A" stroke-width="8" />
-  <circle cx="150" cy="150" r="133" fill="none" stroke="#F72585" stroke-width="3" opacity="0.6" />
+  <circle cx="150" cy="150" r="142" fill="url(#desperado_bg)" stroke="#1A1A1A" stroke-width="8" />
+  <circle cx="150" cy="150" r="133" fill="none" stroke="#F59E0B" stroke-width="3" opacity="0.6" />
 
-  <g clip-path="url(#smugClip)">
-    <clipPath id="smugClip">
+  <g clip-path="url(#dpClip)">
+    <clipPath id="dpClip">
       <circle cx="150" cy="150" r="138" />
     </clipPath>
 
-    <!-- Dark High Collar Coat -->
-    <path d="M 45 300 C 55 215, 95 200, 150 200 C 205 200, 245 215, 255 300 Z" fill="#181824" stroke="#1A1A1A" stroke-width="5" />
-    <!-- High Collar Flaps -->
-    <path d="M 105 215 L 125 170 L 150 215 Z" fill="#7209B7" stroke="#1A1A1A" stroke-width="3.5" />
-    <path d="M 195 215 L 175 170 L 150 215 Z" fill="#7209B7" stroke="#1A1A1A" stroke-width="3.5" />
-
-    <!-- Neck -->
-    <rect x="130" y="160" width="40" height="40" fill="#E2A67B" stroke="#1A1A1A" stroke-width="4" />
-
-    <!-- Ears & Piercing -->
-    <ellipse cx="94" cy="142" rx="14" ry="18" fill="#E2A67B" stroke="#1A1A1A" stroke-width="4.5" />
-    <ellipse cx="206" cy="142" rx="14" ry="18" fill="#E2A67B" stroke="#1A1A1A" stroke-width="4.5" />
-    <circle cx="91" cy="138" r="3" fill="#F72585" stroke="#1A1A1A" stroke-width="1.5" />
+    <!-- Dark Outlaw Coat & Bandolier -->
+    <path d="M 40 300 C 50 215, 95 200, 150 200 C 205 200, 250 215, 260 300 Z" fill="#18181B" stroke="#1A1A1A" stroke-width="6" />
+    <!-- Bullet Bandolier Sash -->
+    <path d="M 70 200 L 230 300" stroke="#78350F" stroke-width="18" />
+    <rect x="90" y="206" width="10" height="8" rx="2" fill="#F59E0B" stroke="#1A1A1A" stroke-width="1.5" transform="rotate(32 95 210)" />
+    <rect x="120" y="224" width="10" height="8" rx="2" fill="#F59E0B" stroke="#1A1A1A" stroke-width="1.5" transform="rotate(32 125 228)" />
+    <rect x="150" y="243" width="10" height="8" rx="2" fill="#F59E0B" stroke="#1A1A1A" stroke-width="1.5" transform="rotate(32 155 247)" />
+    <rect x="180" y="261" width="10" height="8" rx="2" fill="#F59E0B" stroke="#1A1A1A" stroke-width="1.5" transform="rotate(32 185 265)" />
 
     <!-- Face Base -->
-    <path d="M 104 105 C 104 75, 196 75, 196 105 C 196 160, 175 190, 150 195 C 125 190, 104 160, 104 105 Z" fill="#EAA67C" stroke="#1A1A1A" stroke-width="5" />
+    <path d="M 110 100 C 110 75, 190 75, 190 100 C 190 140, 175 165, 150 168 C 125 165, 110 140, 110 100 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="5" />
 
-    <!-- Playful Comic Red Devil Horns on Top! 😈 -->
-    <path d="M 108 50 C 95 32, 100 12, 116 16 C 114 30, 115 42, 118 52 Z" fill="#F72585" stroke="#1A1A1A" stroke-width="3.5" />
-    <path d="M 192 50 C 205 32, 200 12, 184 16 C 186 30, 185 42, 182 52 Z" fill="#F72585" stroke="#1A1A1A" stroke-width="3.5" />
+    <!-- Piercing Intense Eyes -->
+    <ellipse cx="128" cy="122" rx="9" ry="6" fill="#FFF" stroke="#1A1A1A" stroke-width="3.5" />
+    <circle cx="130" cy="122" r="4" fill="#1A1A1A" />
+    <circle cx="132" cy="120" r="1.5" fill="#FFF" />
 
-    <!-- Spiky Dark Anime Hair -->
-    <path d="M 92 105 C 82 50, 115 32, 150 30 C 185 32, 218 50, 208 105 C 220 75, 205 45, 185 36 C 160 28, 135 28, 110 38 Z" fill="#1C1A2E" stroke="#1A1A1A" stroke-width="5" />
-    <!-- Bangs -->
-    <path d="M 96 95 L 115 120 L 125 98 L 142 125 L 155 95 L 175 125 L 195 95 Z" fill="#2D2847" stroke="#1A1A1A" stroke-width="3.5" />
+    <ellipse cx="172" cy="122" rx="9" ry="6" fill="#FFF" stroke="#1A1A1A" stroke-width="3.5" />
+    <circle cx="170" cy="122" r="4" fill="#1A1A1A" />
+    <circle cx="172" cy="120" r="1.5" fill="#FFF" />
 
-    <!-- Smug Sly Eyes: Narrow & Calculating -->
-    <!-- Left Eye: Half squinting -->
-    <ellipse cx="127" cy="122" rx="10" ry="7" fill="#FFF" stroke="#1A1A1A" stroke-width="3.5" />
-    <circle cx="129" cy="122" r="5" fill="#7209B7" />
-    <circle cx="129" cy="122" r="2.5" fill="#1A1A1A" />
-    <!-- Right Eye: Open with Raised Eyebrow -->
-    <ellipse cx="173" cy="120" rx="10" ry="9" fill="#FFF" stroke="#1A1A1A" stroke-width="3.5" />
-    <circle cx="173" cy="120" r="5.5" fill="#7209B7" />
-    <circle cx="173" cy="120" r="3" fill="#1A1A1A" />
-    <circle cx="171" cy="118" r="1.8" fill="#FFF" />
+    <!-- Aggressive Eyebrows -->
+    <path d="M 116 112 L 140 118" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" />
+    <path d="M 184 112 L 160 118" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" />
 
-    <!-- Highly Asymmetrical Eyebrows: One Flat, One Way Up! -->
-    <path d="M 115 116 L 138 114" stroke="#1A1A1A" stroke-width="5.5" stroke-linecap="round" />
-    <path d="M 160 106 Q 172 94 186 102" stroke="#1A1A1A" stroke-width="5.5" stroke-linecap="round" fill="none" />
+    <!-- Outlaw Face Bandana / Mask covering nose and mouth 🌵 -->
+    <path d="M 105 136 C 120 130, 180 130, 195 136 L 180 230 L 150 245 L 120 230 Z" fill="url(#bandana_mask)" stroke="#1A1A1A" stroke-width="5" />
+    <!-- Bandana Fold Details & Paisley -->
+    <path d="M 115 155 Q 150 170 185 155" stroke="#991B1B" stroke-width="3" fill="none" />
+    <path d="M 125 180 Q 150 195 175 180" stroke="#991B1B" stroke-width="3" fill="none" />
+    <circle cx="150" cy="170" r="3" fill="#FEF08A" opacity="0.7" />
+    <circle cx="138" cy="195" r="3" fill="#FEF08A" opacity="0.7" />
+    <circle cx="162" cy="195" r="3" fill="#FEF08A" opacity="0.7" />
 
-    <!-- Nose -->
-    <path d="M 150 120 L 147 138 L 154 139" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" fill="none" />
-
-    <!-- Devilish Sideways Grin Showing Canine Tooth! -->
-    <path d="M 132 160 Q 150 178 172 152" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
-    <!-- Little Sharp Canine Fang -->
-    <path d="M 160 158 L 166 166 L 168 156 Z" fill="#FFF" stroke="#1A1A1A" stroke-width="1.5" />
+    <!-- Low Black Cowboy Hat covering brow -->
+    <path d="M 105 75 C 105 25, 120 20, 150 25 C 180 20, 195 25, 195 75 Z" fill="#18181B" stroke="#1A1A1A" stroke-width="6" />
+    <path d="M 45 78 C 80 52, 220 52, 255 78 C 240 90, 60 90, 45 78 Z" fill="#18181B" stroke="#1A1A1A" stroke-width="6" />
+    <path d="M 105 72 Q 150 78 195 72" stroke="#451A03" stroke-width="6" fill="none" />
   </g>
 
   <circle cx="150" cy="150" r="142" fill="none" stroke="#1A1A1A" stroke-width="8" />

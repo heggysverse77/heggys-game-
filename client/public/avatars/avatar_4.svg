@@ -1,77 +1,77 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
   <defs>
-    <radialGradient id="shock_bg" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#FFF0F3" />
-      <stop offset="70%" stop-color="#FFCCD5" />
-      <stop offset="100%" stop-color="#FF758F" />
+    <radialGradient id="cowgirl_bg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FED7AA" />
+      <stop offset="60%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#9A3412" />
     </radialGradient>
-    <filter id="sweat_drop_shadow">
-      <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#1A1A1A" flood-opacity="0.3" />
-    </filter>
+    <linearGradient id="hat_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#78350F" />
+      <stop offset="50%" stop-color="#92400E" />
+      <stop offset="100%" stop-color="#451A03" />
+    </linearGradient>
+    <linearGradient id="bandana_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="100%" stop-color="#991B1B" />
+    </linearGradient>
   </defs>
 
   <!-- Outer Circle -->
-  <circle cx="150" cy="150" r="142" fill="url(#shock_bg)" stroke="#1A1A1A" stroke-width="8" />
-  <circle cx="150" cy="150" r="133" fill="none" stroke="#FF4D6D" stroke-width="3" opacity="0.6" />
+  <circle cx="150" cy="150" r="142" fill="url(#cowgirl_bg)" stroke="#1A1A1A" stroke-width="8" />
+  <circle cx="150" cy="150" r="133" fill="none" stroke="#FFA646" stroke-width="3" opacity="0.6" />
 
-  <!-- Shocked Anime Lines in Background -->
-  <line x1="60" y1="50" x2="80" y2="70" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" />
-  <line x1="50" y1="75" x2="75" y2="85" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" />
-  <line x1="240" y1="50" x2="220" y2="70" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" />
-  <line x1="250" y1="75" x2="225" y2="85" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" />
-
-  <g clip-path="url(#shockClip)">
-    <clipPath id="shockClip">
+  <g clip-path="url(#cgClip)">
+    <clipPath id="cgClip">
       <circle cx="150" cy="150" r="138" />
     </clipPath>
 
-    <!-- Coral Top / Shoulders -->
-    <path d="M 45 300 C 55 215, 95 200, 150 200 C 205 200, 245 215, 255 300 Z" fill="#FF4D6D" stroke="#1A1A1A" stroke-width="5" />
+    <!-- Shoulders / Leather Vest -->
+    <path d="M 40 300 C 50 215, 95 200, 150 200 C 205 200, 250 215, 260 300 Z" fill="#78350F" stroke="#1A1A1A" stroke-width="6" />
+    <path d="M 110 215 L 150 260 L 190 215 Z" fill="#FEF3C7" stroke="#1A1A1A" stroke-width="4" />
 
-    <!-- Cute Hands Holding Cheeks in Shock! 😱 -->
-    <path d="M 80 180 C 80 145, 105 145, 105 175 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4" />
-    <path d="M 220 180 C 220 145, 195 145, 195 175 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4" />
+    <!-- Red Western Bandana -->
+    <path d="M 120 180 Q 150 230 180 180 Q 150 170 120 180 Z" fill="url(#bandana_grad)" stroke="#1A1A1A" stroke-width="4" />
+    <polygon points="150,225 142,210 158,210" fill="#EF4444" stroke="#1A1A1A" stroke-width="3" />
 
     <!-- Neck -->
-    <rect x="130" y="165" width="40" height="40" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4" />
+    <rect x="130" y="150" width="40" height="35" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4" />
 
-    <!-- Face Base -->
-    <path d="M 104 105 C 104 75, 196 75, 196 105 C 196 160, 175 190, 150 195 C 125 190, 104 160, 104 105 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="5" />
+    <!-- Hair (Behind) -->
+    <path d="M 80 130 C 65 190, 85 240, 100 270 C 115 240, 110 190, 110 160 Z" fill="#B45309" stroke="#1A1A1A" stroke-width="4" />
+    <path d="M 220 130 C 235 190, 215 240, 200 270 C 185 240, 190 190, 190 160 Z" fill="#B45309" stroke="#1A1A1A" stroke-width="4" />
 
-    <!-- Panicked Blue/Purple Forehead Shadow (Anime Dread) -->
-    <path d="M 104 90 C 120 100, 180 100, 196 90 L 196 75 C 160 65, 140 65, 104 75 Z" fill="#805AD5" opacity="0.3" />
-    <line x1="125" y1="78" x2="125" y2="95" stroke="#6B46C1" stroke-width="2" opacity="0.5" />
-    <line x1="140" y1="76" x2="140" y2="98" stroke="#6B46C1" stroke-width="2" opacity="0.5" />
-    <line x1="155" y1="76" x2="155" y2="98" stroke="#6B46C1" stroke-width="2" opacity="0.5" />
-    <line x1="170" y1="78" x2="170" y2="95" stroke="#6B46C1" stroke-width="2" opacity="0.5" />
+    <!-- Face -->
+    <path d="M 108 105 C 108 75, 192 75, 192 105 C 192 155, 172 185, 150 188 C 128 185, 108 155, 108 105 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="5" />
 
-    <!-- Pink Hair with Twin Buns / Ponytails -->
-    <path d="M 90 105 C 80 50, 115 30, 150 28 C 185 30, 220 50, 210 105 C 215 75, 195 48, 150 46 C 105 48, 85 75, 90 105 Z" fill="#E85D75" stroke="#1A1A1A" stroke-width="5" />
-    <!-- Bangs -->
-    <path d="M 98 88 Q 120 115 135 92 Q 150 118 165 92 Q 180 115 202 88 Z" fill="#E85D75" stroke="#1A1A1A" stroke-width="3" />
+    <!-- Eyes (Confident & Cool) -->
+    <path d="M 116 122 Q 130 115 140 122" stroke="#1A1A1A" stroke-width="4" fill="none" stroke-linecap="round" />
+    <circle cx="128" cy="126" r="6" fill="#1A1A1A" />
+    <circle cx="130" cy="124" r="2" fill="#FFF" />
 
-    <!-- Massive Shocked Wide Eyes! 😳 -->
-    <ellipse cx="126" cy="120" rx="14" ry="17" fill="#FFF" stroke="#1A1A1A" stroke-width="4" />
-    <ellipse cx="174" cy="120" rx="14" ry="17" fill="#FFF" stroke="#1A1A1A" stroke-width="4" />
-    <!-- Tiny Shrunken Pupils in Horror -->
-    <circle cx="126" cy="120" r="4.5" fill="#1A1A1A" />
-    <circle cx="174" cy="120" r="4.5" fill="#1A1A1A" />
+    <path d="M 160 122 Q 170 115 184 122" stroke="#1A1A1A" stroke-width="4" fill="none" stroke-linecap="round" />
+    <circle cx="172" cy="126" r="6" fill="#1A1A1A" />
+    <circle cx="174" cy="124" r="2" fill="#FFF" />
 
-    <!-- Floating Anime Sweat Drop on Temple 💧 -->
-    <path d="M 86 95 C 80 108, 92 118, 98 108 C 100 102, 92 88, 86 95 Z" fill="#38BDF8" stroke="#1A1A1A" stroke-width="2.5" filter="url(#sweat_drop_shadow)" />
-    <ellipse cx="91" cy="102" rx="2" ry="4" fill="#FFF" opacity="0.8" />
+    <!-- Eyebrows -->
+    <path d="M 114 112 Q 128 104 142 110" stroke="#78350F" stroke-width="4" stroke-linecap="round" fill="none" />
+    <path d="M 158 110 Q 172 104 186 112" stroke="#78350F" stroke-width="4" stroke-linecap="round" fill="none" />
 
-    <!-- Raised Wavy Panicked Eyebrows -->
-    <path d="M 112 95 Q 125 88 138 98" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
-    <path d="M 162 98 Q 175 88 188 95" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
+    <!-- Nose -->
+    <path d="M 148 132 L 145 144 L 155 144" stroke="#D97706" stroke-width="3" stroke-linecap="round" fill="none" />
 
-    <!-- Tiny Nose Dot -->
-    <circle cx="150" cy="132" r="2" fill="#1A1A1A" />
+    <!-- Smirk Smile with Red Lipstick -->
+    <path d="M 136 160 Q 150 172 166 158" stroke="#DC2626" stroke-width="4" stroke-linecap="round" fill="none" />
 
-    <!-- Huge Open Screaming Mouth! 😱 -->
-    <ellipse cx="150" cy="158" rx="15" ry="21" fill="#7A1C28" stroke="#1A1A1A" stroke-width="4" />
-    <!-- Tongue in Mouth -->
-    <path d="M 138 165 C 142 158, 158 158, 162 165 C 160 174, 140 174, 138 165 Z" fill="#F28482" />
+    <!-- Western Stetson Cowboy Hat -->
+    <!-- Crown -->
+    <path d="M 105 75 C 105 25, 120 18, 150 25 C 180 18, 195 25, 195 75 Z" fill="url(#hat_grad)" stroke="#1A1A1A" stroke-width="6" />
+    <!-- Hat Crease -->
+    <path d="M 130 35 Q 150 50 170 35" stroke="#451A03" stroke-width="4" fill="none" />
+    <!-- Hat Brim (Curved Western) -->
+    <path d="M 45 78 C 80 50, 220 50, 255 78 C 240 92, 60 92, 45 78 Z" fill="url(#hat_grad)" stroke="#1A1A1A" stroke-width="6" />
+    <!-- Hat Band with Turquoise Gem -->
+    <path d="M 106 72 Q 150 78 194 72" stroke="#0D9488" stroke-width="7" fill="none" />
+    <circle cx="150" cy="74" r="5" fill="#2DD4BF" stroke="#1A1A1A" stroke-width="2" />
   </g>
 
   <circle cx="150" cy="150" r="142" fill="none" stroke="#1A1A1A" stroke-width="8" />

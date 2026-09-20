@@ -26,20 +26,20 @@ export interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  host:        'bg-[#F86041] text-white border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  ready:       'bg-[#33A9AC] text-white border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  waiting:     'bg-white text-[#1A1A1A]/70 border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  rank1:       'bg-[#FFA646] text-[#1A1A1A] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  rank2:       'bg-[#FFF6E5] text-[#1A1A1A] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  rank3:       'bg-[#F5CAC3] text-[#1A1A1A] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  'dare-mild':  'bg-[#33A9AC] text-white border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  'dare-spicy': 'bg-[#FFA646] text-[#1A1A1A] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  'dare-chaos': 'bg-[#F86041] text-white border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  cyan:        'bg-[#33A9AC] text-white border-2 border-[#1A1A1A] shadow-[0_0_12px_rgba(51,169,172,0.45)]',
-  gold:        'bg-[#FFA646] text-[#1A1A1A] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  teal:        'bg-[#33A9AC] text-white border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  coral:       'bg-[#F86041] text-white border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  custom:      'bg-white text-[#1A1A1A] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
+  host:        'bg-[#EA580C] text-white border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  ready:       'bg-[#0D9488] text-white border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  waiting:     'bg-white text-[#1C1917]/70 border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  rank1:       'bg-[#F59E0B] text-[#1C1917] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  rank2:       'bg-[#FFF8EB] text-[#1C1917] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  rank3:       'bg-[#FED7AA] text-[#1C1917] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  'dare-mild':  'bg-[#0D9488] text-white border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  'dare-spicy': 'bg-[#F59E0B] text-[#1C1917] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  'dare-chaos': 'bg-[#EA580C] text-white border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  cyan:        'bg-[#0D9488] text-white border-2 border-[#1C1917] shadow-[0_0_12px_rgba(13,148,136,0.45)]',
+  gold:        'bg-[#F59E0B] text-[#1C1917] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  teal:        'bg-[#0D9488] text-white border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  coral:       'bg-[#EA580C] text-white border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  custom:      'bg-white text-[#1C1917] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
 };
 
 // Generous, enlarged chip sizes to prevent text clipping & ensure comfortable hierarchy

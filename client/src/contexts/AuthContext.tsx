@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useState,
+  useEffect,
   type ReactNode,
 } from 'react';
 import { guestLogin, login, register, updateUserProfileApi } from '../services/auth.service';
@@ -49,6 +50,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null);
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+  }, []);
+
+  // Listen for unauthorized 401 events to auto-reset stale auth
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      setUser(null);
+      setToken(null);
+    };
+    window.addEventListener('heggy:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('heggy:unauthorized', handleUnauthorized);
   }, []);
 
   const updateProfile = useCallback(async (newUsername: string, newAvatarId: string, gameId?: string) => {

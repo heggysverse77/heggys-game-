@@ -296,6 +296,7 @@ export const getRoundRevealedAnswers = async (roundId: string): Promise<Revealed
     JOIN game_players gp ON ra.game_player_id = gp.id
     JOIN users u ON gp.user_id = u.id
     WHERE ra.round_id = $1
+      AND gp.status NOT IN ('KICKED', 'LEFT')
     ORDER BY ra.submitted_at ASC;
   `;
   const res = await pool.query(query, [roundId]);
@@ -408,7 +409,9 @@ export const startMatchingPhase = async (roundId: string, gameId: string) => {
        gp.user_id AS "authorUserId"
      FROM round_answers ra
      JOIN game_players gp ON ra.game_player_id = gp.id
-     WHERE ra.round_id = $1;`,
+     WHERE ra.round_id = $1
+       AND gp.status NOT IN ('KICKED', 'LEFT')
+       AND gp.is_connected = true;`,
     [roundId]
   );
 
@@ -429,7 +432,9 @@ export const startMatchingPhase = async (roundId: string, gameId: string) => {
     `SELECT gp.id AS "gamePlayerId", gp.user_id AS "userId", gp.nickname, u.avatar_id AS "avatarId"
      FROM game_players gp
      JOIN users u ON gp.user_id = u.id
-     WHERE gp.game_id = $1 AND gp.is_connected = true
+     WHERE gp.game_id = $1 
+       AND gp.is_connected = true
+       AND gp.status NOT IN ('KICKED', 'LEFT')
      ORDER BY gp.joined_at ASC;`,
     [gameId]
   );
@@ -466,7 +471,9 @@ export const getMatchingPhaseData = async (roundId: string, gameId: string, requ
        gp.user_id AS "authorUserId"
      FROM round_answers ra
      JOIN game_players gp ON ra.game_player_id = gp.id
-     WHERE ra.round_id = $1;`,
+     WHERE ra.round_id = $1
+       AND gp.status NOT IN ('KICKED', 'LEFT')
+       AND gp.is_connected = true;`,
     [roundId]
   );
 
@@ -474,7 +481,9 @@ export const getMatchingPhaseData = async (roundId: string, gameId: string, requ
     `SELECT gp.id AS "gamePlayerId", gp.user_id AS "userId", gp.nickname, u.avatar_id AS "avatarId"
      FROM game_players gp
      JOIN users u ON gp.user_id = u.id
-     WHERE gp.game_id = $1 AND gp.is_connected = true
+     WHERE gp.game_id = $1 
+       AND gp.is_connected = true
+       AND gp.status NOT IN ('KICKED', 'LEFT')
      ORDER BY gp.joined_at ASC;`,
     [gameId]
   );
@@ -672,7 +681,7 @@ export const calculateRoundScores = async (
       `SELECT gp.id AS "gamePlayerId", gp.user_id AS "userId", gp.nickname, u.avatar_id AS "avatarId", gp.total_score AS "totalScore"
        FROM game_players gp
        JOIN users u ON gp.user_id = u.id
-       WHERE gp.game_id = $1;`,
+       WHERE gp.game_id = $1 AND gp.status NOT IN ('KICKED', 'LEFT');`,
       [gameId]
     );
 
@@ -905,7 +914,7 @@ export const finishGameSession = async (gameId: string): Promise<FinalGameResult
       `SELECT gp.id AS "gamePlayerId", gp.user_id AS "userId", gp.nickname, gp.total_score AS "totalScore", u.avatar_id AS "avatarId"
        FROM game_players gp
        JOIN users u ON gp.user_id = u.id
-       WHERE gp.game_id = $1
+       WHERE gp.game_id = $1 AND gp.status NOT IN ('KICKED', 'LEFT')
        ORDER BY gp.total_score DESC, gp.joined_at ASC;`,
       [gameId]
     );
@@ -1076,7 +1085,7 @@ export const getFinishedGameData = async (gameId: string): Promise<FinalGameResu
     `SELECT gp.id AS "gamePlayerId", gp.user_id AS "userId", gp.nickname, gp.total_score AS "totalScore", gp.final_rank AS "finalRank", u.avatar_id AS "avatarId"
      FROM game_players gp
      JOIN users u ON gp.user_id = u.id
-     WHERE gp.game_id = $1
+     WHERE gp.game_id = $1 AND gp.status NOT IN ('KICKED', 'LEFT')
      ORDER BY COALESCE(gp.final_rank, 999) ASC, gp.total_score DESC;`,
     [gameId]
   );

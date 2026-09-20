@@ -83,21 +83,21 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
       aria-modal="true"
     >
       <div
-        className="relative w-[min(94vw,580px)] max-h-[min(90vh,820px)] my-auto bg-[#FFF6E5] text-[#1A1A1A] border-3 border-[#1A1A1A] rounded-2xl sm:rounded-3xl shadow-[6px_6px_0px_#1A1A1A] sm:shadow-[8px_8px_0px_#1A1A1A] flex flex-col overflow-hidden text-right select-none animate-[pop_0.2s_ease]"
+        className="relative w-[min(94vw,580px)] max-h-[min(90vh,820px)] my-auto bg-[#FFF8EB] text-[#1C1917] border-3 border-[#1C1917] rounded-2xl sm:rounded-3xl shadow-[6px_6px_0px_#1C1917] sm:shadow-[8px_8px_0px_#1C1917] flex flex-col overflow-hidden text-right select-none animate-[pop_0.2s_ease]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 1. Header */}
-        <div className="px-5 sm:px-7 py-4 sm:py-5 border-b-2.5 border-[#1A1A1A] bg-[#FFF6E5] flex items-center justify-between gap-4 shrink-0">
+        <div className="px-5 sm:px-7 py-4 sm:py-5 border-b-2.5 border-[#1C1917] bg-[#FEF3C7] flex items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#FFA646] border-2 border-[#1A1A1A] flex items-center justify-center text-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] shrink-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#F59E0B] border-2 border-[#1C1917] flex items-center justify-center text-[#1C1917] shadow-[2px_2px_0px_#1C1917] shrink-0">
               <UserRound className="w-5 h-5 stroke-[2.5]" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-xl sm:text-2xl font-display font-black text-[#1A1A1A] truncate">
+              <h2 className="text-xl sm:text-2xl font-display font-black text-[#1C1917] truncate">
                 الملف الشخصي
               </h2>
-              <p className="text-xs sm:text-sm text-[#1A1A1A]/70 font-body font-bold mt-0.5">
-                تعديل الاسم واختيار الشخصية الرمزية
+              <p className="text-xs sm:text-sm text-[#1C1917]/70 font-body font-bold mt-0.5">
+                تعديل الاسم واختيار شخصية الغرب الأمريكي
               </p>
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
             type="button"
             onClick={onClose}
             aria-label="إغلاق"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#F86041] hover:text-white flex items-center justify-center transition-all cursor-pointer shrink-0 shadow-[2px_2px_0px_#1A1A1A] active:translate-y-0.5"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border-2 border-[#1C1917] text-[#1C1917] hover:bg-[#EA580C] hover:text-white flex items-center justify-center transition-all cursor-pointer shrink-0 shadow-[2px_2px_0px_#1C1917] active:translate-y-0.5"
           >
             <X className="w-5 h-5 stroke-[2.5]" />
           </button>
@@ -115,22 +115,22 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
         {/* 2. Body */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-7 custom-scrollbar flex flex-col gap-5">
           {/* Avatar Live Preview */}
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-white border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A]">
+          <div className="flex items-center gap-4 p-4 rounded-2xl bg-white border-2.5 border-[#1C1917] shadow-[3px_3px_0px_#1C1917]">
             <Avatar
               avatarId={avatarId}
               nickname={username || 'أنت'}
               size="lg"
               ring="none"
-              className="border-2.5 border-[#1A1A1A] shrink-0 w-16 h-16 sm:w-18 sm:h-18"
+              className="border-2.5 border-[#1C1917] shrink-0 w-16 h-16 sm:w-18 sm:h-18"
             />
             <div className="flex flex-col gap-1 min-w-0 flex-1">
-              <span className="self-start text-xs sm:text-sm font-black px-4 py-1 rounded-full bg-[#FFA646] text-[#1A1A1A] border-2 border-[#1A1A1A] shadow-xs">
+              <span className="self-start text-xs sm:text-sm font-black px-4 py-1 rounded-full bg-[#F59E0B] text-[#1C1917] border-2 border-[#1C1917] shadow-xs">
                 الشخصية الرمزية المختارة
               </span>
-              <h3 className="text-lg sm:text-xl font-display font-black text-[#1A1A1A] truncate">
+              <h3 className="text-lg sm:text-xl font-display font-black text-[#1C1917] truncate">
                 {username || 'اسم اللاعب'}
               </h3>
-              <p className="text-xs text-[#1A1A1A]/70 font-body font-bold">
+              <p className="text-xs text-[#1C1917]/70 font-body font-bold">
                 {user?.is_guest ? 'حساب ضيف مؤقت' : 'لاعب مسجل'}
               </p>
             </div>
@@ -138,7 +138,7 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
 
           {/* Nickname Input */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs sm:text-sm font-body font-black text-[#1A1A1A]">
+            <label className="text-xs sm:text-sm font-body font-black text-[#1C1917]">
               اسم اللاعب في اللعبة
             </label>
             <input
@@ -150,18 +150,18 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
                 setError('');
               }}
               maxLength={20}
-              className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-white border-2.5 border-[#1A1A1A] text-[#1A1A1A] font-body font-bold text-sm sm:text-base px-4 outline-none shadow-inner text-right focus:ring-3 focus:ring-[#FFA646]/50 transition-all"
+              className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-white border-2.5 border-[#1C1917] text-[#1C1917] font-body font-bold text-sm sm:text-base px-4 outline-none shadow-inner text-right focus:ring-3 focus:ring-[#F59E0B]/50 transition-all"
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
             />
             {error && <span className="text-xs text-red-600 font-bold">{error}</span>}
           </div>
 
-          {/* Avatar Selector Grid (IMAGE ONLY - NO NAMES) */}
+          {/* Avatar Selector Grid */}
           <div className="flex flex-col gap-2">
-            <label className="text-xs sm:text-sm font-body font-black text-[#1A1A1A]">
-              اختر الشخصية الرمزية:
+            <label className="text-xs sm:text-sm font-body font-black text-[#1C1917]">
+              اختر شخصيتك الرمزية (Wild West):
             </label>
-            <div className="grid grid-cols-5 gap-2.5 p-3 bg-white rounded-2xl border-2.5 border-[#1A1A1A] shadow-inner">
+            <div className="grid grid-cols-5 gap-2.5 p-3 bg-white rounded-2xl border-2.5 border-[#1C1917] shadow-inner">
               {AVATAR_LIST.map((item) => {
                 const isSelected = avatarId === item.id;
                 return (
@@ -172,10 +172,10 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
                     className={[
                       'p-2 rounded-2xl transition-all cursor-pointer flex items-center justify-center border-2.5',
                       isSelected
-                        ? 'bg-[#FFA646] border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A] scale-110'
-                        : 'bg-[#FFF9EE] border-transparent hover:border-[#1A1A1A]/40 hover:scale-105',
+                        ? 'bg-[#F59E0B] border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917] scale-110'
+                        : 'bg-[#FFF8EB] border-transparent hover:border-[#1C1917]/40 hover:scale-105',
                     ].join(' ')}
-                    title="اختر الصورة"
+                    title={item.name}
                   >
                     <Avatar avatarId={item.id} size="md" ring="none" />
                   </button>
@@ -186,11 +186,11 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
         </div>
 
         {/* 3. Footer */}
-        <div className="px-5 sm:px-7 py-3 sm:py-3.5 border-t-2.5 border-[#1A1A1A] bg-[#FFF6E5] flex items-center justify-between gap-3 shrink-0 flex-wrap">
+        <div className="px-5 sm:px-7 py-3 sm:py-3.5 border-t-2.5 border-[#1C1917] bg-[#FEF3C7] flex items-center justify-between gap-3 shrink-0 flex-wrap">
           <button
             type="button"
             onClick={handleLogoutClick}
-            className="h-10 sm:h-10.5 px-3.5 rounded-xl bg-white hover:bg-red-50 text-red-600 border-2 border-[#1A1A1A] font-body font-black text-xs shadow-[2px_2px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center gap-1.5"
+            className="h-10 sm:h-10.5 px-3.5 rounded-xl bg-white hover:bg-red-50 text-red-600 border-2 border-[#1C1917] font-body font-black text-xs shadow-[2px_2px_0px_#1C1917] active:translate-y-0.5 transition-all cursor-pointer flex items-center gap-1.5"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>تسجيل الخروج</span>
@@ -200,7 +200,7 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
             <button
               type="button"
               onClick={onClose}
-              className="h-10 sm:h-10.5 px-3.5 rounded-xl bg-white text-[#1A1A1A] hover:bg-neutral-100 border-2 border-[#1A1A1A] font-body font-black text-xs shadow-[2px_2px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer"
+              className="h-10 sm:h-10.5 px-3.5 rounded-xl bg-white text-[#1C1917] hover:bg-amber-50 border-2 border-[#1C1917] font-body font-black text-xs shadow-[2px_2px_0px_#1C1917] active:translate-y-0.5 transition-all cursor-pointer"
             >
               إلغاء
             </button>
@@ -208,7 +208,7 @@ export default function UserProfileModal({ isOpen, onClose, onLogout, gameId }: 
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="h-10 sm:h-10.5 px-5 rounded-xl comic-btn-gold font-body font-black text-xs sm:text-sm border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center gap-1.5"
+              className="h-10 sm:h-10.5 px-5 rounded-xl comic-btn-gold font-body font-black text-xs sm:text-sm border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917] active:translate-y-0.5 transition-all cursor-pointer flex items-center gap-1.5"
             >
               <Save className="w-3.5 h-3.5" />
               <span>{saving ? 'جاري الحفظ...' : 'حفظ التعديلات'}</span>

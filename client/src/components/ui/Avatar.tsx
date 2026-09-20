@@ -34,13 +34,13 @@ const textSizeClasses = {
 };
 
 const ringClasses = {
-  gold:   'ring-2.5 sm:ring-3 ring-[#FFA646] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  cyan:   'ring-2.5 sm:ring-3 ring-[#33A9AC] border-2 border-[#1A1A1A] shadow-[0_0_12px_rgba(51,169,172,0.4)]',
-  teal:   'ring-2.5 sm:ring-3 ring-[#33A9AC] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  pink:   'ring-2.5 sm:ring-3 ring-[#F86041] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  orange: 'ring-2.5 sm:ring-3 ring-[#FFA646] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  purple: 'ring-2.5 sm:ring-3 ring-[#33A9AC] border-2 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A]',
-  none:   'border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]',
+  gold:   'ring-2.5 sm:ring-3 ring-[#F59E0B] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  cyan:   'ring-2.5 sm:ring-3 ring-[#0D9488] border-2 border-[#1C1917] shadow-[0_0_12px_rgba(13,148,136,0.4)]',
+  teal:   'ring-2.5 sm:ring-3 ring-[#0D9488] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  pink:   'ring-2.5 sm:ring-3 ring-[#EA580C] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  orange: 'ring-2.5 sm:ring-3 ring-[#F59E0B] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  purple: 'ring-2.5 sm:ring-3 ring-[#991B1B] border-2 border-[#1C1917] shadow-[2.5px_2.5px_0px_#1C1917]',
+  none:   'border-2 border-[#1C1917] shadow-[2px_2px_0px_#1C1917]',
 };
 
 export default function Avatar({
@@ -76,7 +76,7 @@ export default function Avatar({
             draggable={false}
             className={[
               sizeClasses[size],
-              'rounded-full object-cover select-none bg-[#FFF6E5] transition-all duration-300',
+              'rounded-full object-cover select-none bg-[#FFF8EB] transition-all duration-300',
               ringClasses[ring],
               animate ? 'animate-[float_3s_ease-in-out_infinite]' : '',
             ].join(' ')}
@@ -85,12 +85,12 @@ export default function Avatar({
           <div
             className={[
               sizeClasses[size],
-              'rounded-full select-none bg-gradient-to-br from-[#FFA646] to-[#F86041] flex items-center justify-center font-display font-black text-[#1A1A1A]',
+              'rounded-full select-none bg-gradient-to-br from-[#F59E0B] to-[#EA580C] flex items-center justify-center font-display font-black text-[#1C1917]',
               ringClasses[ring],
               textSizeClasses[size],
             ].join(' ')}
           >
-            🔥
+            🤠
           </div>
         )}
 
@@ -98,9 +98,9 @@ export default function Avatar({
         {isConnected !== undefined && (
           <span
             className={[
-              'absolute bottom-0 left-0 rounded-full border-2 border-[#1A1A1A] shadow-md',
+              'absolute bottom-0 left-0 rounded-full border-2 border-[#1C1917] shadow-md',
               size === 'xs' || size === 'sm' ? 'w-3 h-3' : 'w-4 h-4',
-              isConnected ? 'bg-[#33A9AC] animate-pulse' : 'bg-gray-400',
+              isConnected ? 'bg-[#0D9488] animate-pulse' : 'bg-gray-400',
             ].join(' ')}
           />
         )}
@@ -109,7 +109,7 @@ export default function Avatar({
       {showNickname && nickname && (
         <span
           className={[
-            'font-display font-black text-[#FFF6E5] drop-shadow-[2px_2px_0px_#1A1A1A] truncate max-w-[7.5rem] text-center',
+            'font-display font-black text-[#FFF8EB] drop-shadow-[2px_2px_0px_#1C1917] truncate max-w-[7.5rem] text-center',
             textSizeClasses[size],
           ].join(' ')}
         >
@@ -119,3 +119,4 @@ export default function Avatar({
     </div>
   );
 }
+

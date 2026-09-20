@@ -344,11 +344,27 @@ export const kickGamePlayer = async (
     if (target.user_id === hostUserId) throw new Error('CANNOT_KICK_SELF');
     if (target.status === 'KICKED') throw new Error('ALREADY_KICKED');
 
-    // Soft kick
-    await client.query(
-      `UPDATE game_players SET status = 'KICKED', is_connected = false WHERE id = $1`,
-      [target.id]
+    // Check if target is a bot
+    const botCheck = await client.query(
+      `SELECT u.email FROM users u WHERE u.id = $1`,
+      [target.user_id]
     );
+    const isBot = Boolean(botCheck.rows[0]?.email?.includes('@heggyverse.local'));
+
+    if (isBot) {
+      // Bot is removed completely from game
+      await client.query(`DELETE FROM game_players WHERE id = $1`, [target.id]);
+    } else {
+      // Soft kick for human players
+      await client.query(
+        `UPDATE game_players SET status = 'KICKED', is_connected = false WHERE id = $1`,
+        [target.id]
+      );
+    }
+
+    // Purge any dangling answers or guesses for this player
+    await client.query('DELETE FROM round_answers WHERE game_player_id = $1;', [target.id]);
+    await client.query('DELETE FROM round_guesses WHERE guesser_player_id = $1 OR guessed_player_id = $1;', [target.id]);
 
     await client.query('COMMIT');
 

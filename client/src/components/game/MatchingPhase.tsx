@@ -38,7 +38,9 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
   const getPlayerId = (p: any): string => p.gamePlayerId || p.userId || p.id || '';
 
   // Use playersToMatch or fallback to allGamePlayers
-  const activePlayers = playersToMatch.length > 0 ? playersToMatch : allGamePlayers;
+  const activePlayers = (playersToMatch.length > 0 ? playersToMatch : allGamePlayers).filter(
+    (p: any) => p.status !== 'KICKED' && p.status !== 'LEFT'
+  );
 
   const isMeCheck = (p: any) => {
     return Boolean(
@@ -155,7 +157,7 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
         }
       >
         {/* Center Vertical Stack of Cream Answer Cards (Screen 3) */}
-        <div className="flex flex-col gap-2 w-full max-w-[210px] sm:max-w-[240px] max-h-full overflow-y-auto p-1.5 custom-scrollbar z-20">
+        <div className="flex flex-col gap-1.5 w-full max-w-[170px] sm:max-w-[210px] max-h-full overflow-y-auto p-1 custom-scrollbar z-20">
           {answersToMatch.length === 0 ? (
             <div className="p-3 text-center bg-[#FFF6E5] rounded-2xl border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]">
               <span className="text-xs sm:text-sm font-display font-black text-[#1A1A1A]">
@@ -163,11 +165,14 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
               </span>
             </div>
           ) : (
-            answersToMatch.map((a: any) => {
+            answersToMatch.map((a: any, idx: number) => {
               const ansId = getAnswerId(a);
               const isSelected = selectedAnswerId === ansId;
               const assignedPlayerId = myGuesses[ansId];
               const assignedPlayer = candidatePlayers.find((p: any) => getPlayerId(p) === assignedPlayerId);
+              const suits = ['♠', '♥', '♦', '♣'];
+              const suitChar = suits[idx % suits.length];
+              const isRedSuit = suitChar === '♥' || suitChar === '♦';
 
               return (
                 <button
@@ -175,20 +180,28 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
                   type="button"
                   onClick={() => handleSelectAnswer(ansId)}
                   className={[
-                    'w-full p-2 sm:p-2.5 rounded-xl sm:rounded-2xl border-2 sm:border-2.5 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none',
+                    'w-full p-2 sm:p-2.5 rounded-xl sm:rounded-2xl border-2 sm:border-2.5 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none relative overflow-hidden',
                     isSelected
-                      ? 'bg-[#FFA646] text-[#1A1A1A] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] scale-[1.03] font-black'
+                      ? 'bg-[#F59E0B] text-[#1C1917] border-[#1C1917] shadow-[3px_3px_0px_#1C1917] scale-[1.03] font-black'
                       : assignedPlayer
-                      ? 'bg-[#33A9AC] text-white border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]'
-                      : 'bg-[#FFF6E5] text-[#1A1A1A] border-[#1A1A1A] hover:bg-white shadow-[2px_2px_0px_#1A1A1A]',
+                      ? 'bg-[#0D9488] text-white border-[#1C1917] shadow-[2px_2px_0px_#1C1917]'
+                      : 'bg-[#FFF8EB] text-[#1C1917] border-[#1C1917] hover:bg-white shadow-[2px_2px_0px_#1C1917]',
                   ].join(' ')}
                 >
-                  <span className="text-sm sm:text-base font-display font-black leading-tight truncate max-w-full px-1">
+                  {/* Playing card mini suit watermark */}
+                  <span 
+                    className="pointer-events-none absolute top-1 right-2 text-[11px] opacity-40 font-mono"
+                    style={{ color: isRedSuit ? '#DC2626' : '#1C1917' }}
+                  >
+                    {suitChar}
+                  </span>
+
+                  <span className="text-sm sm:text-base font-display font-black leading-tight truncate max-w-full px-2 z-10">
                     {a.text}
                   </span>
 
                   {assignedPlayer && (
-                    <div className="flex items-center gap-1 text-[10px] sm:text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full mt-0.5">
+                    <div className="flex items-center gap-1 text-[10px] sm:text-xs font-bold bg-black/20 text-white px-2 py-0.5 rounded-full mt-0.5 z-10">
                       <Check className="w-3 h-3" />
                       <span className="truncate max-w-[90px]">{assignedPlayer.nickname}</span>
                       <span

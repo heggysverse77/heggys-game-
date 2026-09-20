@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://a3raf-sa7bak.heggyverse.online/sitemap.xml

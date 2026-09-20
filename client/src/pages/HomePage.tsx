@@ -30,9 +30,10 @@ type HomeTab = 'guest' | 'login';
 interface HomePageProps {
   onEnterLobby: (opts: CreateGameOptions) => void;
   onJoinRoom: () => void;
+  onPreviewDuel?: () => void;
 }
 
-export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
+export default function HomePage({ onEnterLobby, onJoinRoom, onPreviewDuel }: HomePageProps) {
   const { user, loginAsGuest, loginWithCredentials, isLoading, isAuthenticated, logout } = useAuth();
   const { showToast } = useToast();
 
@@ -87,13 +88,9 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
       />
 
       <main className="hv-container" dir="rtl" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-        {/* ── HERO — Title 48px bold / Subtitle 20px medium / CTAs 24px apart ── */}
+        {/* ── HERO ── */}
         <section className="hv-hero">
           <ComicLogo size="hero" animate={true} />
-
-          <p className="hv-hero-subtitle">
-            جاوب على أسئلة حماسية، خمن إجابات أصحابك، واقترح أحكام تضحك على الخسران!
-          </p>
 
           {isAuthenticated && (
             <div className="hv-hero-ctas">
@@ -105,6 +102,19 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
               </Button>
             </div>
           )}
+
+          {/* Quick Duel Animation Test Preview */}
+          {onPreviewDuel && (
+            <div style={{ marginTop: 14, display: 'flex', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={onPreviewDuel}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1C1917] text-[#FDE047] text-xs font-display font-black border-2 border-[#F59E0B] shadow-[2.5px_2.5px_0px_#F59E0B] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <span>تجربة حركة سرقة الصدارة والمبارزة</span>
+              </button>
+            </div>
+          )}
         </section>
 
         {/* ── AUTH / ACTION AREA ── */}
@@ -112,16 +122,16 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
           {!isAuthenticated ? (
             <Card style={{ maxWidth: 560, marginInline: 'auto' }}>
               {/* Tabs */}
-              <div style={{ display: 'flex', gap: 8, padding: 4, borderRadius: 12, background: '#FFF0D4', border: '2px solid #1A1A1A', boxShadow: '2px 2px 0px #1A1A1A', marginBottom: 24 }}>
+              <div style={{ display: 'flex', gap: 8, padding: 4, borderRadius: 12, background: '#FEF3C7', border: '2px solid #1C1917', boxShadow: '2px 2px 0px #1C1917', marginBottom: 24 }}>
                 <button
                   type="button"
                   onClick={() => setTab('guest')}
                   style={{
                     flex: 1, minHeight: 44, borderRadius: 8, fontWeight: 800, fontSize: 14, cursor: 'pointer',
-                    border: tab === 'guest' ? '2px solid #1A1A1A' : '2px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    background: tab === 'guest' ? 'linear-gradient(135deg,#FFA646,#F86041)' : 'transparent',
-                    color: tab === 'guest' ? '#fff' : '#1A1A1A',
-                    boxShadow: tab === 'guest' ? '2px 2px 0px #1A1A1A' : 'none',
+                    border: tab === 'guest' ? '2px solid #1C1917' : '2px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    background: tab === 'guest' ? 'linear-gradient(135deg,#F59E0B,#EA580C)' : 'transparent',
+                    color: tab === 'guest' ? '#fff' : '#1C1917',
+                    boxShadow: tab === 'guest' ? '2px 2px 0px #1C1917' : 'none',
                     transition: 'all 0.2s ease',
                   }}
                 >
@@ -133,10 +143,10 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
                   onClick={() => setTab('login')}
                   style={{
                     flex: 1, minHeight: 44, borderRadius: 8, fontWeight: 800, fontSize: 14, cursor: 'pointer',
-                    border: tab === 'login' ? '2px solid #1A1A1A' : '2px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    background: tab === 'login' ? 'linear-gradient(135deg,#33A9AC,#23787B)' : 'transparent',
-                    color: tab === 'login' ? '#fff' : '#1A1A1A',
-                    boxShadow: tab === 'login' ? '2px 2px 0px #1A1A1A' : 'none',
+                    border: tab === 'login' ? '2px solid #1C1917' : '2px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    background: tab === 'login' ? 'linear-gradient(135deg,#0D9488,#115E59)' : 'transparent',
+                    color: tab === 'login' ? '#fff' : '#1C1917',
+                    boxShadow: tab === 'login' ? '2px 2px 0px #1C1917' : 'none',
                     transition: 'all 0.2s ease',
                   }}
                 >
@@ -148,8 +158,8 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
               {tab === 'guest' ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                   <div>
-                    <p className="hv-label" style={{ marginBottom: 12 }}>اختر شخصيتك الرمزية</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 8, padding: 12, background: '#FFF0D4', borderRadius: 12, border: '2px solid #1A1A1A' }}>
+                    <p className="hv-label" style={{ marginBottom: 12 }}>اختر شخصيتك الرمزية (Wild West)</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 8, padding: 12, background: '#FEF3C7', borderRadius: 12, border: '2px solid #1C1917' }}>
                       {AVATAR_LIST.map((item) => {
                         const isSelected = avatarId === item.id;
                         return (
@@ -157,12 +167,12 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
                             key={item.id}
                             type="button"
                             onClick={() => setAvatarId(item.id)}
-                            title="اختر الصورة"
+                            title={item.name}
                             style={{
                               padding: 6, borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              background: isSelected ? 'rgba(255,166,70,0.3)' : 'transparent',
-                              border: isSelected ? '2px solid #1A1A1A' : '2px solid transparent',
-                              boxShadow: isSelected ? '2px 2px 0px #1A1A1A' : 'none',
+                              background: isSelected ? 'rgba(245,158,11,0.4)' : 'transparent',
+                              border: isSelected ? '2px solid #1C1917' : '2px solid transparent',
+                              boxShadow: isSelected ? '2px 2px 0px #1C1917' : 'none',
                               transform: isSelected ? 'scale(1.08)' : 'none',
                               transition: 'all 0.15s ease',
                             }}
@@ -173,6 +183,7 @@ export default function HomePage({ onEnterLobby, onJoinRoom }: HomePageProps) {
                       })}
                     </div>
                   </div>
+
 
                   <Input
                     label="اسم اللاعب"

@@ -26,16 +26,19 @@ export default function Navbar({
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
           {leading}
           {logo ?? (
-            <img
-              src="/images/logo.png"
-              alt="اعرف صاحبك وعلّم عليه"
-              style={{
-                height: 38,
-                width: 'auto',
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))',
-              }}
-            />
+            <div className="relative [perspective:600px] cursor-pointer">
+              <img
+                src="/images/logo.png"
+                alt="اعرف صاحبك وعلّم عليه"
+                className="transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] [transform-style:preserve-3d] hover:[transform:rotateY(180deg)_scale(1.15)] active:scale-95"
+                style={{
+                  height: 38,
+                  width: 'auto',
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))',
+                }}
+              />
+            </div>
           )}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span className="hv-logo" style={{ fontSize: 20, lineHeight: 1.2 }}>

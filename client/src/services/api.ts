@@ -43,6 +43,11 @@ export async function apiRequest<T>(
   const data = await res.json();
 
   if (!res.ok) {
+    if (res.status === 401) {
+      localStorage.removeItem('heggy_token');
+      localStorage.removeItem('heggy_user');
+      window.dispatchEvent(new Event('heggy:unauthorized'));
+    }
     throw new ApiError(res.status, data?.message ?? 'خطأ في الخادم');
   }
 

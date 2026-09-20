@@ -97,25 +97,34 @@ export const removeBotFromGame = async (gameId: string) => {
     WHERE id = (
       SELECT gp.id FROM game_players gp
       JOIN users u ON gp.user_id = u.id
-      WHERE gp.game_id = $1 AND u.email LIKE '%@heggyverse.local'
+      WHERE gp.game_id = $1 
+        AND u.email LIKE '%@heggyverse.local'
+        AND gp.status NOT IN ('KICKED', 'LEFT')
       ORDER BY gp.joined_at DESC
       LIMIT 1
     )
     RETURNING *;
   `;
   const res = await pool.query(query, [gameId]);
+  if (res.rows[0]) {
+    await pool.query('DELETE FROM round_answers WHERE game_player_id = $1;', [res.rows[0].id]);
+    await pool.query('DELETE FROM round_guesses WHERE guesser_player_id = $1 OR guessed_player_id = $1;', [res.rows[0].id]);
+  }
   return res.rows[0] || null;
 };
 
 /**
- * Queries all bots currently in the game.
+ * Queries all active bots currently in the game.
  */
 export const getGameBots = async (gameId: string) => {
   const query = `
     SELECT gp.id AS "gamePlayerId", gp.user_id AS "userId", gp.nickname, u.avatar_id AS "avatarId"
     FROM game_players gp
     JOIN users u ON gp.user_id = u.id
-    WHERE gp.game_id = $1 AND u.email LIKE '%@heggyverse.local';
+    WHERE gp.game_id = $1 
+      AND u.email LIKE '%@heggyverse.local'
+      AND gp.status NOT IN ('KICKED', 'LEFT')
+      AND gp.is_connected = true;
   `;
   const res = await pool.query(query, [gameId]);
   return res.rows;
@@ -143,7 +152,7 @@ export const handleBotAnswering = async (io: Server, roundId: string, gameId: st
     console.log(`🤖 [Bots] Scheduling answers for ${unansweredBots.length} bot(s) in round [${roundId}]`);
 
     unansweredBots.forEach((bot, index) => {
-      // Random delay between 2s and 4.5s per bot
+      // Random delay between 1.8s and 4.5s per bot
       const delayMs = 1800 + index * 1200 + Math.floor(Math.random() * 800);
 
       setTimeout(async () => {
@@ -151,6 +160,13 @@ export const handleBotAnswering = async (io: Server, roundId: string, gameId: st
           // Check if round is still in ANSWERING phase
           const roundCheck = await pool.query('SELECT phase FROM game_rounds WHERE id = $1;', [roundId]);
           if (roundCheck.rows[0]?.phase !== 'ANSWERING') return;
+
+          // Check if bot is still active in the game
+          const botCheck = await pool.query(
+            "SELECT id FROM game_players WHERE id = $1 AND status NOT IN ('KICKED', 'LEFT') AND is_connected = true;",
+            [bot.gamePlayerId]
+          );
+          if (botCheck.rows.length === 0) return;
 
           // Pick an unused funny answer
           let chosenAnswer = FUNNY_BOT_ANSWERS[Math.floor(Math.random() * FUNNY_BOT_ANSWERS.length)];
@@ -201,19 +217,22 @@ export const handleBotMatching = async (io: Server, roundId: string, gameId: str
     const bots = await getGameBots(gameId);
     if (bots.length === 0) return;
 
-    // Get anonymous answers for this round
+    // Get anonymous answers for this round from active players
     const answersRes = await pool.query(
       `SELECT ra.id AS "answerId", ra.game_player_id AS "authorPlayerId"
        FROM round_answers ra
-       WHERE ra.round_id = $1;`,
+       JOIN game_players gp ON ra.game_player_id = gp.id
+       WHERE ra.round_id = $1 
+         AND gp.status NOT IN ('KICKED', 'LEFT') 
+         AND gp.is_connected = true;`,
       [roundId]
     );
     const answers = answersRes.rows;
     if (answers.length === 0) return;
 
-    // Get players in game to match against
+    // Get active players in game to match against
     const playersRes = await pool.query(
-      'SELECT id, nickname FROM game_players WHERE game_id = $1 AND is_connected = true;',
+      "SELECT id, nickname FROM game_players WHERE game_id = $1 AND is_connected = true AND status NOT IN ('KICKED', 'LEFT');",
       [gameId]
     );
     const players = playersRes.rows;
@@ -231,13 +250,19 @@ export const handleBotMatching = async (io: Server, roundId: string, gameId: str
     console.log(`🤖 [Bots] Scheduling guesses for ${unansweredBots.length} bot(s) in round [${roundId}]`);
 
     unansweredBots.forEach((bot, index) => {
-      // Delay between 2.5s and 5s
+      // Delay between 2.2s and 4.5s
       const delayMs = 2200 + index * 1200 + Math.floor(Math.random() * 1000);
 
       setTimeout(async () => {
         try {
           const roundCheck = await pool.query('SELECT phase FROM game_rounds WHERE id = $1;', [roundId]);
           if (roundCheck.rows[0]?.phase !== 'MATCHING') return;
+
+          const botCheck = await pool.query(
+            "SELECT id FROM game_players WHERE id = $1 AND status NOT IN ('KICKED', 'LEFT') AND is_connected = true;",
+            [bot.gamePlayerId]
+          );
+          if (botCheck.rows.length === 0) return;
 
           // For each answer (excluding bot's own answer), pick candidate players (excluding bot)
           const botAnswers = answers.filter((ans) => ans.authorPlayerId !== bot.gamePlayerId);

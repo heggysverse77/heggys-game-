@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import app from './app.js';
 import { testDbConnection } from './config/db.js';
 import { initSocketServer } from './sockets/socket.server.js';
+import { startDatabaseCleanupSchedule } from './utils/cleanup.service.js';
 
 dotenv.config();
 
@@ -20,12 +21,16 @@ const startServer = async () => {
     // 1. Test database connection pool
     await testDbConnection();
 
-    // 2. Start HTTP server listener
+    // 2. Start automated maintenance schedule
+    startDatabaseCleanupSchedule();
+
+    // 3. Start HTTP server listener
     server.listen(PORT, () => {
       console.log(`\n==================================================`);
       console.log(`🚀 Heggy Game Server running in [${process.env.NODE_ENV || 'development'}] mode`);
       console.log(`📡 Listening on: http://localhost:${PORT}`);
       console.log(`🔌 Socket.io engine initialized`);
+      console.log(`🧹 DB Auto-Cleanup task registered`);
       console.log(`==================================================\n`);
     });
   } catch (error) {

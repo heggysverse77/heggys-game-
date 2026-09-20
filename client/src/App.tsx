@@ -19,7 +19,9 @@ import { onRoundStart, onRoundResults } from './socket/round.events';
 import { onStartMatching, onFinalResults } from './socket/game.events';
 import { onCurrentState, onUpdatePlayers, onSettingsUpdated, onRematchStarted, onKicked, onHostTransferred } from './socket/lobby.events';
 
-type AppPage = 'home' | 'join' | 'lobby' | 'game';
+import WesternRankStealDuel from './components/game/WesternRankStealDuel';
+
+type AppPage = 'home' | 'join' | 'lobby' | 'game' | 'duel';
 
 interface RoomInfo {
   gameId: string;
@@ -38,6 +40,9 @@ function InnerApp() {
   });
 
   const [page, setPage] = useState<AppPage>(() => {
+    if (window.location.pathname.includes('/duel') || window.location.search.includes('duel') || window.location.hash.includes('duel')) {
+      return 'duel';
+    }
     try {
       const saved = localStorage.getItem('heggy_active_room');
       return saved ? 'game' : 'home';
@@ -335,10 +340,20 @@ function InnerApp() {
         <AppLoadingSplash onFinished={() => setShowInitialSplash(false)} />
       )}
 
+      {page === 'duel' && (
+        <WesternRankStealDuel
+          onContinue={() => {
+            window.history.replaceState({}, '', '/');
+            setPage('home');
+          }}
+        />
+      )}
+
       {page === 'home' && (
         <HomePage
           onEnterLobby={handleCreateRoom}
           onJoinRoom={() => setPage('join')}
+          onPreviewDuel={() => setPage('duel')}
         />
       )}
       {page === 'join' && (

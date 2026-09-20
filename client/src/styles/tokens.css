@@ -70,34 +70,35 @@
   --modal-w-lg:        min(95vw, 760px);
   --modal-max-h:       min(90vh, 840px);
 
-  /* --- 6. Warm Comic Pop Palette --- */
-  --comic-cream:       #FFF6E5;
-  --comic-cream-soft:  #FFF9EE;
+  /* --- 6. Western Wild West Palette --- */
+  --comic-cream:       #FFF8EB;
+  --comic-cream-soft:  #FFFBF2;
   --comic-white:       #FFFFFF;
-  --comic-black:       #1A1A1A;
-  --comic-black-soft:  #2D2D2D;
-  --comic-gold:        #FFA646;
-  --comic-gold-hover:  #F59A33;
-  --comic-pink:        #F86041;
-  --comic-pink-hover:  #E85536;
-  --comic-teal:        #33A9AC;
-  --comic-teal-hover:  #2C999C;
-  --comic-blush:       #F5CAC3;
-  --comic-sand:        #F7EDE2;
+  --comic-black:       #1C1917;
+  --comic-black-soft:  #292524;
+  --comic-gold:        #F59E0B;
+  --comic-gold-hover:  #D97706;
+  --comic-pink:        #EA580C;
+  --comic-pink-hover:  #C2410C;
+  --comic-teal:        #0D9488;
+  --comic-teal-hover:  #0F766E;
+  --comic-blush:       #FED7AA;
+  --comic-sand:        #FDF6E2;
 
-  /* Atmospheric Cream Surfaces */
-  --bg-deep:           #FDF9EE;
-  --bg-card:           #FFF6E5;
-  --bg-card-hover:     #FFFDF5;
+  /* Atmospheric Western Sand Surfaces */
+  --bg-deep:           #FDF6E2;
+  --bg-card:           #FFF8EB;
+  --bg-card-hover:     #FFFDF7;
 
-  /* --- 7. Crisp Comic Borders & Shadows --- */
-  --border-comic-sm:   2px solid #1A1A1A;
-  --border-comic-md:   2.5px solid #1A1A1A;
-  --border-comic-lg:   3px solid #1A1A1A;
+  /* --- 7. Crisp Western Borders & Shadows --- */
+  --border-comic-sm:   2px solid #1C1917;
+  --border-comic-md:   2.5px solid #1C1917;
+  --border-comic-lg:   3px solid #1C1917;
 
-  --shadow-comic-xs:   2px 2px 0px #1A1A1A;
-  --shadow-comic-sm:   3px 3px 0px #1A1A1A;
-  --shadow-comic-md:   4px 4px 0px #1A1A1A;
-  --shadow-comic-lg:   6px 6px 0px #1A1A1A;
-  --shadow-comic-xl:   8px 8px 0px #1A1A1A;
+  --shadow-comic-xs:   2px 2px 0px #1C1917;
+  --shadow-comic-sm:   3px 3px 0px #1C1917;
+  --shadow-comic-md:   4px 4px 0px #1C1917;
+  --shadow-comic-lg:   6px 6px 0px #1C1917;
+  --shadow-comic-xl:   8px 8px 0px #1C1917;
 }
+

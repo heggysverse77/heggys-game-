@@ -1,79 +1,112 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
   <defs>
-    <radialGradient id="handsome_bg" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#FFF3EB" />
-      <stop offset="70%" stop-color="#FCD5CE" />
-      <stop offset="100%" stop-color="#F8AD9D" />
+    <radialGradient id="gunslinger_bg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#BAE6FD" />
+      <stop offset="55%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#0C4A6E" />
     </radialGradient>
-    <filter id="star_glow">
-      <feGaussianBlur stdDeviation="2" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
+    <linearGradient id="hat_leather" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5B290B" />
+      <stop offset="50%" stop-color="#451A03" />
+      <stop offset="100%" stop-color="#1C0902" />
+    </linearGradient>
+    <linearGradient id="poncho_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#365314" />
+      <stop offset="50%" stop-color="#1E3A8A" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="poncho_olive" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4D7C0F" />
+      <stop offset="60%" stop-color="#3F6212" />
+      <stop offset="100%" stop-color="#1A2E05" />
+    </linearGradient>
   </defs>
 
-  <!-- Outer Circle -->
-  <circle cx="150" cy="150" r="142" fill="url(#handsome_bg)" stroke="#1A1A1A" stroke-width="8" />
-  <circle cx="150" cy="150" r="133" fill="none" stroke="#F28482" stroke-width="3" opacity="0.6" />
+  <!-- Outer Circle Frame -->
+  <circle cx="150" cy="150" r="142" fill="url(#gunslinger_bg)" stroke="#1C1917" stroke-width="8" />
+  <circle cx="150" cy="150" r="133" fill="none" stroke="#38BDF8" stroke-width="3" opacity="0.7" />
 
-  <!-- Four-Point Anime Sparkles in Background -->
-  <path d="M 60 70 Q 66 70 66 64 Q 66 70 72 70 Q 66 70 66 76 Q 66 70 60 70 Z" fill="#F6BD60" stroke="#1A1A1A" stroke-width="1.5" filter="url(#star_glow)" />
-  <path d="M 235 80 Q 242 80 242 73 Q 242 80 249 80 Q 242 80 242 87 Q 242 80 235 80 Z" fill="#F6BD60" stroke="#1A1A1A" stroke-width="1.5" filter="url(#star_glow)" />
+  <!-- Gunslinger Sniper Crosshair Glint in Background -->
+  <circle cx="230" cy="70" r="18" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.3" stroke-dasharray="4 3" />
+  <line x1="230" y1="46" x2="230" y2="94" stroke="#FFFFFF" stroke-width="1.5" opacity="0.3" />
+  <line x1="206" y1="70" x2="254" y2="70" stroke="#FFFFFF" stroke-width="1.5" opacity="0.3" />
 
-  <g clip-path="url(#handsomeClip)">
-    <clipPath id="handsomeClip">
+  <g clip-path="url(#gsClip)">
+    <clipPath id="gsClip">
       <circle cx="150" cy="150" r="138" />
     </clipPath>
 
-    <!-- Silk Open Collar Shirt -->
-    <path d="M 45 300 C 55 215, 95 200, 150 200 C 205 200, 245 215, 255 300 Z" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="5" />
-    <!-- V-Neck Opening -->
-    <path d="M 125 200 L 150 248 L 175 200 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="3.5" />
-    <!-- Silver Pendant -->
-    <circle cx="150" cy="225" r="3.5" fill="#E2E8F0" stroke="#1A1A1A" stroke-width="1.5" />
+    <!-- Clint Eastwood Style Western Poncho / Duster Cape -->
+    <path d="M 35 300 C 45 205, 95 190, 150 190 C 205 190, 255 205, 265 300 Z" fill="url(#poncho_olive)" stroke="#1C1917" stroke-width="6" />
+    
+    <!-- Poncho Western Geometric Tribal Pattern Bands -->
+    <path d="M 60 250 L 240 250" stroke="#FEF08A" stroke-width="6" stroke-linecap="round" />
+    <path d="M 65 270 L 235 270" stroke="#EA580C" stroke-width="4" stroke-linecap="round" />
+    <!-- White woven triangles on poncho -->
+    <polygon points="100,246 110,254 120,246" fill="#FFFFFF" />
+    <polygon points="140,246 150,254 160,246" fill="#FFFFFF" />
+    <polygon points="180,246 190,254 200,246" fill="#FFFFFF" />
 
-    <!-- Neck -->
-    <rect x="128" y="160" width="44" height="45" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4" />
-    <path d="M 128 160 C 140 180, 160 180, 172 160 Z" fill="#E8B28E" />
+    <!-- Denim Shirt & Neck Scarf / Bandana -->
+    <path d="M 115 200 L 150 255 L 185 200 Z" fill="#1E3A8A" stroke="#1C1917" stroke-width="3.5" />
+    <path d="M 125 185 Q 150 220 175 185 Q 150 175 125 185 Z" fill="#991B1B" stroke="#1C1917" stroke-width="3" />
 
-    <!-- Ears -->
-    <ellipse cx="94" cy="142" rx="14" ry="18" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4.5" />
-    <ellipse cx="206" cy="142" rx="14" ry="18" fill="#FCEADE" stroke="#1A1A1A" stroke-width="4.5" />
+    <!-- Strong Rugged Neck -->
+    <rect x="130" y="152" width="40" height="42" fill="#FCEADE" stroke="#1C1917" stroke-width="4" />
+    <path d="M 130 172 Q 150 185 170 172" stroke="#D97706" stroke-width="2.5" fill="none" />
 
-    <!-- Sharp Chiseled Face Base -->
-    <path d="M 104 105 C 104 75, 196 75, 196 105 C 196 160, 175 190, 150 195 C 125 190, 104 160, 104 105 Z" fill="#FCEADE" stroke="#1A1A1A" stroke-width="5" />
-    <!-- Charming Cheek Blush -->
-    <ellipse cx="118" cy="148" rx="12" ry="6" fill="#F28482" opacity="0.45" />
-    <ellipse cx="182" cy="148" rx="12" ry="6" fill="#F28482" opacity="0.45" />
+    <!-- Chiseled Western Jawline & Face Base -->
+    <path d="M 104 102 C 104 70, 196 70, 196 102 C 196 156, 178 190, 150 194 C 122 190, 104 156, 104 102 Z" fill="#FCEADE" stroke="#1C1917" stroke-width="5" />
 
-    <!-- Slick Dark Anime Hair with Flowing Bangs -->
-    <path d="M 90 108 C 82 50, 115 28, 150 26 C 185 28, 218 50, 210 108 C 225 75, 208 42, 185 34 C 160 26, 135 26, 112 36 C 94 45, 84 75, 90 108 Z" fill="#1C1824" stroke="#1A1A1A" stroke-width="5" />
-    <!-- Swept Bangs Parting Across Brow -->
-    <path d="M 112 40 Q 145 95 130 118 Q 155 75 185 52 Z" fill="#2D2738" stroke="#1A1A1A" stroke-width="3" />
+    <!-- Rugged Stubble / 5 O'Clock Shadow on Jaw -->
+    <path d="M 106 142 C 114 184, 186 184, 194 142 C 182 170, 118 170, 106 142 Z" fill="#451A03" opacity="0.25" />
 
-    <!-- Right Eye: Open, Dreamy & Deep Brown -->
-    <ellipse cx="173" cy="126" rx="9" ry="11" fill="#FFF" stroke="#1A1A1A" stroke-width="3" />
-    <circle cx="173" cy="126" r="6.5" fill="#3D2014" />
-    <circle cx="173" cy="126" r="3.5" fill="#1A1A1A" />
-    <circle cx="171" cy="124" r="2.2" fill="#FFF" />
-    <!-- Left Eye: The Charming Playful WINK 😉 -->
-    <path d="M 116 128 Q 127 120 138 128" stroke="#1A1A1A" stroke-width="5.5" stroke-linecap="round" fill="none" />
-    <!-- Star Sparkle on the Winking Eye! -->
-    <path d="M 104 120 Q 110 120 110 114 Q 110 120 116 120 Q 110 120 110 126 Q 110 120 104 120 Z" fill="#FFF" stroke="#1A1A1A" stroke-width="1.5" filter="url(#star_glow)" />
+    <!-- Sharp Intense Squinting Gunslinger Eyes 🎯 (Laser Focus) -->
+    <!-- Left Eye: Narrow Squint -->
+    <path d="M 118 122 Q 130 114 142 120 Q 130 128 118 122 Z" fill="#FFFFFF" stroke="#1C1917" stroke-width="3" />
+    <circle cx="131" cy="121" r="3.2" fill="#1C1917" />
+    <circle cx="132" cy="120" r="1.2" fill="#38BDF8" />
 
-    <!-- Eyebrows (Smooth & Confident) -->
-    <path d="M 114 112 Q 126 106 138 114" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
-    <path d="M 162 112 Q 174 104 186 110" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" fill="none" />
+    <!-- Right Eye: Narrow Squint with Piercing Glint -->
+    <path d="M 158 120 Q 170 114 182 122 Q 170 128 158 120 Z" fill="#FFFFFF" stroke="#1C1917" stroke-width="3" />
+    <circle cx="169" cy="121" r="3.2" fill="#1C1917" />
+    <circle cx="170" cy="120" r="1.2" fill="#38BDF8" />
 
-    <!-- Nose -->
-    <path d="M 150 118 L 147 138 L 154 139" stroke="#1A1A1A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    <!-- Intense Focused Heavy Eyebrows -->
+    <path d="M 114 112 L 144 116" stroke="#451A03" stroke-width="4.5" stroke-linecap="round" />
+    <path d="M 186 112 L 156 116" stroke="#451A03" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Concentration Forehead Furrow -->
+    <path d="M 148 108 L 148 116" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M 152 108 L 152 116" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" />
 
-    <!-- Killer Charming Smirk -->
-    <path d="M 134 158 Q 146 168 166 156" stroke="#1A1A1A" stroke-width="4.5" stroke-linecap="round" fill="none" />
-    <path d="M 140 160 Q 150 166 162 158" fill="#FFF" />
+    <!-- Aquiline Chiseled Nose -->
+    <path d="M 150 116 L 145 140 L 155 140" stroke="#C2410C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+    <!-- Tight, Determined Grit Mouth -->
+    <path d="M 134 162 Q 148 165 166 160" stroke="#1C1917" stroke-width="3.5" stroke-linecap="round" fill="none" />
+
+    <!-- Cigarillo / Matchstick clenched in corner of mouth -->
+    <rect x="120" y="164" width="22" height="4" rx="1.5" fill="#78350F" stroke="#1C1917" stroke-width="1.5" transform="rotate(18 125 165)" />
+    <!-- Red glowing tip -->
+    <circle cx="114" cy="160" r="2.2" fill="#EF4444" />
+    <circle cx="114" cy="160" r="1" fill="#FBBF24" />
+
+    <!-- Iconic Wide-Brim Flat-Top Gunslinger Stetson Hat -->
+    <!-- Crown -->
+    <path d="M 102 70 C 102 24, 116 16, 150 18 C 184 16, 198 24, 198 70 Z" fill="url(#hat_leather)" stroke="#1C1917" stroke-width="6" />
+    <!-- Crown Crease -->
+    <path d="M 125 28 Q 150 40 175 28" stroke="#1C0902" stroke-width="3" fill="none" />
+    <!-- Curved Wide Hat Brim casting shade over brow -->
+    <path d="M 40 72 C 78 44, 222 44, 260 72 C 242 86, 58 86, 40 72 Z" fill="url(#hat_leather)" stroke="#1C1917" stroke-width="6" />
+    <!-- Hat Shadow on Upper Face -->
+    <path d="M 104 76 Q 150 92 196 76 L 196 95 Q 150 108 104 95 Z" fill="#1C0902" opacity="0.3" />
+    <!-- Braided Hatband with Bullet Loop Details -->
+    <path d="M 103 66 Q 150 72 197 66" stroke="#D97706" stroke-width="6" fill="none" />
+    <circle cx="130" cy="69" r="2.2" fill="#F59E0B" />
+    <circle cx="150" cy="71" r="2.5" fill="#F59E0B" />
+    <circle cx="170" cy="69" r="2.2" fill="#F59E0B" />
   </g>
 
-  <circle cx="150" cy="150" r="142" fill="none" stroke="#1A1A1A" stroke-width="8" />
+  <!-- Outer Ring Border -->
+  <circle cx="150" cy="150" r="142" fill="none" stroke="#1C1917" stroke-width="8" />
 </svg>

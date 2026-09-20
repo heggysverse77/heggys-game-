@@ -140,13 +140,26 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
           </div>
         }
       >
-        {/* Center Circular Question Card (Cream circle with question) */}
-        <div className="w-full h-full rounded-full bg-[#FFF6E5] border-3 sm:border-3.5 border-[#1A1A1A] shadow-[6px_6px_0px_#1A1A1A] flex flex-col items-center justify-center text-center animate-[pop_0.3s_ease] overflow-hidden p-3 sm:p-5">
-          <span className="text-xs sm:text-sm font-body font-black text-[#1A1A1A]/75 mb-1">
-            السؤال {currentRoundNumber} من {totalRounds}
+        {/* Center Western Question Playing Card (Compact & Proportioned) */}
+        <div className="w-full h-full rounded-2xl sm:rounded-3xl bg-gradient-to-b from-[#FFFDF8] to-[#FFF8EB] border-2.5 sm:border-3 border-[#1C1917] shadow-[4px_4px_0px_#1C1917] flex flex-col items-center justify-center text-center animate-[pop_0.3s_ease] overflow-hidden p-2 sm:p-3.5 relative">
+          {/* Playing Card Inner Inset Double Border */}
+          <div className="pointer-events-none absolute inset-1.5 sm:inset-2 rounded-xl border border-[#1C1917]/20 border-dashed" />
+
+          {/* Playing Card Corner Suits */}
+          <div className="pointer-events-none absolute top-1.5 right-2 sm:top-2 sm:right-2.5 flex flex-col items-center leading-none select-none text-[#1C1917] opacity-60">
+            <span className="font-mono text-[10px] sm:text-xs font-black">A</span>
+            <span className="text-[10px] sm:text-xs">♠</span>
+          </div>
+          <div className="pointer-events-none absolute bottom-1.5 left-2 sm:bottom-2 sm:left-2.5 flex flex-col items-center leading-none select-none text-[#1C1917] opacity-60 rotate-180">
+            <span className="font-mono text-[10px] sm:text-xs font-black">A</span>
+            <span className="text-[10px] sm:text-xs">♠</span>
+          </div>
+
+          <span className="text-[10px] sm:text-xs font-body font-black text-[#78350F] mb-0.5 z-10">
+            كارت السؤال {currentRoundNumber} من {totalRounds}
           </span>
-          <div className="flex-1 flex items-center justify-center overflow-y-auto custom-scrollbar w-full">
-            <h1 className="text-base sm:text-xl md:text-2xl font-display font-black text-[#1A1A1A] leading-snug break-words px-2">
+          <div className="flex-1 flex items-center justify-center overflow-y-auto custom-scrollbar w-full z-10 px-1">
+            <h1 className="text-xs sm:text-base md:text-lg font-display font-black text-[#1C1917] leading-snug break-words">
               {currentQuestion?.text_ar ?? 'جاري تحميل السؤال...'}
             </h1>
           </div>

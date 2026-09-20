@@ -69,15 +69,15 @@ export default function GameHeader({
     width: 36,
     height: 36,
     borderRadius: 10,
-    background: '#FFF0D4',
-    border: '2px solid #1A1A1A',
-    color: '#1A1A1A',
+    background: '#FEF3C7',
+    border: '2px solid #1C1917',
+    color: '#1C1917',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
     flexShrink: 0,
-    boxShadow: '2px 2px 0px #1A1A1A',
+    boxShadow: '2px 2px 0px #1C1917',
     transition: 'all 0.15s ease',
   };
 
@@ -98,12 +98,12 @@ export default function GameHeader({
                 onClick={onLeave}
                 className="hv-btn hv-btn-sm"
                 style={{
-                  background: '#FFE5E5',
-                  border: '2px solid #1A1A1A',
-                  color: '#D32F2F',
+                  background: '#FEE2E2',
+                  border: '2px solid #1C1917',
+                  color: '#B91C1C',
                   height: 36,
                   padding: '4px 8px',
-                  boxShadow: '2px 2px 0px #1A1A1A',
+                  boxShadow: '2px 2px 0px #1C1917',
                   flexShrink: 0,
                   fontSize: 12,
                 }}
@@ -114,16 +114,18 @@ export default function GameHeader({
               </button>
             )}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
-              <img
-                src="/images/logo.png"
-                alt="اعرف صاحبك"
-                className="h-7 sm:h-9 w-auto object-contain shrink-0"
-              />
+              <div className="relative [perspective:600px] cursor-pointer">
+                <img
+                  src="/images/logo.png"
+                  alt="اعرف صاحبك"
+                  className="h-7 sm:h-9 w-auto object-contain shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] [transform-style:preserve-3d] hover:[transform:rotateY(180deg)_scale(1.15)] active:scale-95"
+                />
+              </div>
               <span
                 style={{
                   fontWeight: 800,
                   fontSize: 'clamp(12px, 3.2vw, 16px)',
-                  color: '#1A1A1A',
+                  color: '#1C1917',
                   lineHeight: 1.2,
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
@@ -148,22 +150,22 @@ export default function GameHeader({
                 gap: 5,
                 padding: '4px 10px',
                 borderRadius: 9999,
-                background: '#FFF0D4',
-                border: '2px solid #1A1A1A',
-                boxShadow: '2px 2px 0px #1A1A1A',
+                background: '#FEF3C7',
+                border: '2px solid #1C1917',
+                boxShadow: '2px 2px 0px #1C1917',
                 cursor: 'pointer',
                 flexShrink: 0,
                 zIndex: 10,
               }}
             >
-              <span style={{ fontSize: 11, color: '#1A1A1A', fontWeight: 800 }}>كود:</span>
-              <span className="room-code" style={{ color: '#33A9AC', fontSize: 'clamp(12px, 3.6vw, 15px)', fontWeight: 900, letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: 11, color: '#1C1917', fontWeight: 800 }}>كود:</span>
+              <span className="room-code" style={{ color: '#0D9488', fontSize: 'clamp(12px, 3.6vw, 15px)', fontWeight: 900, letterSpacing: '0.05em' }}>
                 {displayRoomCode}
               </span>
               {copied ? (
-                <Check style={{ width: 13, height: 13, color: '#4CAF50' }} />
+                <Check style={{ width: 13, height: 13, color: '#10B981' }} />
               ) : (
-                <Copy style={{ width: 13, height: 13, color: '#1A1A1A' }} />
+                <Copy style={{ width: 13, height: 13, color: '#1C1917' }} />
               )}
             </button>
           ) : null}
@@ -172,9 +174,9 @@ export default function GameHeader({
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
             <button type="button" onClick={toggleSound} style={iconBtn} title={soundEnabled ? 'كتم الصوت' : 'تشغيل الصوت'} aria-label="التحكم في الصوت">
               {soundEnabled ? (
-                <Volume2 style={{ width: 16, height: 16, color: '#33A9AC' }} />
+                <Volume2 style={{ width: 16, height: 16, color: '#0D9488' }} />
               ) : (
-                <VolumeX style={{ width: 16, height: 16, color: '#666666' }} />
+                <VolumeX style={{ width: 16, height: 16, color: '#78716C' }} />
               )}
             </button>
             {isAuthenticated && user && (
@@ -188,15 +190,15 @@ export default function GameHeader({
                   gap: 5,
                   padding: '0 10px',
                   borderRadius: 10,
-                  background: '#FFF0D4',
-                  border: '2px solid #1A1A1A',
-                  boxShadow: '2px 2px 0px #1A1A1A',
+                  background: '#FEF3C7',
+                  border: '2px solid #1C1917',
+                  boxShadow: '2px 2px 0px #1C1917',
                   cursor: 'pointer',
                   flexShrink: 0,
                 }}
                 title="الملف الشخصي"
               >
-                <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1A1A', maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: 13, fontWeight: 800, color: '#1C1917', maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user.username}
                 </span>
               </button>
@@ -204,6 +206,7 @@ export default function GameHeader({
           </div>
         </div>
       </header>
+
 
       <UserProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} onLogout={onLogout} />
     </>

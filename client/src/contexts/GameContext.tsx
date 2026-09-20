@@ -61,6 +61,7 @@ interface GameState {
   // Results
   roundResults: RoundResultsPayload | null;
   leaderboard: LeaderboardEntry[];
+  previousLeaderboard: LeaderboardEntry[];
 
   // Final
   finalResults: GameFinalResultsPayload | null;
@@ -108,6 +109,7 @@ const initialState: GameState = {
   guessStatuses: null,
   roundResults: null,
   leaderboard: [],
+  previousLeaderboard: [],
   finalResults: null,
   dareCards: [],
 };
@@ -212,6 +214,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         phase: 'RESULTS',
         roundResults: action.results,
+        previousLeaderboard: state.leaderboard,
         leaderboard: action.results.leaderboard,
       };
 
@@ -220,6 +223,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         phase: 'FINAL',
         finalResults: action.results,
+        previousLeaderboard: state.leaderboard,
         leaderboard: action.results.finalLeaderboard,
         dareCards: action.results.dareCards ?? [],
       };

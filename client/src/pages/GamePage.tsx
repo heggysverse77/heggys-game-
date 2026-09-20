@@ -21,50 +21,20 @@ export default function GamePage({ gameId, roomCode, onLeaveGame }: GamePageProp
   const { user } = useAuth();
   const { socket } = useSocket();
 
-  // Wire all socket events to the game state reducer
+  // Wire game-specific live status events (global transitions are handled at App root)
   useEffect(() => {
     if (!socket) return;
 
     const cleanups = [
-      onUpdatePlayers((p) => dispatch({ type: 'PLAYERS_UPDATED', players: p.players })),
-
-      // Round start
-      onRoundStart((p) => dispatch({
-        type: 'ROUND_STARTED',
-        roundId: p.roundId,
-        roundNumber: p.roundNumber,
-        question: p.question,
-        timer: p.timer,
-      })),
-
-      // Answer statuses
+      // Live Answer statuses (checkboxes updating during answering)
       onAnswerStatuses((p) => dispatch({ type: 'ANSWER_STATUSES', statuses: p })),
-
-      // Matching phase
-      onStartMatching((p) => dispatch({
-        type: 'MATCHING_STARTED',
-        answers: p.anonymousAnswers,
-        players: p.playersToMatch,
-        timer: p.timer,
-        guessStatuses: (p as any).players ? {
-          submittedCount: (p as any).submittedCount,
-          totalPlayers: (p as any).totalPlayers,
-          players: (p as any).players,
-        } : null,
-      })),
 
       // Matching live guess statuses (per-avatar checkmarks during matching)
       onGuessStatuses((p) => dispatch({ type: 'GUESS_STATUSES', statuses: p })),
-
-      // Results
-      onRoundResults((p) => dispatch({ type: 'RESULTS_RECEIVED', results: p })),
-
-      // Final
-      onFinalResults((p) => dispatch({ type: 'FINAL_RESULTS', results: p })),
     ];
 
     return () => cleanups.forEach((fn) => fn());
-  }, [socket, dispatch, user]);
+  }, [socket, dispatch]);
 
   const getPhaseTitle = () => {
     switch (phase) {
@@ -91,11 +61,20 @@ export default function GamePage({ gameId, roomCode, onLeaveGame }: GamePageProp
         {/* Timer bar lives at top of each phase (hv-timer-track). Active challenge
             is highlighted via hv-card-active inside phase components. */}
         {!phase || phase === 'LOBBY' ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3">
+          <div className="flex flex-col items-center justify-center py-16 gap-4 animate-[fadeIn_0.3s_ease]">
             <Spinner size="lg" />
-            <p className="font-display font-black text-lg sm:text-xl text-[#FFA646] drop-shadow-sm">
-              جاري مزامنة بيانات اللعبة...
+            <p className="font-display font-black text-lg sm:text-xl text-[#F59E0B] drop-shadow-sm">
+              جاري مزامنة بيانات اللعبة... 🤠
             </p>
+            {onLeaveGame && (
+              <button
+                type="button"
+                onClick={onLeaveGame}
+                className="hv-btn hv-btn-ghost hv-btn-sm"
+              >
+                العودة للرئيسية
+              </button>
+            )}
           </div>
         ) : (
           <PhaseController gameId={gameId} />

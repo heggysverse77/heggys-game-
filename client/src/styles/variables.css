@@ -1,39 +1,40 @@
 /* Fonts (Cairo + Inter) are loaded via @import at the top of index.css —
    kept here as variables only so @import order stays valid. */
 :root {
-  /* --- Color System --- */
-  --color-primary: #FFA646;
-  --color-primary-hover: #F59A33;
-  --color-primary-active: #F86041;
-  --color-primary-light: #FFF3E0;
+  /* --- Western Wild West Color System --- */
+  --color-primary: #F59E0B;
+  --color-primary-hover: #D97706;
+  --color-primary-active: #B45309;
+  --color-primary-light: #FEF3C7;
 
-  --color-secondary: #33A9AC;
-  --color-secondary-hover: #2C999C;
-  --color-secondary-active: #23787B;
-  --color-secondary-light: #E0F7FA;
+  --color-secondary: #0D9488;
+  --color-secondary-hover: #0F766E;
+  --color-secondary-active: #115E59;
+  --color-secondary-light: #CCFBF1;
 
-  --color-accent: #F86041;
-  --color-accent-hover: #E85536;
-  --color-accent-active: #C94A2E;
+  --color-accent: #EA580C;
+  --color-accent-hover: #C2410C;
+  --color-accent-active: #9A3412;
 
-  --color-magenta: #982062;
-  --color-magenta-light: #C13A85;
-  --color-deep: #343779;
+  --color-magenta: #991B1B;
+  --color-magenta-light: #DC2626;
+  --color-deep: #451A03;
 
-  --color-bg: #FDF9EE;
-  --color-bg-elevated: #FFF6E5;
-  --color-bg-card: #FFF6E5;
-  --color-bg-card-hover: #FFFDF5;
+  --color-bg: #FDF6E2;
+  --color-bg-elevated: #FFF8EB;
+  --color-bg-card: #FFF8EB;
+  --color-bg-card-hover: #FFFDF7;
 
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #4A4A4A;
-  --color-text-tertiary: #717171;
+  --color-text-primary: #1C1917;
+  --color-text-secondary: #44403C;
+  --color-text-tertiary: #78716C;
   --color-text-inverse: #FFFFFF;
   --color-text-on-primary: #FFFFFF;
 
-  --color-border: #1A1A1A;
-  --color-border-light: #3D3D3D;
-  --color-border-focus: #FFA646;
+  --color-border: #1C1917;
+  --color-border-light: #44403C;
+  --color-border-focus: #F59E0B;
+
 
   --color-success: #4CAF50;
   --color-warning: #FFC107;
