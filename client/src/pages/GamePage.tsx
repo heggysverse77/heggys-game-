@@ -4,11 +4,9 @@ import GameHeader from '../components/layout/GameHeader';
 import { Spinner } from '../components/ui';
 import PhaseController from '../components/game/PhaseController';
 import { useGame } from '../hooks/useGame';
-import { useAuth } from '../hooks/useAuth';
 import { useSocket } from '../hooks/useSocket';
-import { onRoundStart, onAnswerStatuses, onRoundResults } from '../socket/round.events';
-import { onStartMatching, onGuessStatuses, onFinalResults } from '../socket/game.events';
-import { onUpdatePlayers } from '../socket/lobby.events';
+import { onAnswerStatuses } from '../socket/round.events';
+import { onGuessStatuses } from '../socket/game.events';
 
 interface GamePageProps {
   gameId: string;
@@ -18,7 +16,6 @@ interface GamePageProps {
 
 export default function GamePage({ gameId, roomCode, onLeaveGame }: GamePageProps) {
   const { dispatch, phase, currentRoundNumber, game } = useGame();
-  const { user } = useAuth();
   const { socket } = useSocket();
 
   // Wire game-specific live status events (global transitions are handled at App root)
