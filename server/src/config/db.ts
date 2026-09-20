@@ -25,3 +25,5 @@ export const testDbConnection = async () => {
     console.error('❌ PostgreSQL Database connection error:', err);
   }
 };
+
+export default pool;

@@ -1,4 +1,4 @@
-import pool from '../config/db.js';
+import { pool } from '../config/db.js';
 
 /**
  * Periodically cleans up expired guest users, abandoned lobbies,
