@@ -28,7 +28,7 @@ export default function Navbar({
           {logo ?? (
             <div className="relative [perspective:600px] cursor-pointer">
               <img
-                src="/images/logo.png"
+                src="/images/logo.png?v=20260920b"
                 alt="اعرف صاحبك وعلّم عليه"
                 className="transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] [transform-style:preserve-3d] hover:[transform:rotateY(180deg)_scale(1.15)] active:scale-95"
                 style={{

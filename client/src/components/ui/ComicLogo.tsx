@@ -59,7 +59,7 @@ export default function ComicLogo({
       {/* The official brand 3D illustrated logo with coin flip hover animation */}
       <div className="relative [perspective:1000px] cursor-pointer">
         <img
-          src="/images/logo.png"
+          src="/images/logo.png?v=20260920b"
           alt="اعرف صاحبك وعلّم عليه"
           className={`w-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)] transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] [transform-style:preserve-3d] ${sizeStyles.imgClass} ${
             animate

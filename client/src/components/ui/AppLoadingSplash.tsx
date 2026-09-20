@@ -239,7 +239,7 @@ export default function AppLoadingSplash({
           {/* Logo with entrance scale and subtle float */}
           <div className="relative animate-[pop_0.5s_cubic-bezier(0.34,1.56,0.64,1)]">
             <img
-              src="/images/logo.png"
+              src="/images/logo.png?v=20260920b"
               alt="اعرف صاحبك وعلم عليه"
               className="w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain drop-shadow-[0_16px_32px_rgba(0,0,0,0.6)] animate-[float_4s_ease-in-out_infinite]"
               loading="eager"
