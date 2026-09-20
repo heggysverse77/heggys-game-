@@ -74,12 +74,31 @@ function AvatarCardRankBadge({
 }
 
 export default function WesternRankStealDuel({
-  newWinner = fallbackWinner,
-  previousWinner = fallbackPrevious,
+  newWinner,
+  previousWinner,
   onContinue = () => {},
 }: WesternRankStealDuelProps) {
   const winner = newWinner || fallbackWinner;
   const opponent = previousWinner || fallbackPrevious;
+
+  // Guard against self-duel (e.g. Heggy shooting Heggy)
+  const isSelfDuel = Boolean(
+    !winner ||
+    !opponent ||
+    winner.nickname === opponent.nickname ||
+    (winner.userId && opponent.userId && winner.userId === opponent.userId) ||
+    (winner.playerId && opponent.playerId && winner.playerId === opponent.playerId)
+  );
+
+  useEffect(() => {
+    if (isSelfDuel) {
+      onContinue();
+    }
+  }, [isSelfDuel, onContinue]);
+
+  if (isSelfDuel) {
+    return null;
+  }
 
   const cleanWinnerName = cleanText(winner.nickname);
   const cleanOpponentName = cleanText(opponent.nickname);

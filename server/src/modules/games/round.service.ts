@@ -790,6 +790,8 @@ export interface FinalGameResult {
   loser: FinalPlayerRank;
   dareEnabled: boolean;
   dareCards?: DareCard[];
+  isRankStolen?: boolean;
+  previousLeader?: FinalPlayerRank | null;
 }
 
 /**
@@ -972,6 +974,68 @@ export const finishGameSession = async (gameId: string): Promise<FinalGameResult
       dareCards = daresRes.rows;
     }
 
+    // 5. Detect if Rank 1 was stolen in the final round (new player passed the previous leader)
+    let isRankStolen = false;
+    let previousLeader: any = null;
+
+    const roundsRes = await client.query(
+      'SELECT id, round_number FROM game_rounds WHERE game_id = $1 ORDER BY round_number ASC;',
+      [gameId]
+    );
+
+    if (roundsRes.rows.length >= 2 && finalLeaderboard.length >= 2) {
+      const finalRoundId = roundsRes.rows[roundsRes.rows.length - 1].id;
+
+      const preFinalScoresRes = await client.query(
+        `SELECT 
+           gp.id AS "gamePlayerId", 
+           gp.user_id AS "userId", 
+           gp.nickname, 
+           u.avatar_id AS "avatarId",
+           COALESCE(SUM(rs.points_gained), 0)::int AS "preFinalScore"
+         FROM game_players gp
+         JOIN users u ON gp.user_id = u.id
+         LEFT JOIN round_scores rs ON rs.game_player_id = gp.id AND rs.round_id IN (
+           SELECT id FROM game_rounds WHERE game_id = $1 AND id != $2
+         )
+         WHERE gp.game_id = $1 AND gp.status NOT IN ('KICKED', 'LEFT')
+         GROUP BY gp.id, u.avatar_id
+         ORDER BY "preFinalScore" DESC, gp.joined_at ASC;`,
+        [gameId, finalRoundId]
+      );
+
+      const topPreFinal = preFinalScoresRes.rows[0];
+      const finalChampion = finalLeaderboard[0];
+
+      // Rank is stolen ONLY if the player who led before the final round is NOT the final winner!
+      if (
+        topPreFinal &&
+        finalChampion &&
+        topPreFinal.gamePlayerId !== finalChampion.gamePlayerId &&
+        topPreFinal.userId !== finalChampion.userId &&
+        topPreFinal.nickname !== finalChampion.nickname
+      ) {
+        isRankStolen = true;
+        const matchingLeader = finalLeaderboard.find((p) => p.gamePlayerId === topPreFinal.gamePlayerId);
+        previousLeader = matchingLeader
+          ? {
+              ...matchingLeader,
+              playerId: matchingLeader.userId,
+            }
+          : {
+              playerId: topPreFinal.userId,
+              gamePlayerId: topPreFinal.gamePlayerId,
+              userId: topPreFinal.userId,
+              nickname: topPreFinal.nickname,
+              avatarId: topPreFinal.avatarId,
+              totalScore: topPreFinal.preFinalScore,
+              finalRank: 2,
+              titleBadge: '',
+              commentary: '',
+            };
+      }
+    }
+
     await client.query('COMMIT');
 
     return {
@@ -982,6 +1046,8 @@ export const finishGameSession = async (gameId: string): Promise<FinalGameResult
       loser: loser as any,
       dareEnabled,
       dareCards,
+      isRankStolen,
+      previousLeader,
     };
   } catch (error) {
     await client.query('ROLLBACK');
@@ -1122,6 +1188,67 @@ export const getFinishedGameData = async (gameId: string): Promise<FinalGameResu
     dareCards = daresRes.rows;
   }
 
+  // Detect if Rank 1 was stolen in the final round (for reconnection)
+  let isRankStolen = false;
+  let previousLeader: any = null;
+
+  const roundsRes = await pool.query(
+    'SELECT id, round_number FROM game_rounds WHERE game_id = $1 ORDER BY round_number ASC;',
+    [gameId]
+  );
+
+  if (roundsRes.rows.length >= 2 && finalLeaderboard.length >= 2) {
+    const finalRoundId = roundsRes.rows[roundsRes.rows.length - 1].id;
+
+    const preFinalScoresRes = await pool.query(
+      `SELECT 
+         gp.id AS "gamePlayerId", 
+         gp.user_id AS "userId", 
+         gp.nickname, 
+         u.avatar_id AS "avatarId",
+         COALESCE(SUM(rs.points_gained), 0)::int AS "preFinalScore"
+       FROM game_players gp
+       JOIN users u ON gp.user_id = u.id
+       LEFT JOIN round_scores rs ON rs.game_player_id = gp.id AND rs.round_id IN (
+         SELECT id FROM game_rounds WHERE game_id = $1 AND id != $2
+       )
+       WHERE gp.game_id = $1 AND gp.status NOT IN ('KICKED', 'LEFT')
+       GROUP BY gp.id, u.avatar_id
+       ORDER BY "preFinalScore" DESC, gp.joined_at ASC;`,
+      [gameId, finalRoundId]
+    );
+
+    const topPreFinal = preFinalScoresRes.rows[0];
+    const finalChampion = finalLeaderboard[0];
+
+    if (
+      topPreFinal &&
+      finalChampion &&
+      topPreFinal.gamePlayerId !== finalChampion.gamePlayerId &&
+      topPreFinal.userId !== finalChampion.userId &&
+      topPreFinal.nickname !== finalChampion.nickname
+    ) {
+      isRankStolen = true;
+      const matchingLeader = finalLeaderboard.find((p) => p.gamePlayerId === topPreFinal.gamePlayerId);
+      previousLeader = matchingLeader
+        ? {
+            ...matchingLeader,
+            playerId: matchingLeader.userId,
+          }
+        : {
+            playerId: topPreFinal.userId,
+            gamePlayerId: topPreFinal.gamePlayerId,
+            userId: topPreFinal.userId,
+            nickname: topPreFinal.nickname,
+            avatarId: topPreFinal.avatarId,
+            totalScore: topPreFinal.preFinalScore,
+            finalRank: 2,
+            titleBadge: '',
+            commentary: '',
+          };
+    }
+  }
+
   return {
     gameId,
     status: 'FINISHED',
@@ -1130,6 +1257,8 @@ export const getFinishedGameData = async (gameId: string): Promise<FinalGameResu
     loser: loser as any,
     dareEnabled,
     dareCards,
+    isRankStolen,
+    previousLeader,
   };
 };
 

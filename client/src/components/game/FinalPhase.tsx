@@ -16,21 +16,24 @@ interface FinalPhaseProps {
 }
 
 export default function FinalPhase(props: FinalPhaseProps) {
-  const { leaderboard, previousLeaderboard, game, isHost } = useGame();
+  const { leaderboard, finalResults, game } = useGame();
   const { celebrate } = useConfetti();
   const { play } = useSound();
 
   const winner = leaderboard[0];
-  const rest = leaderboard.slice(1);
-  const previousWinner = (previousLeaderboard && previousLeaderboard.length > 0) ? previousLeaderboard[0] : null;
+  const previousWinner = finalResults?.previousLeader || null;
 
-  // Detect if 1st place was stolen in the final round
+  // Detect if 1st place was stolen in the final round:
+  // 1. Must be verified by the server that a rank steal occurred
+  // 2. Both winner and previousWinner must exist
+  // 3. Winner and previousWinner MUST NOT be the same player (different userId, playerId, and nickname)
   const isRank1Stolen = Boolean(
+    finalResults?.isRankStolen &&
     winner &&
     previousWinner &&
-    previousWinner.playerId &&
-    winner.playerId &&
-    previousWinner.playerId !== winner.playerId
+    (winner.userId && previousWinner.userId ? winner.userId !== previousWinner.userId : true) &&
+    (winner.playerId && previousWinner.playerId ? winner.playerId !== previousWinner.playerId : true) &&
+    winner.nickname !== previousWinner.nickname
   );
 
   const [showDuel, setShowDuel] = useState<boolean>(() => isRank1Stolen);
@@ -57,11 +60,11 @@ export default function FinalPhase(props: FinalPhaseProps) {
 
   return (
     <>
-      {/* ── Western Rank Steal Duel Showdown Overlay ── */}
-      {showDuel && winner && (
+      {/* ── Western Rank Steal Duel Showdown Overlay: ONLY IF A RANK STEAL ACTUALLY OCCURRED ── */}
+      {showDuel && isRank1Stolen && winner && previousWinner && (
         <WesternRankStealDuel
           newWinner={winner}
-          previousWinner={previousWinner || rest[0]}
+          previousWinner={previousWinner}
           onContinue={() => setShowDuel(false)}
         />
       )}
@@ -80,8 +83,8 @@ export default function FinalPhase(props: FinalPhaseProps) {
             بعد منافسة استمرت {game?.total_rounds ?? 3} جولات حماسية!
           </p>
 
-          {/* Quick Duel Preview Trigger Button */}
-          {winner && (
+          {/* Quick Duel Preview Trigger Button - ONLY IF A RANK STEAL ACTUALLY OCCURRED */}
+          {isRank1Stolen && winner && previousWinner && (
             <button
               type="button"
               onClick={() => setShowDuel(true)}

@@ -147,6 +147,8 @@ export interface GameFinalResultsPayload {
   loser:  { playerId: string; nickname: string; avatarId: string };
   dareEnabled?: boolean;
   dareCards?: DareCard[];
+  isRankStolen?: boolean;
+  previousLeader?: LeaderboardEntry | null;
 }
 
 // ─── Dare Events ──────────────────────────────────────────────────────────────
