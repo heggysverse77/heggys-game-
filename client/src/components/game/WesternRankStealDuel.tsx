@@ -86,8 +86,8 @@ export default function WesternRankStealDuel({
     !winner ||
     !opponent ||
     winner.nickname === opponent.nickname ||
-    (winner.userId && opponent.userId && winner.userId === opponent.userId) ||
-    (winner.playerId && opponent.playerId && winner.playerId === opponent.playerId)
+    winner.playerId === opponent.playerId ||
+    ((winner as any).userId && (opponent as any).userId && (winner as any).userId === (opponent as any).userId)
   );
 
   useEffect(() => {

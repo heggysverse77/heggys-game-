@@ -16,23 +16,24 @@ interface FinalPhaseProps {
 }
 
 export default function FinalPhase(props: FinalPhaseProps) {
-  const { leaderboard, finalResults, game } = useGame();
+  const { leaderboard, finalResults, game, isHost } = useGame();
   const { celebrate } = useConfetti();
   const { play } = useSound();
 
   const winner = leaderboard[0];
+  const rest = leaderboard.slice(1);
   const previousWinner = finalResults?.previousLeader || null;
 
   // Detect if 1st place was stolen in the final round:
   // 1. Must be verified by the server that a rank steal occurred
   // 2. Both winner and previousWinner must exist
-  // 3. Winner and previousWinner MUST NOT be the same player (different userId, playerId, and nickname)
+  // 3. Winner and previousWinner MUST NOT be the same player
   const isRank1Stolen = Boolean(
     finalResults?.isRankStolen &&
     winner &&
     previousWinner &&
-    (winner.userId && previousWinner.userId ? winner.userId !== previousWinner.userId : true) &&
-    (winner.playerId && previousWinner.playerId ? winner.playerId !== previousWinner.playerId : true) &&
+    ((winner as any).userId && (previousWinner as any).userId ? (winner as any).userId !== (previousWinner as any).userId : true) &&
+    winner.playerId !== previousWinner.playerId &&
     winner.nickname !== previousWinner.nickname
   );
 
