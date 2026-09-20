@@ -187,9 +187,13 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
                 }}
                 placeholder="اكتب إجابتك هنا..."
                 maxLength={60}
-                className="flex-1 w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-[#FFF6E5] border-2.5 border-[#1A1A1A] text-[#1A1A1A] placeholder:text-[#1A1A1A]/40 font-body font-bold text-sm sm:text-base px-4 outline-none shadow-[2.5px_2.5px_0px_#1A1A1A] text-center sm:text-right focus:ring-3 focus:ring-[#FFA646]/50 transition-all"
+                autoCapitalize="off"
+                autoCorrect="off"
+                autoComplete="off"
+                spellCheck={false}
+                style={{ fontSize: '16px', touchAction: 'manipulation' }}
+                className="flex-1 w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-[#FFF6E5] border-2.5 border-[#1A1A1A] text-[#1A1A1A] placeholder:text-[#1A1A1A]/40 font-body font-bold text-base px-4 outline-none shadow-[2.5px_2.5px_0px_#1A1A1A] text-center sm:text-right focus:ring-3 focus:ring-[#FFA646]/50 transition-all"
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), submit())}
-                autoFocus
               />
 
               <button

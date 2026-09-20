@@ -116,6 +116,27 @@ function InnerApp() {
     }
   }, [socket, status, room?.gameId]);
 
+  // Handle mobile visibility change & wake-up to auto-reconnect socket on iOS Safari
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const storedToken = localStorage.getItem('heggy_token');
+        if (storedToken && status !== 'connected') {
+          console.log('📱 [App] Page became visible on mobile. Reconnecting socket...');
+          connect(storedToken);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleVisibilityChange);
+    };
+  }, [connect, status]);
+
   // Global socket listener: transitions all players to the game simultaneously
   useEffect(() => {
     if (!socket) return;

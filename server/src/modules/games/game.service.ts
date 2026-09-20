@@ -89,17 +89,20 @@ export const createGameRoom = async (
  * Validates room code availability before a user joins.
  */
 export const getGameByRoomCode = async (roomCode: string) => {
+  const cleanCode = roomCode.trim().toUpperCase();
   const query = `
     SELECT 
       g.id, g.room_code, g.status, g.max_players, g.min_players,
       COUNT(gp.id)::int AS current_players
     FROM games g
-    LEFT JOIN game_players gp ON g.id = gp.game_id
-    WHERE g.room_code = $1
-    GROUP BY g.id;
+    LEFT JOIN game_players gp ON g.id = gp.game_id AND gp.status != 'KICKED'
+    WHERE UPPER(TRIM(g.room_code)) = $1
+    GROUP BY g.id
+    ORDER BY CASE WHEN g.status IN ('LOBBY', 'IN_PROGRESS') THEN 0 ELSE 1 END, g.created_at DESC
+    LIMIT 1;
   `;
 
-  const result = await pool.query(query, [roomCode.toUpperCase()]);
+  const result = await pool.query(query, [cleanCode]);
 
   if (result.rows.length === 0) {
     return null;

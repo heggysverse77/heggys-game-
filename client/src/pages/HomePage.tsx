@@ -92,13 +92,19 @@ export default function HomePage({ onEnterLobby, onJoinRoom, onPreviewDuel }: Ho
         <section className="hv-hero">
           <ComicLogo size="hero" animate={true} />
 
-          {isAuthenticated && (
+          {isAuthenticated ? (
             <div className="hv-hero-ctas">
               <Button variant="primary" size="lg" icon={<Plus style={{ width: 18, height: 18 }} />} onClick={() => setCreateRoomModalOpen(true)}>
                 إنشاء غرفة جديدة
               </Button>
               <Button variant="secondary" size="lg" icon={<KeyRound style={{ width: 18, height: 18 }} />} onClick={onJoinRoom}>
                 الانضمام بكود
+              </Button>
+            </div>
+          ) : (
+            <div className="hv-hero-ctas">
+              <Button variant="secondary" size="lg" icon={<KeyRound style={{ width: 18, height: 18 }} />} onClick={onJoinRoom}>
+                معاك كود غرفة؟ اضغط للانضمام فوراً 🔑
               </Button>
             </div>
           )}

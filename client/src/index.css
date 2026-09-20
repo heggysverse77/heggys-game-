@@ -571,7 +571,23 @@ body {
 }
 
 /* Prevent iOS Safari auto-zoom on focus (inputs must be >= 16px) */
-input, textarea, select { font-size: max(16px, 1em); }
+input, textarea, select {
+  font-size: 16px !important;
+  touch-action: manipulation;
+}
+
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px !important;
+    max-height: 100%;
+  }
+}
 
 /* Touch targets: minimum 44px for interactive elements */
 @media (pointer: coarse) {
