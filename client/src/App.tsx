@@ -12,8 +12,8 @@ import GamePage from './pages/GamePage';
 
 import { AppLoadingSplash } from './components/ui';
 
-import { createRoom, type CreateGameOptions } from './services/game.service';
-import { emitJoinRoom } from './socket/lobby.events';
+import { createRoom, getRoomByCode, type CreateGameOptions } from './services/game.service';
+import { emitJoinRoom, emitLeaveRoom } from './socket/lobby.events';
 
 import { onRoundStart } from './socket/round.events';
 import { onCurrentState, onUpdatePlayers, onSettingsUpdated, onRematchStarted, onKicked, onHostTransferred } from './socket/lobby.events';
@@ -59,6 +59,36 @@ function InnerApp() {
   const { connect, socket, status } = useSocket();
   const { dispatch, state } = useGameContext();
   const game = state.game;
+
+  // Auto-join room from URL search params (?code=... or ?room=...)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const codeParam = params.get('code') || params.get('room');
+    if (codeParam) {
+      const code = codeParam.toUpperCase().trim();
+      if (isAuthenticated && token) {
+        getRoomByCode(code)
+          .then((info) => {
+            if (info && info.canJoin) {
+              updateRoom({ gameId: info.gameId, roomCode: info.roomCode });
+              if (status !== 'connected') connect(token);
+              emitJoinRoom({ gameId: info.gameId });
+              setPage('lobby');
+              window.history.replaceState({}, '', window.location.pathname);
+            } else {
+              setPage('join');
+            }
+          })
+          .catch((err) => {
+            console.error('Failed to auto join room from URL:', err);
+            setPage('join');
+          });
+      } else {
+        // Direct non-logged in users to join flow
+        setPage('join');
+      }
+    }
+  }, [isAuthenticated, token, status, connect]);
 
   // Return to lobby view if game status returns to LOBBY
   useEffect(() => {
@@ -259,6 +289,9 @@ function InnerApp() {
   };
 
   const handleLeaveRoom = () => {
+    if (room?.gameId) {
+      emitLeaveRoom({ gameId: room.gameId });
+    }
     dispatch({ type: 'RESET' });
     updateRoom(null);
     setPage('home');

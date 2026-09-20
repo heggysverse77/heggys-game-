@@ -191,31 +191,19 @@ export const joinGameRoom = async (
 export const handlePlayerDisconnect = async (
   gameId: string,
   userId: string,
-  socketId: string
+  socketId?: string
 ): Promise<{ newHostUserId: string | null; updatedPlayers: any[]; updatedGame: any | null }> => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
-    // 1. Mark player as DISCONNECTED (not LEFT — grace period still running)
+    // 1. Mark player as DISCONNECTED and is_connected = false
     await client.query(
       `UPDATE game_players 
        SET is_connected = false, status = 'DISCONNECTED', disconnected_at = NOW(), socket_id = NULL
-       WHERE game_id = $1 AND user_id = $2 AND socket_id = $3`,
-      [gameId, userId, socketId]
-    );
-
-    // Verify row was actually updated (guard against stale disconnect events)
-    const checkRes = await client.query(
-      `SELECT id FROM game_players WHERE game_id = $1 AND user_id = $2 AND status = 'DISCONNECTED'`,
+       WHERE game_id = $1 AND user_id = $2`,
       [gameId, userId]
     );
-    if (checkRes.rows.length === 0) {
-      // Player already reconnected or was not in this game — skip host transfer
-      await client.query('COMMIT');
-      const updatedPlayers = await getGamePlayersWithAvatars(gameId);
-      return { newHostUserId: null, updatedPlayers, updatedGame: null };
-    }
 
     // 2. Check if the disconnecting player is the host
     const gameRes = await client.query('SELECT * FROM games WHERE id = $1', [gameId]);
@@ -228,11 +216,11 @@ export const handlePlayerDisconnect = async (
     let newHostUserId: string | null = null;
 
     if (game.host_user_id === userId) {
-      // Find a random ACTIVE (fully connected) real player to become host
+      // Find the next connected real player (or bot) to become host
       const nextHostRes = await client.query(
         `SELECT user_id FROM game_players 
-         WHERE game_id = $1 AND status = 'ACTIVE' AND user_id != $2 AND (is_bot = false OR is_bot IS NULL)
-         ORDER BY RANDOM() LIMIT 1`,
+         WHERE game_id = $1 AND is_connected = true AND status NOT IN ('KICKED', 'LEFT') AND user_id != $2
+         ORDER BY joined_at ASC LIMIT 1`,
         [gameId, userId]
       );
 
@@ -263,8 +251,8 @@ export const handlePlayerDisconnect = async (
 };
 
 /**
- * Permanently marks a player as LEFT after the grace period expires.
- * If they were host, transfers host to a random ACTIVE player.
+ * Permanently marks a player as LEFT.
+ * If they were host, transfers host to the next connected player.
  */
 export const markPlayerLeft = async (
   gameId: string,
@@ -274,20 +262,12 @@ export const markPlayerLeft = async (
   try {
     await client.query('BEGIN');
 
-    // Mark as LEFT only if still DISCONNECTED (not already ACTIVE from reconnect)
-    const updateRes = await client.query(
-      `UPDATE game_players SET status = 'LEFT', is_connected = false
-       WHERE game_id = $1 AND user_id = $2 AND status = 'DISCONNECTED'
-       RETURNING id`,
+    // Mark as LEFT unconditionally
+    await client.query(
+      `UPDATE game_players SET status = 'LEFT', is_connected = false, socket_id = NULL
+       WHERE game_id = $1 AND user_id = $2`,
       [gameId, userId]
     );
-
-    if (updateRes.rows.length === 0) {
-      // Player already reconnected — no action needed
-      await client.query('COMMIT');
-      const updatedPlayers = await getGamePlayersWithAvatars(gameId);
-      return { newHostUserId: null, updatedPlayers, updatedGame: null };
-    }
 
     const gameRes = await client.query('SELECT * FROM games WHERE id = $1', [gameId]);
     if (gameRes.rows.length === 0) {
@@ -301,8 +281,8 @@ export const markPlayerLeft = async (
     if (game.host_user_id === userId) {
       const nextHostRes = await client.query(
         `SELECT user_id FROM game_players 
-         WHERE game_id = $1 AND status = 'ACTIVE' AND user_id != $2 AND (is_bot = false OR is_bot IS NULL)
-         ORDER BY RANDOM() LIMIT 1`,
+         WHERE game_id = $1 AND is_connected = true AND status NOT IN ('KICKED', 'LEFT') AND user_id != $2
+         ORDER BY joined_at ASC LIMIT 1`,
         [gameId, userId]
       );
 
@@ -328,6 +308,9 @@ export const markPlayerLeft = async (
     await client.query('ROLLBACK');
     throw error;
   } finally {
+    client.release();
+  }
+};
     client.release();
   }
 };
@@ -495,7 +478,8 @@ export const getGamePlayersWithAvatars = async (gameId: string): Promise<any[]> 
     FROM game_players gp
     JOIN users u ON gp.user_id = u.id
     WHERE gp.game_id = $1
-      AND gp.status != 'KICKED'
+      AND gp.status NOT IN ('KICKED', 'LEFT')
+      AND (gp.is_connected = true OR gp.is_bot = true)
     ORDER BY gp.joined_at ASC;
   `;
 
