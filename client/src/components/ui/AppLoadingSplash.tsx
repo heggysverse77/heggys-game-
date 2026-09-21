@@ -232,21 +232,21 @@ export default function AppLoadingSplash({
           style={{ perspective: '1400px' }}
         >
           <style>{`
-            @keyframes splashLogoFlipElevate {
+            @keyframes splashLogoVerticalFlip {
               0% {
-                transform: translateY(8px) rotateY(0deg) rotateX(2.5deg) scale(0.97);
+                transform: translateY(8px) rotateX(0deg) scale(0.97);
               }
               25% {
-                transform: translateY(-22px) rotateY(90deg) rotateX(-5deg) scale(1.03);
+                transform: translateY(-24px) rotateX(90deg) scale(1.04);
               }
               50% {
-                transform: translateY(-42px) rotateY(180deg) rotateX(2.5deg) scale(1.08);
+                transform: translateY(-46px) rotateX(180deg) scale(1.1);
               }
               75% {
-                transform: translateY(-22px) rotateY(270deg) rotateX(-5deg) scale(1.03);
+                transform: translateY(-24px) rotateX(270deg) scale(1.04);
               }
               100% {
-                transform: translateY(8px) rotateY(360deg) rotateX(2.5deg) scale(0.97);
+                transform: translateY(8px) rotateX(360deg) scale(0.97);
               }
             }
 
@@ -257,8 +257,8 @@ export default function AppLoadingSplash({
                 filter: blur(6px);
               }
               50% {
-                transform: scale(0.62) translateY(14px);
-                opacity: 0.3;
+                transform: scale(0.58) translateY(16px);
+                opacity: 0.28;
                 filter: blur(18px);
               }
             }
@@ -279,13 +279,13 @@ export default function AppLoadingSplash({
             }
 
             .splash-logo-flip-container {
-              animation: splashLogoFlipElevate 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+              animation: splashLogoVerticalFlip 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
               will-change: transform;
               transform-style: preserve-3d;
             }
 
             .splash-logo-shadow {
-              animation: splashLogoShadowPulse 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+              animation: splashLogoShadowPulse 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
               will-change: transform, opacity, filter;
             }
 
@@ -330,11 +330,11 @@ export default function AppLoadingSplash({
               />
             </div>
 
-            {/* Back Face (Oriented right-side up when card flips 180°) */}
+            {/* Back Face (Oriented right-side up when card flips 180° vertically) */}
             <div 
               className="absolute inset-0 flex items-center justify-center"
               style={{
-                transform: 'rotateY(180deg) translateZ(8px)',
+                transform: 'rotateX(180deg) translateZ(8px)',
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
               }}
