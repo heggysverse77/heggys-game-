@@ -226,25 +226,135 @@ export default function AppLoadingSplash({
           </div>
         )}
 
-        {/* ── Main Brand Emblem with Warm Glow ── */}
-        <div className="relative flex items-center justify-center">
-          {/* Intense warm amber core glow behind emblem */}
+        {/* ── Main Brand Emblem with 3D Depth, Flip & Elevation ── */}
+        <div 
+          className="relative flex flex-col items-center justify-center my-1"
+          style={{ perspective: '1400px' }}
+        >
+          <style>{`
+            @keyframes splashLogoFlipElevate {
+              0% {
+                transform: translateY(8px) rotateY(0deg) rotateX(2.5deg) scale(0.97);
+              }
+              25% {
+                transform: translateY(-22px) rotateY(90deg) rotateX(-5deg) scale(1.03);
+              }
+              50% {
+                transform: translateY(-42px) rotateY(180deg) rotateX(2.5deg) scale(1.08);
+              }
+              75% {
+                transform: translateY(-22px) rotateY(270deg) rotateX(-5deg) scale(1.03);
+              }
+              100% {
+                transform: translateY(8px) rotateY(360deg) rotateX(2.5deg) scale(0.97);
+              }
+            }
+
+            @keyframes splashLogoShadowPulse {
+              0%, 100% {
+                transform: scale(1);
+                opacity: 0.85;
+                filter: blur(6px);
+              }
+              50% {
+                transform: scale(0.62) translateY(14px);
+                opacity: 0.3;
+                filter: blur(18px);
+              }
+            }
+
+            @keyframes splashHaloRotate {
+              0% {
+                transform: rotate(0deg) scale(0.95);
+                opacity: 0.75;
+              }
+              50% {
+                transform: rotate(180deg) scale(1.1);
+                opacity: 0.95;
+              }
+              100% {
+                transform: rotate(360deg) scale(0.95);
+                opacity: 0.75;
+              }
+            }
+
+            .splash-logo-flip-container {
+              animation: splashLogoFlipElevate 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+              will-change: transform;
+              transform-style: preserve-3d;
+            }
+
+            .splash-logo-shadow {
+              animation: splashLogoShadowPulse 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+              will-change: transform, opacity, filter;
+            }
+
+            .splash-halo-glow {
+              animation: splashHaloRotate 8s linear infinite;
+              will-change: transform, opacity;
+            }
+
+            .splash-logo-depth {
+              filter: 
+                drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5))
+                drop-shadow(0 12px 20px rgba(0, 0, 0, 0.65))
+                drop-shadow(0 28px 46px rgba(0, 0, 0, 0.85))
+                drop-shadow(0 0 35px rgba(245, 158, 11, 0.65))
+                drop-shadow(0 0 12px rgba(254, 215, 170, 0.45));
+            }
+          `}</style>
+
+          {/* Intense warm amber / fiery core glow behind emblem */}
           <div 
-            className="absolute -inset-8 sm:-inset-12 rounded-full opacity-80 blur-3xl pointer-events-none"
+            className="absolute -inset-10 sm:-inset-16 rounded-full blur-3xl pointer-events-none splash-halo-glow"
             style={{
-              background: 'radial-gradient(circle, #F59E0B 0%, #EA580C 45%, #78350F 75%, transparent 100%)',
+              background: 'radial-gradient(circle, rgba(245, 158, 11, 0.75) 0%, rgba(234, 88, 12, 0.5) 42%, rgba(120, 53, 15, 0.25) 72%, transparent 100%)',
             }}
           />
 
-          {/* Logo with entrance scale and subtle float */}
-          <div className="relative animate-[pop_0.5s_cubic-bezier(0.34,1.56,0.64,1)]">
-            <img
-              src="/images/logo.png?v=20260920b"
-              alt="اعرف صاحبك وعلم عليه"
-              className="w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain drop-shadow-[0_16px_32px_rgba(0,0,0,0.6)] animate-[float_4s_ease-in-out_infinite]"
-              loading="eager"
-            />
+          {/* 3D Flipping & Elevating Emblem (with Double-Sided Mesh so text is never reversed) */}
+          <div className="relative splash-logo-flip-container">
+            {/* Front Face */}
+            <div 
+              style={{
+                transform: 'translateZ(8px)',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+              }}
+            >
+              <img
+                src="/images/logo.png?v=20260920b"
+                alt="اعرف صاحبك وعلم عليه"
+                className="w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain splash-logo-depth select-none pointer-events-none"
+                loading="eager"
+              />
+            </div>
+
+            {/* Back Face (Oriented right-side up when card flips 180°) */}
+            <div 
+              className="absolute inset-0 flex items-center justify-center"
+              style={{
+                transform: 'rotateY(180deg) translateZ(8px)',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+              }}
+            >
+              <img
+                src="/images/logo.png?v=20260920b"
+                alt="اعرف صاحبك وعلم عليه"
+                className="w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain splash-logo-depth select-none pointer-events-none"
+                loading="eager"
+              />
+            </div>
           </div>
+
+          {/* Responsive 3D Ground Cast Shadow that responds to the rising & flipping */}
+          <div 
+            className="w-48 sm:w-64 md:w-72 h-7 sm:h-9 rounded-[100%] pointer-events-none mt-2 splash-logo-shadow"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(12, 4, 1, 0.9) 0%, rgba(35, 12, 3, 0.55) 45%, transparent 75%)',
+            }}
+          />
         </div>
 
         {/* ── Minimalist Circular Spinner & Loading Indicator ── */}
