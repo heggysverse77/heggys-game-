@@ -129,19 +129,28 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
     };
   });
 
+  const selectedAnswerObj = answersToMatch.find((a: any) => getAnswerId(a) === selectedAnswerId);
+
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-6 py-2 sm:py-4 gap-3 sm:gap-4 select-none" dir="rtl">
+    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-2 sm:px-6 py-1 sm:py-3 gap-2 sm:gap-3 select-none" dir="rtl">
       
-      {/* ── 1. HEADER BANNER (Identical to Screen 3 Mockup) ── */}
+      {/* ── 1. HEADER BANNER ── */}
       <div className="text-center animate-[slideUp_0.2s_ease]">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-[#FFF6E5] drop-shadow-[2px_2px_0px_#1A1A1A]">
+        <h1 className="text-xl sm:text-3xl md:text-4xl font-display font-black text-[#FFF6E5] drop-shadow-[2px_2px_0px_#1A1A1A]">
           وصل الإجابات لأصحابها
         </h1>
-        <p className="text-xs sm:text-sm font-body font-bold text-[#FFA646] mt-0.5">
-          {selectedAnswerId
-            ? '👈 اضغط الآن على اللاعب صاحب هذه الإجابة في الدائرة'
-            : 'اسحب كل إجابة أو اضغط عليها وضعها على صاحبها'}
-        </p>
+        <div className="mt-0.5 flex items-center justify-center min-h-[24px]">
+          {selectedAnswerId ? (
+            <span className="inline-flex items-center gap-1.5 bg-[#1C1917] text-[#FDE047] px-3 py-0.5 rounded-full border-1.5 border-[#F59E0B] text-xs font-black shadow-[1.5px_1.5px_0px_#F59E0B] animate-pulse">
+              <span>👈 اضغط على صاحب إجابة:</span>
+              <span className="text-white underline truncate max-w-[140px] sm:max-w-[200px]">"{selectedAnswerObj?.text || 'المختارة'}"</span>
+            </span>
+          ) : (
+            <p className="text-xs sm:text-sm font-body font-bold text-[#FFA646]">
+              اسحب كل إجابة أو اضغط عليها وضعها على صاحبها
+            </p>
+          )}
+        </div>
       </div>
 
       {/* ── 2. CIRCULAR GAME TABLE (Peripheral Avatars + Center Answers Stack) ── */}
@@ -150,14 +159,19 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
         activePlayerId={null}
         onPlayerClick={handleSelectPlayer}
         footerBadge={
-          <div className="inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#F86041] text-white border-2.5 border-[#1A1A1A] shadow-[0_0_16px_rgba(248,96,65,0.5)] font-display font-black text-sm sm:text-base animate-[pop_0.2s_ease] shrink-0 leading-none">
-            <Timer className="w-4.5 h-4.5 stroke-[2.5]" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full bg-[#F86041] text-white border-2 sm:border-2.5 border-[#1A1A1A] shadow-[0_0_14px_rgba(248,96,65,0.4)] font-display font-black text-xs sm:text-base animate-[pop_0.2s_ease] shrink-0 leading-none">
+            <Timer className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 stroke-[2.5]" />
             <span className="timer-number font-mono">{remaining}s</span>
           </div>
         }
       >
-        {/* Center Vertical Stack of Cream Answer Cards (Screen 3) */}
-        <div className="flex flex-col gap-1.5 w-full max-w-[170px] sm:max-w-[210px] max-h-full overflow-y-auto p-1 custom-scrollbar z-20">
+        {/* Center Vertical Stack of Cream Answer Cards */}
+        <div
+          className={[
+            'flex flex-col gap-1 w-full max-h-[165px] sm:max-h-[220px] overflow-y-auto custom-scrollbar p-1 z-20',
+            answersToMatch.length > 4 ? 'max-w-[210px] sm:max-w-[250px]' : 'max-w-[180px] sm:max-w-[220px]',
+          ].join(' ')}
+        >
           {answersToMatch.length === 0 ? (
             <div className="p-3 text-center bg-[#FFF6E5] rounded-2xl border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]">
               <span className="text-xs sm:text-sm font-display font-black text-[#1A1A1A]">
@@ -165,71 +179,82 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
               </span>
             </div>
           ) : (
-            answersToMatch.map((a: any, idx: number) => {
-              const ansId = getAnswerId(a);
-              const isSelected = selectedAnswerId === ansId;
-              const assignedPlayerId = myGuesses[ansId];
-              const assignedPlayer = candidatePlayers.find((p: any) => getPlayerId(p) === assignedPlayerId);
-              const suits = ['♠', '♥', '♦', '♣'];
-              const suitChar = suits[idx % suits.length];
-              const isRedSuit = suitChar === '♥' || suitChar === '♦';
+            <>
+              {answersToMatch.length > 4 && (
+                <div className="text-[10px] sm:text-xs font-display font-black text-[#F59E0B] text-center mb-0.5 leading-none shrink-0 select-none">
+                  ↕ اسحب للإجابات ({matchedCount}/{totalAnswers})
+                </div>
+              )}
+              {answersToMatch.map((a: any, idx: number) => {
+                const ansId = getAnswerId(a);
+                const isSelected = selectedAnswerId === ansId;
+                const assignedPlayerId = myGuesses[ansId];
+                const assignedPlayer = candidatePlayers.find((p: any) => getPlayerId(p) === assignedPlayerId);
+                const suits = ['♠', '♥', '♦', '♣'];
+                const suitChar = suits[idx % suits.length];
+                const isRedSuit = suitChar === '♥' || suitChar === '♦';
+                const rawText = a.text ? String(a.text).trim() : '';
+                const displayText = rawText || `إجابة لاعب #${idx + 1}`;
 
-              return (
-                <button
-                  key={ansId}
-                  type="button"
-                  onClick={() => handleSelectAnswer(ansId)}
-                  className={[
-                    'w-full p-2 sm:p-2.5 rounded-xl sm:rounded-2xl border-2 sm:border-2.5 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none relative overflow-hidden',
-                    isSelected
-                      ? 'bg-[#F59E0B] text-[#1C1917] border-[#1C1917] shadow-[3px_3px_0px_#1C1917] scale-[1.03] font-black'
-                      : assignedPlayer
-                      ? 'bg-[#0D9488] text-white border-[#1C1917] shadow-[2px_2px_0px_#1C1917]'
-                      : 'bg-[#FFF8EB] text-[#1C1917] border-[#1C1917] hover:bg-white shadow-[2px_2px_0px_#1C1917]',
-                  ].join(' ')}
-                >
-                  {/* Playing card mini suit watermark */}
-                  <span 
-                    className="pointer-events-none absolute top-1 right-2 text-[11px] opacity-40 font-mono"
-                    style={{ color: isRedSuit ? '#DC2626' : '#1C1917' }}
+                return (
+                  <button
+                    key={ansId}
+                    type="button"
+                    onClick={() => handleSelectAnswer(ansId)}
+                    className={[
+                      'w-full px-2 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border-1.5 sm:border-2 text-right transition-all cursor-pointer flex items-center justify-between gap-1 select-none shrink-0 relative overflow-hidden',
+                      isSelected
+                        ? 'bg-[#F59E0B] text-[#1C1917] border-[#1C1917] shadow-[2px_2px_0px_#1C1917] scale-[1.02] font-black'
+                        : assignedPlayer
+                        ? 'bg-[#0D9488] text-white border-[#1C1917] shadow-[1.5px_1.5px_0px_#1C1917]'
+                        : 'bg-[#FFF8EB] text-[#1C1917] border-[#1C1917] hover:bg-white shadow-[1.5px_1.5px_0px_#1C1917]',
+                    ].join(' ')}
                   >
-                    {suitChar}
-                  </span>
-
-                  <span className="text-sm sm:text-base font-display font-black leading-tight truncate max-w-full px-2 z-10">
-                    {a.text}
-                  </span>
-
-                  {assignedPlayer && (
-                    <div className="flex items-center gap-1 text-[10px] sm:text-xs font-bold bg-black/20 text-white px-2 py-0.5 rounded-full mt-0.5 z-10">
-                      <Check className="w-3 h-3" />
-                      <span className="truncate max-w-[90px]">{assignedPlayer.nickname}</span>
+                    {/* Right side: Suit icon + Answer text */}
+                    <div className="flex items-center gap-1 min-w-0 flex-1 text-right">
                       <span
-                        onClick={(e) => handleUnlinkGuess(ansId, e)}
-                        className="text-red-300 hover:text-white mr-1 cursor-pointer font-black"
-                        title="إلغاء الربط"
+                        className="text-[11px] sm:text-xs font-mono font-bold shrink-0 opacity-70"
+                        style={{ color: isRedSuit ? '#DC2626' : '#1C1917' }}
                       >
-                        ×
+                        {suitChar}
+                      </span>
+                      <span className="text-[11px] sm:text-xs md:text-sm font-display font-black leading-tight truncate">
+                        {displayText}
                       </span>
                     </div>
-                  )}
-                </button>
-              );
-            })
+
+                    {/* Left side: Matched player pill (if assigned) */}
+                    {assignedPlayer && (
+                      <div className="shrink-0 flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px] font-bold bg-black/25 text-white px-1.5 py-0.5 rounded-md">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                        <span className="truncate max-w-[55px] sm:max-w-[75px]">{assignedPlayer.nickname}</span>
+                        <span
+                          onClick={(e) => handleUnlinkGuess(ansId, e)}
+                          className="text-red-300 hover:text-white mr-0.5 cursor-pointer font-black text-xs leading-none"
+                          title="إلغاء الربط"
+                        >
+                          ×
+                        </span>
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </>
           )}
         </div>
       </CircularGameTable>
 
       {/* ── 3. BOTTOM ACTIONS: CONFIRM GUESSES ── */}
-      <div className="w-full max-w-md flex flex-col items-center gap-2.5 animate-[slideUp_0.3s_ease]">
+      <div className="w-full max-w-sm sm:max-w-md flex flex-col items-center gap-1.5 sm:gap-2 animate-[slideUp_0.3s_ease]">
         {!hasSubmittedGuesses ? (
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex flex-col gap-1.5">
             <button
               type="button"
               onClick={handleSubmit}
               disabled={!allGuessed}
               className={[
-                'w-full min-h-[46px] sm:min-h-[50px] px-6 rounded-xl sm:rounded-2xl font-display font-black text-base sm:text-lg border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center gap-2 select-none whitespace-nowrap',
+                'w-full min-h-[40px] sm:min-h-[46px] px-4 sm:px-6 rounded-xl sm:rounded-2xl font-display font-black text-sm sm:text-base border-2 sm:border-2.5 border-[#1A1A1A] shadow-[2.5px_2.5px_0px_#1A1A1A] transition-all cursor-pointer flex items-center justify-center gap-2 select-none whitespace-nowrap',
                 allGuessed
                   ? 'bg-[#F86041] text-white hover:bg-[#E85536] active:translate-y-0.5'
                   : 'bg-white/20 text-white/40 border-white/20 cursor-not-allowed shadow-none',
@@ -238,7 +263,7 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
               <Play className="w-4 h-4" />
               <span>
                 {allGuessed
-                  ? 'تأكيد وإرسال التخمينات'
+                  ? 'تأكيد وإرسال التخمينات 🚀'
                   : `وصل باقي الإجابات (${matchedCount}/${totalAnswers})`}
               </span>
             </button>
@@ -247,19 +272,19 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
               <button
                 type="button"
                 onClick={() => emitForceResults({ gameId, roundId: currentRoundId || '' })}
-                className="text-xs font-body font-bold text-[#FFF6E5] bg-[#1A1A1A]/85 hover:bg-[#1A1A1A] px-4 py-1.5 rounded-full border-1.5 border-[#1A1A1A] shadow-xs self-center transition-all cursor-pointer active:translate-y-0.5"
+                className="text-[11px] sm:text-xs font-body font-bold text-[#FFF6E5] bg-[#1A1A1A]/85 hover:bg-[#1A1A1A] px-3.5 py-1 rounded-full border border-[#1A1A1A] shadow-xs self-center transition-all cursor-pointer active:translate-y-0.5"
               >
                 <span>كشف النتائج فوراً (المضيف) ⏭️</span>
               </button>
             )}
           </div>
         ) : (
-          <div className="w-full flex flex-col gap-2.5 items-center">
-            <div className="w-full p-4 rounded-2xl bg-[#FFF6E5] border-3 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] text-center animate-[pop_0.25s_ease]">
-              <span className="text-[#1A1A1A] text-lg sm:text-xl font-display font-black block">
+          <div className="w-full flex flex-col gap-2 items-center">
+            <div className="w-full p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-[#FFF6E5] border-2 sm:border-3 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] text-center animate-[pop_0.25s_ease]">
+              <span className="text-[#1A1A1A] text-base sm:text-lg font-display font-black block">
                 ✅ تم إرسال تخميناتك بنجاح!
               </span>
-              <span className="text-xs sm:text-sm text-[#1A1A1A]/70 font-body font-bold mt-1 block">
+              <span className="text-xs sm:text-sm text-[#1A1A1A]/70 font-body font-bold mt-0.5 block">
                 في انتظار انتهاء باقي اللاعبين لكشف النتائج...
               </span>
             </div>
@@ -268,9 +293,9 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
               <button
                 type="button"
                 onClick={() => emitForceResults({ gameId, roundId: currentRoundId || '' })}
-                className="w-full h-13 sm:h-14 rounded-2xl bg-[#33A9AC] text-white font-display font-black text-base sm:text-lg border-3 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-[#33A9AC] text-white font-display font-black text-sm sm:text-base border-2.5 border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <Play className="w-5 h-5" />
+                <Play className="w-4 h-4" />
                 <span>كشف نتائج الجولة (المرحلة التالية ⏭️)</span>
               </button>
             )}

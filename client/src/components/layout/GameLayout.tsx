@@ -14,7 +14,7 @@ export default function GameLayout({ children, className = '' }: GameLayoutProps
     >
       {/* Retro Comic City Background Wallpaper */}
       <div aria-hidden="true" className="hv-bg-wallpaper" />
-      <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', paddingTop: 0, paddingBottom: 48 }} className={className}>
+      <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', paddingTop: 0, paddingBottom: 'clamp(10px, 2.5vw, 36px)' }} className={className}>
         {children}
       </div>
     </div>

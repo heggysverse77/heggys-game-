@@ -35,14 +35,20 @@ export default function CircularGameTable({
   radiusPercent = 42,
 }: CircularGameTableProps) {
   const total = players.length;
+  const isManyPlayers = total > 4;
+  const effectiveRadius = isManyPlayers ? 43 : radiusPercent;
 
   return (
     <div className={`relative flex flex-col items-center justify-center w-full ${className}`}>
       <div
-        className="relative flex items-center justify-center select-none my-2 sm:my-4"
+        className="relative flex items-center justify-center select-none my-1 sm:my-3"
         style={{
-          width: 'clamp(300px, min(94vw, 78vh), 540px)',
-          height: 'clamp(300px, min(94vw, 78vh), 540px)',
+          width: isManyPlayers
+            ? 'clamp(270px, min(92vw, 48vh), 460px)'
+            : 'clamp(285px, min(94vw, 55vh), 520px)',
+          height: isManyPlayers
+            ? 'clamp(270px, min(92vw, 48vh), 460px)'
+            : 'clamp(285px, min(94vw, 55vh), 520px)',
           maxWidth: '96vw',
         }}
       >
@@ -139,7 +145,14 @@ export default function CircularGameTable({
         </svg>
 
         {/* ── 2. CENTER CONTENT SLOT (Question Card / Answer Stack) ── */}
-        <div className="relative z-10 w-[50%] h-[50%] sm:w-[54%] sm:h-[54%] max-w-[240px] sm:max-w-[290px] max-h-[240px] sm:max-h-[290px] flex items-center justify-center p-1 sm:p-2">
+        <div
+          className={[
+            'relative z-10 flex items-center justify-center p-0.5 sm:p-2',
+            isManyPlayers
+              ? 'w-[64%] h-[64%] sm:w-[58%] sm:h-[58%] max-w-[270px] sm:max-w-[300px] max-h-[270px] sm:max-h-[300px]'
+              : 'w-[54%] h-[54%] sm:w-[54%] sm:h-[54%] max-w-[240px] sm:max-w-[290px] max-h-[240px] sm:max-h-[290px]',
+          ].join(' ')}
+        >
           {children}
         </div>
 
@@ -147,8 +160,8 @@ export default function CircularGameTable({
         {players.map((player, index) => {
           // Standard 12 o'clock start position
           const angle = (2 * Math.PI * index) / (total || 1) - Math.PI / 2;
-          const xPercent = 50 + radiusPercent * Math.cos(angle);
-          const yPercent = 50 + radiusPercent * Math.sin(angle);
+          const xPercent = 50 + effectiveRadius * Math.cos(angle);
+          const yPercent = 50 + effectiveRadius * Math.sin(angle);
           const isTop = yPercent < 35;
 
           const isClickable = Boolean(onPlayerClick && !player.isDisabled);
@@ -178,7 +191,7 @@ export default function CircularGameTable({
                 <div className="relative">
                   <div
                     className={[
-                      'rounded-full p-1 transition-all duration-200 shadow-[3px_3px_0px_#1C1917] border-2.5 sm:border-3',
+                      'rounded-full p-1 transition-all duration-200 shadow-[3px_3px_0px_#1C1917] border-2 sm:border-2.5',
                       isSelected
                         ? 'bg-[#F59E0B] border-[#1C1917] ring-4 ring-[#F59E0B] scale-105 shadow-[0_0_16px_rgba(245,158,11,0.7)]'
                         : player.isAssignedInMatching
@@ -193,18 +206,22 @@ export default function CircularGameTable({
                       nickname={player.nickname}
                       size="md"
                       ring="none"
-                      className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 border-1.5 border-[#1C1917]"
+                      className={
+                        isManyPlayers
+                          ? 'w-8 h-8 sm:w-11 sm:h-11 md:w-13 md:h-13 border-1.5 border-[#1C1917]'
+                          : 'w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 border-1.5 border-[#1C1917]'
+                      }
                     />
                   </div>
 
                   {/* 1. Finished Action Badge (Green Checked Poker Chip) */}
                   {player.hasActed ? (
-                    <div className="absolute -top-1 -right-1 z-30 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#10B981] border-2 border-[#1C1917] text-white flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#1C1917] animate-[pop_0.2s_ease]">
-                      <Check className="w-3.5 h-3.5 stroke-[3.5]" />
+                    <div className="absolute -top-1 -right-1 z-30 w-4.5 h-4.5 sm:w-6 sm:h-6 rounded-full bg-[#10B981] border-1.5 sm:border-2 border-[#1C1917] text-white flex items-center justify-center text-[10px] sm:text-xs font-black shadow-[1.5px_1.5px_0px_#1C1917] animate-[pop_0.2s_ease]">
+                      <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[3.5]" />
                     </div>
                   ) : (
                     /* 2. Still Thinking / Matching Poker Chip */
-                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 px-1.5 sm:px-2 py-0.5 rounded-full bg-[#F59E0B] text-[#1C1917] border-1.5 border-[#1C1917] text-[9px] sm:text-[10px] font-display font-black shadow-[1px_1px_0px_#1C1917] flex items-center gap-1 animate-pulse whitespace-nowrap">
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 px-1 sm:px-2 py-0.5 rounded-full bg-[#F59E0B] text-[#1C1917] border-1 border-[#1C1917] text-[8px] sm:text-[10px] font-display font-black shadow-[1px_1px_0px_#1C1917] flex items-center gap-0.5 sm:gap-1 animate-pulse whitespace-nowrap">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#1C1917] animate-ping shrink-0" />
                       <span>{player.statusText || 'يفكر...'}</span>
                     </div>
@@ -214,7 +231,10 @@ export default function CircularGameTable({
                 {/* Nickname Parchment Chip */}
                 <div
                   className={[
-                    'px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-[13px] font-display font-black border-2 transition-all max-w-[100px] sm:max-w-[130px] truncate shadow-[2px_2px_0px_#1C1917] z-30 leading-none flex items-center gap-1',
+                    isManyPlayers
+                      ? 'px-1.5 sm:px-2.5 py-0.5 text-[9px] sm:text-xs max-w-[68px] sm:max-w-[100px]'
+                      : 'px-2.5 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-[13px] max-w-[100px] sm:max-w-[130px]',
+                    'rounded-full font-display font-black border-1.5 sm:border-2 transition-all truncate shadow-[2px_2px_0px_#1C1917] z-30 leading-none flex items-center gap-0.5 sm:gap-1',
                     isTop ? 'mb-1' : 'mt-1',
                     isSelected
                       ? 'bg-[#F59E0B] text-[#1C1917] border-[#1C1917] scale-105 shadow-[0_0_12px_rgba(245,158,11,0.5)]'
@@ -224,7 +244,7 @@ export default function CircularGameTable({
                   ].join(' ')}
                 >
                   <span className="truncate">{player.nickname}</span>
-                  {player.isAssignedInMatching && <span className="text-[10px]">🔗</span>}
+                  {player.isAssignedInMatching && <span className="text-[8px] sm:text-[10px]">🔗</span>}
                 </div>
               </button>
             </div>
@@ -232,8 +252,12 @@ export default function CircularGameTable({
         })}
       </div>
 
-      {/* Optional bottom badge (Timer / Counter) */}
-      {footerBadge && <div className="mt-1 sm:mt-2 z-20">{footerBadge}</div>}
+      {/* Optional bottom badge (Timer / Counter) with clearance for bottom avatars */}
+      {footerBadge && (
+        <div className={`z-20 ${isManyPlayers ? 'mt-3 sm:mt-4' : 'mt-1 sm:mt-2'}`}>
+          {footerBadge}
+        </div>
+      )}
     </div>
   );
 }

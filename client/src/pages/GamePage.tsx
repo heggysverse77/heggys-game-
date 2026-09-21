@@ -54,7 +54,7 @@ export default function GamePage({ gameId, roomCode, onLeaveGame }: GamePageProp
         onLogout={onLeaveGame}
       />
 
-      <div className="hv-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', paddingBlock: 24 }}>
+      <div className="hv-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', paddingBlock: 'clamp(6px, 1.5vw, 20px)' }}>
         {/* Timer bar lives at top of each phase (hv-timer-track). Active challenge
             is highlighted via hv-card-active inside phase components. */}
         {!phase || phase === 'LOBBY' ? (
