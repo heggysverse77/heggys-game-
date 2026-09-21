@@ -9,7 +9,7 @@ interface BotConfig {
 
 const BOTS: BotConfig[] = [
   {
-    name: 'الروقان 🚬',
+    name: 'كريم',
     avatarId: 'avatar_1',
     catchphrases: [
       'أنا طبعاً بدون نقاش 😎',
@@ -20,7 +20,7 @@ const BOTS: BotConfig[] = [
     ],
   },
   {
-    name: 'النينجا 🥷',
+    name: 'سارة',
     avatarId: 'avatar_2',
     catchphrases: [
       'ضربة في الظلام وسرعة خارقة 🥷',
@@ -31,7 +31,7 @@ const BOTS: BotConfig[] = [
     ],
   },
   {
-    name: 'البرنس 😉',
+    name: 'عمر',
     avatarId: 'avatar_3',
     catchphrases: [
       'شاورما عربي بالثومية 🌯',
@@ -42,7 +42,7 @@ const BOTS: BotConfig[] = [
     ],
   },
   {
-    name: 'المصدومة 😱',
+    name: 'مريم',
     avatarId: 'avatar_4',
     catchphrases: [
       'إيه اللي بيحصل هنا ده؟! 😱',
@@ -53,7 +53,7 @@ const BOTS: BotConfig[] = [
     ],
   },
   {
-    name: 'السايبر جيمر 🎧',
+    name: 'زياد',
     avatarId: 'avatar_5',
     catchphrases: [
       'GG يا شباب الجيم ده بتاعي 🎮',

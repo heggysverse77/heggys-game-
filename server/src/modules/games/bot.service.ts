@@ -14,16 +14,32 @@ interface BotProfile {
 }
 
 const BOT_PROFILES: BotProfile[] = [
-  { name: 'أبو صقر 🦅', avatarId: 'avatar_2' },
-  { name: 'كابتن ماجد ⚽', avatarId: 'avatar_3' },
-  { name: 'شاورما دبل 🌯', avatarId: 'avatar_4' },
-  { name: 'طمطم 🍅', avatarId: 'avatar_5' },
-  { name: 'فيلسوف الشلة 🧐', avatarId: 'avatar_6' },
-  { name: 'نمس اللعبة 🕵️', avatarId: 'avatar_7' },
-  { name: 'المعلم سردينة 🐟', avatarId: 'avatar_8' },
-  { name: 'البرنس 👑', avatarId: 'avatar_9' },
-  { name: 'زيزو المشاكس ⚡', avatarId: 'avatar_10' },
-  { name: 'سوبر هنيدي 🎭', avatarId: 'avatar_1' },
+  { name: 'كريم', avatarId: 'avatar_1' },
+  { name: 'سارة', avatarId: 'avatar_2' },
+  { name: 'عمر', avatarId: 'avatar_3' },
+  { name: 'مريم', avatarId: 'avatar_4' },
+  { name: 'أحمد', avatarId: 'avatar_5' },
+  { name: 'نور', avatarId: 'avatar_6' },
+  { name: 'يوسف', avatarId: 'avatar_7' },
+  { name: 'فريدة', avatarId: 'avatar_8' },
+  { name: 'زياد', avatarId: 'avatar_9' },
+  { name: 'سلمى', avatarId: 'avatar_10' },
+  { name: 'مصطفى', avatarId: 'avatar_1' },
+  { name: 'ليلى', avatarId: 'avatar_2' },
+  { name: 'طارق', avatarId: 'avatar_3' },
+  { name: 'نادين', avatarId: 'avatar_4' },
+  { name: 'خالد', avatarId: 'avatar_5' },
+  { name: 'ياسمين', avatarId: 'avatar_6' },
+  { name: 'حمزة', avatarId: 'avatar_7' },
+  { name: 'هدى', avatarId: 'avatar_8' },
+  { name: 'علي', avatarId: 'avatar_9' },
+  { name: 'هنا', avatarId: 'avatar_10' },
+  { name: 'مازن', avatarId: 'avatar_1' },
+  { name: 'دينا', avatarId: 'avatar_2' },
+  { name: 'شريف', avatarId: 'avatar_3' },
+  { name: 'ريم', avatarId: 'avatar_4' },
+  { name: 'أدهم', avatarId: 'avatar_5' },
+  { name: 'ملك', avatarId: 'avatar_6' },
 ];
 
 const FUNNY_BOT_ANSWERS = [
@@ -59,13 +75,14 @@ export const addBotToGame = async (gameId: string) => {
   const existingNames = new Set(playersRes.rows.map((p) => p.nickname));
 
   // 2. Pick a bot profile whose name is not already in the game
+  const fallbackIndex = playersRes.rows.length + 1;
   const profile = BOT_PROFILES.find((b) => !existingNames.has(b.name)) || {
-    name: `بوت ${playersRes.rows.length + 1} 🤖`,
-    avatarId: `avatar_${((playersRes.rows.length % 10) + 1)}`,
+    name: `لاعب ${fallbackIndex}`,
+    avatarId: `avatar_${((fallbackIndex % 10) + 1)}`,
   };
 
   // 3. Ensure bot user exists in users table
-  const email = `bot_${encodeURIComponent(profile.name.replace(/[^a-zA-Z0-9]/g, ''))}_${Date.now()}@heggyverse.local`;
+  const email = `bot_${Date.now()}_${Math.random().toString(36).substring(2, 7)}@heggyverse.local`;
   const insertUserQuery = `
     INSERT INTO users (username, email, avatar_id, is_guest)
     VALUES ($1, $2, $3, true)

@@ -23,7 +23,7 @@ const fallbackWinner: LeaderboardEntry = {
 
 const fallbackPrevious: LeaderboardEntry = {
   playerId: 'p2',
-  nickname: 'كابتن ماجد',
+  nickname: 'كريم',
   avatarId: 'avatar_2',
   totalScore: 500,
   pointsGained: 100,
