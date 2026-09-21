@@ -31,7 +31,7 @@ export default function MatchingPhase({ gameId }: MatchingPhaseProps) {
   const { play } = useSound();
 
   const totalDuration = timerSeconds || game?.matching_timer_sec || 45;
-  const { remaining, isExpired } = useTimer(totalDuration, !hasSubmittedGuesses);
+  const { remaining, isExpired } = useTimer(totalDuration, true, currentRoundId);
   const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
 
   const getAnswerId = (a: any): string => a.answerId || a.answer_id || a.id || '';

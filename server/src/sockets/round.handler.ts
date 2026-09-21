@@ -18,7 +18,94 @@ import {
 import { pool } from '../config/db.js';
 import { handleBotAnswering, handleBotMatching } from '../modules/games/bot.service.js';
 
+const phaseTimers = new Map<string, NodeJS.Timeout>();
+
+export const clearPhaseTimer = (gameId: string) => {
+  const existing = phaseTimers.get(gameId);
+  if (existing) {
+    clearTimeout(existing);
+    phaseTimers.delete(gameId);
+  }
+};
+
+export const scheduleAnsweringTimer = (
+  io: Server,
+  gameId: string,
+  roundId: string,
+  timerSec: number
+) => {
+  clearPhaseTimer(gameId);
+  const timeoutMs = (Math.max(5, timerSec) + 2.5) * 1000;
+
+  const timer = setTimeout(async () => {
+    try {
+      const roundRes = await pool.query(
+        'SELECT phase FROM game_rounds WHERE id = $1;',
+        [roundId]
+      );
+      if (roundRes.rows.length === 0 || roundRes.rows[0].phase !== 'ANSWERING') {
+        return;
+      }
+      console.log(`⏰ Answering phase timed out for game [${gameId}], round [${roundId}]. Auto-advancing to MATCHING...`);
+
+      const missingPlayersRes = await pool.query(
+        `SELECT gp.id FROM game_players gp
+         LEFT JOIN round_answers ra ON ra.round_id = $1 AND ra.game_player_id = gp.id
+         WHERE gp.game_id = $2
+           AND gp.status NOT IN ('KICKED', 'LEFT')
+           AND gp.is_connected = true
+           AND ra.id IS NULL;`,
+        [roundId, gameId]
+      );
+
+      for (let i = 0; i < missingPlayersRes.rows.length; i++) {
+        const pId = missingPlayersRes.rows[i].id;
+        try {
+          await submitRoundAnswer(roundId, pId, `لا توجد إجابة ${i + 1}`);
+        } catch (e) {
+          console.warn(`Could not auto-submit placeholder answer for player ${pId}:`, e);
+        }
+      }
+
+      await triggerMatchingPhase(io, roundId, gameId);
+    } catch (err) {
+      console.error(`Error in auto-advancing answering phase for game [${gameId}]:`, err);
+    }
+  }, timeoutMs);
+
+  phaseTimers.set(gameId, timer);
+};
+
+export const scheduleMatchingTimer = (
+  io: Server,
+  gameId: string,
+  roundId: string,
+  timerSec: number
+) => {
+  clearPhaseTimer(gameId);
+  const timeoutMs = (Math.max(5, timerSec) + 2.5) * 1000;
+
+  const timer = setTimeout(async () => {
+    try {
+      const roundRes = await pool.query(
+        'SELECT phase FROM game_rounds WHERE id = $1;',
+        [roundId]
+      );
+      if (roundRes.rows.length === 0 || roundRes.rows[0].phase !== 'MATCHING') {
+        return;
+      }
+      console.log(`⏰ Matching phase timed out for game [${gameId}], round [${roundId}]. Auto-advancing to RESULTS...`);
+      await triggerResultsPhase(io, roundId, gameId);
+    } catch (err) {
+      console.error(`Error in auto-advancing matching phase for game [${gameId}]:`, err);
+    }
+  }, timeoutMs);
+
+  phaseTimers.set(gameId, timer);
+};
+
 export const triggerMatchingPhase = async (io: Server, roundId: string, gameId: string) => {
+  clearPhaseTimer(gameId);
   const roomChannel = `game_${gameId}`;
   const matchingData = await startMatchingPhase(roundId, gameId);
   const guessStatuses = await getMatchingGuessStatuses(roundId, gameId);
@@ -55,9 +142,13 @@ export const triggerMatchingPhase = async (io: Server, roundId: string, gameId: 
 
   // Trigger bots to submit matching guesses
   handleBotMatching(io, roundId, gameId);
+
+  // Schedule server fallback timer for matching phase
+  scheduleMatchingTimer(io, gameId, roundId, matchingData.matchingTimerSec);
 };
 
 export const triggerResultsPhase = async (io: Server, roundId: string, gameId: string) => {
+  clearPhaseTimer(gameId);
   const roomChannel = `game_${gameId}`;
   const leaderboard = await calculateRoundScores(roundId, gameId);
   const revealedAnswers = await getRoundRevealedAnswers(roundId);
@@ -141,6 +232,9 @@ export const registerRoundHandlers = (io: Server, socket: AuthenticatedSocket) =
 
       // Trigger bots to answer secret questions automatically
       handleBotAnswering(io, result.round.id, gameId);
+
+      // Schedule server fallback timer for answering phase
+      scheduleAnsweringTimer(io, gameId, result.round.id, result.answeringTimerSec);
 
       console.log(`🎮 Game [${gameId}] started by host [${user.username}]. Round 1 initiated.`);
     } catch (error: any) {
@@ -392,6 +486,9 @@ export const registerRoundHandlers = (io: Server, socket: AuthenticatedSocket) =
 
         // Trigger bots to answer secret questions for the new round
         handleBotAnswering(io, round.id, gameId);
+
+        // Schedule server fallback timer for answering phase
+        scheduleAnsweringTimer(io, gameId, round.id, answeringTimerSec);
 
         console.log(`🔁 Game [${gameId}] advanced to Round [${round.round_number}].`);
       }

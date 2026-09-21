@@ -28,12 +28,11 @@ export default function AnsweringPhase({ gameId }: AnsweringPhaseProps) {
   const { user } = useAuth();
   const { play } = useSound();
 
+  const targetRoundId = currentRoundId || currentQuestion?.id;
   const totalDuration = timerSeconds || game?.answering_timer_sec || 30;
-  const { remaining, isExpired } = useTimer(totalDuration, !hasSubmittedAnswer);
+  const { remaining, isExpired } = useTimer(totalDuration, true, targetRoundId);
   const [answer, setAnswer] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const targetRoundId = currentRoundId || currentQuestion?.id;
 
   // Listen to round errors
   useEffect(() => {
